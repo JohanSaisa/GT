@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GT.Data.Migrations.GTIdentityMigrations
 {
     [DbContext(typeof(GTIdentityContext))]
-    [Migration("20220317140913_Init")]
+    [Migration("20220317144015_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
