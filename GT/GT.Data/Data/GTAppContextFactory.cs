@@ -1,6 +1,7 @@
 ﻿using GT.Data.Data.GTAppDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace TestingNTier.DAL.Data
 {
@@ -8,9 +9,19 @@ namespace TestingNTier.DAL.Data
 	{
 		public GTAppContext CreateDbContext(string[] args)
 		{
+			//TODO - Check to see if ~ will find the root folder. .sln?
+			var basePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
+
+			var cfg = new ConfigurationBuilder()
+			.SetBasePath(basePath)
+			.AddJsonFile("appsettings.json")
+			.Build();
+
 			var optionsBuilder = new DbContextOptionsBuilder<GTAppContext>();
-			//TODO - Fix so that connection string imports from appsettings either in DATA or UI
-			optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GTAppDb;Trusted_Connection=True;MultipleActiveResultSets=true");
+
+			var connectionString = cfg.GetConnectionString("GTIdentityContextConnection");
+
+			optionsBuilder.UseSqlServer(connectionString);
 
 			return new GTAppContext(optionsBuilder.Options);
 		}
