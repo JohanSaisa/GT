@@ -19,7 +19,7 @@ namespace TestingNTier.DAL.Data
 
 			var optionsBuilder = new DbContextOptionsBuilder<GTAppContext>();
 
-			var connectionString = cfg.GetConnectionString("GTIdentityContextConnection");
+			var connectionString = cfg.GetConnectionString("GTApplicationContextConnection");
 
 			optionsBuilder.UseSqlServer(connectionString);
 
