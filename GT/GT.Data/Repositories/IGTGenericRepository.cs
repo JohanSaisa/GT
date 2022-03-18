@@ -6,8 +6,10 @@ namespace GT.Data.Repositories
 		where TEntity : class, IGTEntity
 	{
 		Task<IQueryable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include);
-    Task<TEntity> CreateAsync(TEntity entity);
+		Task<TEntity> FindAsync(Func<IQueryable<TEntity>, bool> predicate);
+		Task<TEntity> CreateAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);
 		Task DeleteAsync(string id);
+
   }
 }
