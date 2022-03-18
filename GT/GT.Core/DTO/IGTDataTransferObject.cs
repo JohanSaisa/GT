@@ -1,6 +1,6 @@
 ﻿namespace GT.Core.DTO
 {
-	internal interface IDataTransferObject
+	internal interface IGTDataTransferObject
 	{
 		string Id { get; set; }
 	}
