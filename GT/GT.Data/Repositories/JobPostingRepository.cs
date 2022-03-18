@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GT.Data.Repositories
 {
-    public class JobPostingRepository : IGT
+    public class JobPostingRepository
     {
         
     }

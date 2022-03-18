@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace GT.Data.Repositories
 {
@@ -7,30 +8,43 @@ namespace GT.Data.Repositories
         where TEntity : class, IGTEntity
     {
         protected readonly DbContext _context;
+        protected bool _disposed;
 
         protected GTGenericRepository(DbContext context) 
         { 
             _context = context;
         }
 
-        public async Task<IQueryable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include)
+        public virtual IQueryable<TEntity> GetAll(
+            Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null)
         {
-            IQueryable<TEntity> query = _context.Set<TEntity>();
-
-            if (include is not null)
+            if (includeExpression is not null)
             {
-                query = include(query);
-            }
-            var items = await query
-                .ToListAsync();
+                var include = includeExpression.Compile();
 
-            return items
-                .AsQueryable();
+                return include(_context.Set<TEntity>());
+            }
+            
+            return _context.Set<TEntity>();
         }
 
-        public Task<TEntity> FindAsync(Func<IQueryable<TEntity>, bool> predicate)
+        // JobListingRepository.FindAsync(jobListing =>
+        // jobListing.Id == id,
+        // jb => jb.Include(x => x.Company));
+
+        public virtual async Task<TEntity?> FindAsync(
+            Expression<Func<TEntity, bool>> predicate, 
+            Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null)
         {
-            throw new NotImplementedException();
+            if (predicate is null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var item = await GetAll(includeExpression)
+                .FirstOrDefaultAsync(predicate, CancellationToken.None);
+
+            return item;
         }
 
         public async Task<TEntity> CreateAsync(TEntity entity)
@@ -40,23 +54,89 @@ namespace GT.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            await _context.Set<TEntity>().AddAsync(entity);
+            try
+            {
+                await _context
+                    .Set<TEntity>()
+                    .AddAsync(entity);
+
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                throw;
+            }
 
             return entity;
         }
-        public Task UpdateAsync(TEntity entity, string id)
+        public async Task UpdateAsync(TEntity entity, string id)
         {
-            throw new NotImplementedException();
+            if(entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            if(!ItemExists(id))
+            {
+                try
+                {
+                    _context.Update(entity);
+                    await _context.SaveChangesAsync();
+                }
+                catch(DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
         }
 
-        public Task DeleteAsync(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            var item = await _context
+                .Set<TEntity>()
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if(item is not null)
+            {
+                try
+                {
+                    _context
+                        .Set<TEntity>()
+                        .Remove(item);
+
+                    await _context.SaveChangesAsync();
+                }
+                catch(DbUpdateException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        protected bool ItemExists(string id)
+        {
+            return _context
+                .Set<TEntity>()
+                .Any(e => e.Id == id);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!_disposed)
+            {
+                if(disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+
+            _disposed = true;
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
