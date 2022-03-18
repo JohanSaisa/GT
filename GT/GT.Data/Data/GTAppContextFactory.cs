@@ -9,7 +9,6 @@ namespace TestingNTier.DAL.Data
 	{
 		public GTAppContext CreateDbContext(string[] args)
 		{
-			//TODO - Check to see if ~ will find the root folder. .sln?
 			var basePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
 
 			var cfg = new ConfigurationBuilder()
@@ -19,7 +18,7 @@ namespace TestingNTier.DAL.Data
 
 			var optionsBuilder = new DbContextOptionsBuilder<GTAppContext>();
 
-			var connectionString = cfg.GetConnectionString("GTIdentityContextConnection");
+			var connectionString = cfg.GetConnectionString("GTApplicationContextConnection");
 
 			optionsBuilder.UseSqlServer(connectionString);
 
