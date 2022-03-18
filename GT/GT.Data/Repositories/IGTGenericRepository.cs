@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using GT.Data.Data;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace GT.Data.Repositories
@@ -13,7 +14,7 @@ namespace GT.Data.Repositories
 			Expression<Func<TEntity, bool>> predicate,
 			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? include);
 
-		Task<TEntity> CreateAsync(TEntity entity);
+    Task<TEntity> CreateAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);
 		Task Delete(string id);
   }

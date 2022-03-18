@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GT.Core\GT.Core.csproj" />
     <ProjectReference Include="..\GT.Data\GT.Data.csproj" />
   </ItemGroup>
 

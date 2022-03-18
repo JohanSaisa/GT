@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GT.Data\GT.Data.csproj" />
+  </ItemGroup>
+
 </Project>
