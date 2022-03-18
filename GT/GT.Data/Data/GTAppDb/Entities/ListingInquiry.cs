@@ -16,7 +16,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		[Column(TypeName = "nvarchar(100)")]
 		public string MessageTitle { get; set; }
 
-		[Column(TypeName = "nvarchar(2000)")]
+		[Column(TypeName = "nvarchar(500)")]
 		public string MessageBody { get; set; }
 
 		[Column(TypeName = "nvarchar(100)")]
