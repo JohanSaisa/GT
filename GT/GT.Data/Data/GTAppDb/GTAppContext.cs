@@ -1,9 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GT.Data.Data.GTAppDb.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GT.Data.Data.GTAppDb
 {
 	public class GTAppContext : DbContext
 	{
+		internal DbSet<Address> Addresses { get; set; }
+		internal DbSet<Company> Companies { get; set; }
+		internal DbSet<Listing> Listings { get; set; }
+		internal DbSet<ListingInquiry> ListingInquiries { get; set; }
+
 		public GTAppContext(DbContextOptions<GTAppContext> options)
 			: base(options)
 		{
@@ -12,9 +18,6 @@ namespace GT.Data.Data.GTAppDb
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			base.OnModelCreating(builder);
-			// Customize the ASP.NET Identity model and override the defaults if needed.
-			// For example, you can rename the ASP.NET Identity table names and more.
-			// Add your customizations after calling base.OnModelCreating(builder);
 		}
 	}
 }
