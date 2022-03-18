@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using GT.Data.Data;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace GT.Data.Repositories
 {

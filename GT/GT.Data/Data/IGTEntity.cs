@@ -1,4 +1,4 @@
-﻿namespace GT.Data
+﻿namespace GT.Data.Data
 {
 	public interface IGTEntity
 	{
