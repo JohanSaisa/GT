@@ -1,5 +1,4 @@
-﻿using GT.Data.Data.GTIdentityDb.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
@@ -26,7 +25,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		//Full Time Equivelent
 		public bool? FTE { get; set; }
 
-		public ApplicationUser? CreatedBy { get; set; }
+		public string? CreatedById { get; set; }
 
 		[Column(TypeName = "Date")]
 		public DateTime CreatedDate { get; set; }
