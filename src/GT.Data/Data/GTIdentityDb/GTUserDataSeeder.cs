@@ -24,8 +24,8 @@ namespace GT.Data.Data.GTIdentityDb
       _builder = builder;
 #if DEBUG
       Console.WriteLine("Mode=Debug");
-      SeedGtApplicationUser();
-      SeedGtAdministrator();
+      SeedGTApplicationUser();
+      SeedGTAdministrator();
 #else
     Console.WriteLine("Mode=Release");
     SeedGtAdministrator();
@@ -35,25 +35,25 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Seed Identity DB with one Application User.
     /// </summary>
-    private static void SeedGtApplicationUser()
+    private static void SeedGTApplicationUser()
     {
       (string userAccountGuid, string userRoleGuid) = GenerateAccountAndRoleGuids();
 
-      CreateGtUserAccount(userAccountGuid);
-      CreateGtUserRole(userRoleGuid);
-      CoupleGtAccountAndRole(userAccountGuid, userRoleGuid);
+      CreateGTUserAccount(userAccountGuid);
+      CreateGTUserRole(userRoleGuid);
+      CoupleGTAccountAndRole(userAccountGuid, userRoleGuid);
     }
 
     /// <summary>
     /// Seed Identity DB with default Administrator.
     /// </summary>
-    private static void SeedGtAdministrator()
+    private static void SeedGTAdministrator()
     {
       (string adminAccountGuid, string adminRoleGuid) = GenerateAccountAndRoleGuids();
 
-      CreateGtAdminAccount(adminAccountGuid);
-      CreateGtAdminRole(adminRoleGuid);
-      CoupleGtAdminAccountAndRole(adminAccountGuid, adminRoleGuid);
+      CreateGTAdminAccount(adminAccountGuid);
+      CreateGTAdminRole(adminRoleGuid);
+      CoupleGTAdminAccountAndRole(adminAccountGuid, adminRoleGuid);
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Populate Identity DB with dummy user account.
     /// </summary>
-    private static void CreateGtUserAccount(string userAccountGuid)
+    private static void CreateGTUserAccount(string userAccountGuid)
     {
       ApplicationUser gtUser = new ApplicationUser()
       {
@@ -88,7 +88,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Populate Identity DB with dummy user role.
     /// </summary>
-    private static void CreateGtUserRole(string userRoleGuid)
+    private static void CreateGTUserRole(string userRoleGuid)
     {
       var userRole = new IdentityRole()
       {
@@ -104,7 +104,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Connect the User account with User role in Identity DB.
     /// </summary>
-    private static void CoupleGtAccountAndRole(string userAccountGuid, string userRoleGuid)
+    private static void CoupleGTAccountAndRole(string userAccountGuid, string userRoleGuid)
     {
       var appUser = new IdentityUserRole<string>()
       {
@@ -118,7 +118,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Populate Identity DB with Default Administrator.
     /// </summary>
-    private static void CreateGtAdminAccount(string adminAccountGuid)
+    private static void CreateGTAdminAccount(string adminAccountGuid)
     {
       ApplicationUser gtAdmin = new ApplicationUser()
       {
@@ -136,7 +136,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Populate Identity DB with default Administrator role.
     /// </summary>
-    private static void CreateGtAdminRole(string adminRoleGuid)
+    private static void CreateGTAdminRole(string adminRoleGuid)
     {
       var adminRole = new IdentityRole()
       {
@@ -152,7 +152,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Connect the default Administrator account with Administrator role in Identity DB.
     /// </summary>
-    private static void CoupleGtAdminAccountAndRole(string adminAccountGuid, string adminRoleGuid)
+    private static void CoupleGTAdminAccountAndRole(string adminAccountGuid, string adminRoleGuid)
     {
       var adminUser = new IdentityUserRole<string>()
       {
