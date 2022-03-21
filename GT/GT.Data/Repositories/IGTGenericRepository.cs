@@ -4,18 +4,19 @@ using System.Linq.Expressions;
 
 namespace GT.Data.Repositories
 {
+	/// <summary>
+	/// Defines what functionalities that need to be present in any implementation of a generic repository.
+	/// </summary>
+	/// <typeparam name="TEntity">The entity in the database represented by a given concrete repository implementation.</typeparam>
 	public interface IGTGenericRepository<TEntity>
 		where TEntity : class, IGTEntity
 	{
 		IQueryable<TEntity> GetAll(
-			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? include);
+			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression);
 
-		Task<TEntity?> FindAsync(
-			Expression<Func<TEntity, bool>> predicate,
-			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? include);
-
-    Task<TEntity> CreateAsync(TEntity entity);
+		Task<TEntity> FindAsync(params object[] keys);
+    Task<TEntity> AddAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);
-		Task Delete(string id);
+		Task DeleteAsync(string id);
   }
 }
