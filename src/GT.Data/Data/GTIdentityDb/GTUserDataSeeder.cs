@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using GT.Data.Data.GTIdentityDb.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,9 +37,11 @@ namespace GT.Data.Data.GTIdentityDb
     /// </summary>
     private static void SeedGtApplicationUser()
     {
-      SeedGtUser();
-      SeedGtUserRole();
-      CoupleGtUserAndRole();
+      (string userAccountGuid, string userRoleGuid) = GenerateAccountAndRoleGuids();
+
+      CreateGtUserAccount(userAccountGuid);
+      CreateGtUserRole(userRoleGuid);
+      CoupleGtAccountAndRole(userAccountGuid, userRoleGuid);
     }
 
     /// <summary>
@@ -46,52 +49,52 @@ namespace GT.Data.Data.GTIdentityDb
     /// </summary>
     private static void SeedGtAdministrator()
     {
-      (string adminAccountGuid, string adminRoleGuid) = GenerateAdminGuids();
+      (string adminAccountGuid, string adminRoleGuid) = GenerateAccountAndRoleGuids();
 
-      SeedGtAdmin(adminAccountGuid);
-      SeedGtAdminRole(adminRoleGuid);
-      CoupleGtAdminUserAndRole(adminAccountGuid, adminRoleGuid);
+      CreateGtAdminAccount(adminAccountGuid);
+      CreateGtAdminRole(adminRoleGuid);
+      CoupleGtAdminAccountAndRole(adminAccountGuid, adminRoleGuid);
     }
 
     /// <summary>
     /// Generate Guids for Admin Account and Admin Role.
     /// </summary>
     /// <returns></returns>
-    private static (string adminAccountGuid, string adminRoleGuid) GenerateAdminGuids()
+    private static (string accountGuid, string roleGuid) GenerateAccountAndRoleGuids()
     {
-      string adminAccountGuid = Guid.NewGuid().ToString();
-      string adminRoleGuid = Guid.NewGuid().ToString();
-      return (adminAccountGuid, adminRoleGuid);
+      string accountGuid = Guid.NewGuid().ToString();
+      string roleGuid = Guid.NewGuid().ToString();
+      return (accountGuid, roleGuid);
     }
 
     /// <summary>
     /// Populate Identity DB with dummy user account.
     /// </summary>
-    private static void SeedGtUser()
+    private static void CreateGtUserAccount(string userAccountGuid)
     {
-      IdentityUser gtUser = new IdentityUser()
+      ApplicationUser gtUser = new ApplicationUser()
       {
-        Id = "d6498f73-89d2-458f-ba9a-013f4ca5e9dc",
+        Id = userAccountGuid,
         UserName = "GTuser@user.com",
         Email = "GTuser@user.com",
         LockoutEnabled = false,
       };
-      PasswordHasher<IdentityUser> userPassword = new PasswordHasher<IdentityUser>();
+      PasswordHasher<ApplicationUser> userPassword = new PasswordHasher<ApplicationUser>();
       gtUser.PasswordHash = userPassword.HashPassword(gtUser, "User123!");
 
-      _builder.Entity<IdentityUser>().HasData(gtUser);
+      _builder.Entity<ApplicationUser>().HasData(gtUser);
     }
 
     /// <summary>
     /// Populate Identity DB with dummy user role.
     /// </summary>
-    private static void SeedGtUserRole()
+    private static void CreateGtUserRole(string userRoleGuid)
     {
       var userRole = new IdentityRole()
       {
-        Id = "a263abf2-d66f-4193-b306-73b22894d51a",
-        Name = "User",
-        ConcurrencyStamp = "97b0bae1-87ac-430e-92cd-462c6f69f6cf",
+        Id = userRoleGuid,
+        Name = "GTUser",
+        ConcurrencyStamp = Guid.NewGuid().ToString("D"),
         NormalizedName = "GTUser"
       };
 
@@ -101,12 +104,12 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Connect the User account with User role in Identity DB.
     /// </summary>
-    private static void CoupleGtUserAndRole()
+    private static void CoupleGtAccountAndRole(string userAccountGuid, string userRoleGuid)
     {
       var appUser = new IdentityUserRole<string>()
       {
-        RoleId = "a263abf2-d66f-4193-b306-73b22894d51a",
-        UserId = "d6498f73-89d2-458f-ba9a-013f4ca5e9dc"
+        UserId = userAccountGuid,
+        RoleId = userRoleGuid
       };
 
       _builder.Entity<IdentityUserRole<string>>().HasData(appUser);
@@ -115,31 +118,31 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Populate Identity DB with Default Administrator.
     /// </summary>
-    private static void SeedGtAdmin(string adminAccountGuid)
+    private static void CreateGtAdminAccount(string adminAccountGuid)
     {
-      IdentityUser gtAdmin = new IdentityUser()
+      ApplicationUser gtAdmin = new ApplicationUser()
       {
         Id = adminAccountGuid,
         UserName = "GTadmin@admin.com",
         Email = "GTadmin@admin.com",
         LockoutEnabled = false,
       };
-      PasswordHasher<IdentityUser> adminPassword = new PasswordHasher<IdentityUser>();
+      PasswordHasher<ApplicationUser> adminPassword = new PasswordHasher<ApplicationUser>();
       gtAdmin.PasswordHash = adminPassword.HashPassword(gtAdmin, "Admin123!");
 
-      _builder.Entity<IdentityUser>().HasData(gtAdmin);
+      _builder.Entity<ApplicationUser>().HasData(gtAdmin);
     }
 
     /// <summary>
     /// Populate Identity DB with default Administrator role.
     /// </summary>
-    private static void SeedGtAdminRole(string adminRoleGuid)
+    private static void CreateGtAdminRole(string adminRoleGuid)
     {
       var adminRole = new IdentityRole()
       {
         Id = adminRoleGuid,
-        Name = "Admin",
-        ConcurrencyStamp = "9cc023c3-d41d-4d57-85fe-9fa73578c522",
+        Name = "GTAdministrator",
+        ConcurrencyStamp = Guid.NewGuid().ToString("D"),
         NormalizedName = "GTAdministrator"
       };
 
@@ -149,7 +152,7 @@ namespace GT.Data.Data.GTIdentityDb
     /// <summary>
     /// Connect the default Administrator account with Administrator role in Identity DB.
     /// </summary>
-    private static void CoupleGtAdminUserAndRole(string adminAccountGuid, string adminRoleGuid)
+    private static void CoupleGtAdminAccountAndRole(string adminAccountGuid, string adminRoleGuid)
     {
       var adminUser = new IdentityUserRole<string>()
       {
