@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#nullable disable
-
 namespace GT.Data.Data.GTAppDb.Entities
 {
   internal class Company : IGTEntity

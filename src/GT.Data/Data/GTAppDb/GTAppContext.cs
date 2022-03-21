@@ -1,8 +1,6 @@
 ﻿using GT.Data.Data.GTAppDb.Entities;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace GT.Data.Data.GTAppDb
 {
   public class GTAppContext : DbContext
