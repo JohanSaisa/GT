@@ -7,6 +7,11 @@ using System.Linq.Expressions;
 
 namespace GT.Core.Services
 {
+  /// <summary>
+  /// Base service class from which all services should inherit.
+  /// </summary>
+  /// <typeparam name="TEntity">The database entity handled by the service.</typeparam>
+  /// <typeparam name="TDataTransferObject">The DTO representing the database entity handled by the service.</typeparam>
   public abstract class GTGenericService<TEntity, TDataTransferObject>
   : IGTGenericService<TEntity, TDataTransferObject>
     where TEntity : class, IGTEntity
@@ -19,17 +24,39 @@ namespace GT.Core.Services
       _repository = repository;
     }
 
-    public IQueryable<TDataTransferObject> Get(
-      Expression<Func<TDataTransferObject, bool>>? predicateExpression = null, 
+    /// <summary>
+    /// Gets all entities of the type handled by the service from the database, with optional optional included related data.
+    /// </summary>
+    /// <param name="includeExpression">Expression defining what related data is loaded.</param>
+    /// <returns></returns>
+    public IQueryable<TDataTransferObject> GetAll(
       Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null)
     {
-      var items = _repository
+      return _repository
         .GetAll(includeExpression)
         .Select(e => EntityToDTO(e));
+    }
 
-      return predicateExpression is null
-        ? items
-        : items.Where(predicateExpression);
+    /// <summary>
+    /// Gets all entities matching an expression from the database, with optional included related data.
+    /// </summary>
+    /// <param name="predicateExpression">The expression which the database entities are matched against.</param>
+    /// <param name="includeExpression">Expression defining what related data is loaded.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public IQueryable<TDataTransferObject> Filter(
+      Expression<Func<TDataTransferObject, bool>> predicateExpression, 
+      Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null)
+    {
+      if(predicateExpression is null)
+      {
+        throw new ArgumentNullException(nameof(predicateExpression));
+      }
+
+      return _repository
+        .GetAll(includeExpression)
+        .Select(e => EntityToDTO(e))
+        .Where(predicateExpression);
     }
 
     /// <summary>
@@ -49,7 +76,7 @@ namespace GT.Core.Services
       }
 
       // Get entities with related data and return the first entity matching the given predicate.
-      var item = await Get(predicateExpression, includeExpression)
+      var item = await Filter(predicateExpression, includeExpression)
         .FirstOrDefaultAsync(predicateExpression, CancellationToken.None);
 
       return item;

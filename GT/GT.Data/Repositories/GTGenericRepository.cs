@@ -5,6 +5,10 @@ using System.Linq.Expressions;
 
 namespace GT.Data.Repositories
 {
+  /// <summary>
+  /// Base repository class.
+  /// </summary>
+  /// <typeparam name="TEntity">The database entity handled by the repository.</typeparam>
   public class GTGenericRepository<TEntity>
   : IGTGenericRepository<TEntity>, IDisposable
       where TEntity : class, IGTEntity
@@ -35,6 +39,7 @@ namespace GT.Data.Repositories
         var include = includeExpression.Compile();
         return include(_context.Set<TEntity>());
       }
+
       return _context.Set<TEntity>();
     }
 

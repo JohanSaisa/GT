@@ -5,12 +5,20 @@ using System.Linq.Expressions;
 
 namespace GT.Core.Services
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="TEntity">The database entity handled by the service.</typeparam>
+	/// <typeparam name="TDataTransferObject">The DTO representing the database entity handled by the service.</typeparam>
 	public interface IGTGenericService<TEntity, TDataTransferObject>
 		where TEntity : class, IGTEntity
 		where TDataTransferObject : class, IGTDataTransferObject
 	{
-		IQueryable<TDataTransferObject> Get(
-			Expression<Func<TDataTransferObject, bool>>? predicateExpression = null,
+		IQueryable<TDataTransferObject> GetAll(
+			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null);
+
+		IQueryable<TDataTransferObject> Filter(
+			Expression<Func<TDataTransferObject, bool>> predicateExpression,
 			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null);
 
 		Task<TDataTransferObject?> FirstOrDefaultAsync(
