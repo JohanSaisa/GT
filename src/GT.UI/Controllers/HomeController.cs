@@ -13,26 +13,31 @@ namespace GT.UI.Controllers
       _logger = logger;
     }
 
+    [Route("")]
     public IActionResult Index()
     {
       return View();
     }
 
+    [Route("Kontakt")]
     public IActionResult Contact()
     {
       return View();
     }
 
+    [Route("Annonser")]
     public IActionResult Listings()
     {
       return View();
     }
 
+    [Route("Info")]
     public IActionResult About()
     {
       return View();
     }
 
+    [Route("Om-cookies")]
     public IActionResult Privacy()
     {
       return View();
