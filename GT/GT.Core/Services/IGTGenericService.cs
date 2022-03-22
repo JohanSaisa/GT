@@ -22,7 +22,7 @@ namespace GT.Core.Services
 			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null);
 
 		Task<TDataTransferObject?> FirstOrDefaultAsync(
-			Expression<Func<TDataTransferObject, bool>> predicate,
+			Expression<Func<TDataTransferObject, bool>> predicateExpression,
 			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null);
 
 		Task<TDataTransferObject> FindAsync(params object[] keys);
