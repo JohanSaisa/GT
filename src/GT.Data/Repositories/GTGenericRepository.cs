@@ -16,7 +16,7 @@ namespace GT.Data.Repositories
     protected readonly DbContext _context;
     protected bool _disposed;
 
-    protected GTGenericRepository(DbContext context)
+    public GTGenericRepository(DbContext context)
     {
       _context = context;
     }
@@ -71,8 +71,8 @@ namespace GT.Data.Repositories
       try
       {
         await _context
-            .Set<TEntity>()
-            .AddAsync(entity);
+          .Set<TEntity>()
+          .AddAsync(entity);
 
         await _context.SaveChangesAsync();
       }
@@ -120,16 +120,16 @@ namespace GT.Data.Repositories
     public async Task DeleteAsync(string id)
     {
       var item = await _context
-          .Set<TEntity>()
-          .FirstOrDefaultAsync(e => e.Id == id);
+        .Set<TEntity>()
+        .FirstOrDefaultAsync(e => e.Id == id);
 
       if (item is not null)
       {
         try
         {
           _context
-              .Set<TEntity>()
-              .Remove(item);
+            .Set<TEntity>()
+            .Remove(item);
 
           await _context.SaveChangesAsync();
         }
@@ -143,8 +143,8 @@ namespace GT.Data.Repositories
     protected bool ItemExists(string id)
     {
       return _context
-          .Set<TEntity>()
-          .Any(e => e.Id == id);
+        .Set<TEntity>()
+        .Any(e => e.Id == id);
     }
 
     protected virtual void Dispose(bool disposing)
