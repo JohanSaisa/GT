@@ -1,4 +1,6 @@
 ﻿using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.GTIdentityDb;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace GT.Data.Data.GTAppDb
