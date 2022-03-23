@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GT.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,15 @@ namespace GT.UI.Controllers
 	[ApiController]
 	public class JobListingController : ControllerBase
 	{
+		private readonly ILogger<JobListingController> _logger;
+		private readonly IGTListingService _listingService;
+
+		public JobListingController(ILogger<JobListingController> logger, IGTListingService listingService)
+		{
+			_logger = logger;
+			_listingService = listingService;
+		}
+
 		// GET: api/<JobListingController>
 		[HttpGet]
 		public IEnumerable<string> Get()
