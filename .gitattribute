@@ -8,4 +8,3 @@
 *.snk binary
 *.vbproj text merge=union
 *.xls binary
-"insert_final_newline = true"
