@@ -101,8 +101,8 @@ namespace GT.Data.Data.GTAppDb
 			Listing1 = new Listing()
 			{
 				Id = Guid.NewGuid().ToString(),
-				ListingTitle = "Vi söker sexy .NET-Utvecklare",
-				Description = "Fullstack utvecklare till vår nya spännande halvtidstjänst. Behöver vara otrologt smart och dutkig",
+				ListingTitle = "Duktig .NET-Utvecklare till halvtidstjänst",
+				Description = "Vi söker en duktig utvecklare till vår nya halvtidstjänst. Kommer jobba i ett litet team och utveckla applikationer efter kunders önskemål. Erfarenhet inom teknologioer som ASP.Net, Azure och Entity Framework är meriterande",
 				Employer = Company1,
 				SalaryMin = 30000,
 				SalaryMax = 50000,
@@ -116,7 +116,7 @@ namespace GT.Data.Data.GTAppDb
 			{
 				Id = Guid.NewGuid().ToString(),
 				ListingTitle = "Spännande Robot AI-utvecklare sökes till Stockholm",
-				Description = "AI utvecklare med stenkoll på python och HTML",
+				Description = "Vill du vara del av vårt AI-team och jobba med värdelns främsta experter inom python och AI? Vi på Google söker just dig som vill vara en del av denna spännande branch. Du bör ha kunskaper inom AI-Development, Python och JS men alla är välkomna att söka",
 				Employer = Company2,
 				SalaryMin = 45000,
 				SalaryMax = 45555,
@@ -129,22 +129,21 @@ namespace GT.Data.Data.GTAppDb
 			ListingInquiry1 = new ListingInquiry()
 			{
 				Id = Guid.NewGuid().ToString(),
-				MessageTitle = "Jag vill ha jobb här tack",
+				MessageTitle = "Fullstack utvecklare med lång erfarenhet inom .Net",
 				MessageBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
 				LinkedInLink = "test@test.com",
 				ApplicantId = null,
-				ListingID = Listing1,
+				Listing = Listing1,
 			};
 			ListingInquiry2 = new ListingInquiry()
 			{
 				Id = Guid.NewGuid().ToString(),
-				MessageTitle = "Ny examinerad student",
+				MessageTitle = "Nyexaminerad student söker er AI-Utvecklar tjänst",
 				MessageBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
-				LinkedInLink = "linkedin.com/användare",
+				LinkedInLink = "linkedin.com/användare2",
 				ApplicantId = null,
-				ListingID = Listing2,
+				Listing = Listing2,
 			};
-
 			Company1.Addresses.Add(Address1);
 			Company2.Addresses.Add(Address2);
 			Address1.Companies.Add(Company1);
