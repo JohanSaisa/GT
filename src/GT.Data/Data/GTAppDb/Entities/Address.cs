@@ -2,7 +2,7 @@
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
-	internal class Address : IGTEntity
+	public class Address : IGTEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]
 		public string Id { get; set; }
