@@ -40,7 +40,7 @@ namespace GT.UI.Controllers
 
 		// PUT api/<JobListingController>/5
 		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
+		public void Put(string id, [FromBody] string value)
 		{
 		}
 
