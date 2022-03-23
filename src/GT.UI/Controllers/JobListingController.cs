@@ -27,7 +27,7 @@ namespace GT.UI.Controllers
 
 		// GET api/<JobListingController>/5
 		[HttpGet("{id}")]
-		public string Get(int id)
+		public string Get(string id)
 		{
 			return "value";
 		}
@@ -46,7 +46,7 @@ namespace GT.UI.Controllers
 
 		// DELETE api/<JobListingController>/5
 		[HttpDelete("{id}")]
-		public void Delete(int id)
+		public void Delete(string id)
 		{
 		}
 	}
