@@ -18,5 +18,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 
 		[Column(TypeName = "nvarchar(450)")]
 		public string? ApplicantId { get; set; }
+
+		public Listing ListingID { get; set; }
 	}
 }

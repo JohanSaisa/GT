@@ -4,8 +4,10 @@ using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 var identityConnectionString = builder.Configuration.GetConnectionString("GTIdentityContextConnection");
 var appConnectionString = builder.Configuration.GetConnectionString("GTApplicationContextConnection");
@@ -32,6 +34,8 @@ if (!app.Environment.IsDevelopment())
   // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
   app.UseHsts();
 }
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

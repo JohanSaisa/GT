@@ -1,4 +1,5 @@
 ﻿using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.GTIdentityDb;
 using Microsoft.EntityFrameworkCore;
 
 namespace GT.Data.Data.GTAppDb
@@ -10,6 +11,8 @@ namespace GT.Data.Data.GTAppDb
     internal DbSet<Listing> Listings { get; set; }
     internal DbSet<ListingInquiry> ListingInquiries { get; set; }
 
+    internal DbSet<AddressCompany> CompanyAddresses { get; set; }
+
     public GTAppContext(DbContextOptions<GTAppContext> options)
       : base(options)
     {
@@ -18,6 +21,7 @@ namespace GT.Data.Data.GTAppDb
     protected override void OnModelCreating(ModelBuilder builder)
     {
       base.OnModelCreating(builder);
+      GTAppDataSeeder.InitializeAppDataSeeder(builder);
     }
   }
 }
