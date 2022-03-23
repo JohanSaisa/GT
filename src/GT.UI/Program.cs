@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,11 +32,15 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
   app.UseExceptionHandler("/Home/Error");
-  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-  app.UseHsts();
+// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+app.UseHsts();
 }
 
-
+using(var scope = app.Services.CreateScope())
+{
+  var services = scope.ServiceProvider;
+  GTAppDataSeeder.Initialize(services);
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
