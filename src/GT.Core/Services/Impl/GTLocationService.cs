@@ -5,18 +5,18 @@ using GT.Data.Repositories;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTLocationService : GTGenericService<City, LocationDTO>, IGTLocationService
+	public class GTLocationService : GTGenericService<Location, LocationDTO>, IGTLocationService
 	{
-		public GTLocationService(IGTGenericRepository<City> repository) : base(repository)
+		public GTLocationService(IGTGenericRepository<Location> repository) : base(repository)
 		{
 		}
 
-		protected override City DTOToEntity(LocationDTO dataTransferObject)
+		protected override Location DTOToEntity(LocationDTO dataTransferObject)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override LocationDTO EntityToDTO(City entity)
+		protected override LocationDTO EntityToDTO(Location entity)
 		{
 			throw new NotImplementedException();
 		}
