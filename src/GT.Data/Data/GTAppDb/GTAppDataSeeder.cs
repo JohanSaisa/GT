@@ -6,146 +6,291 @@ namespace GT.Data.Data.GTAppDb
 {
 	public static class GTAppDataSeeder
 	{
-		private static Location Address1 { get; set; }
-		private static Location Address2 { get; set; }
-		private static Company Company1 { get; set; }
-		private static Company Company2 { get; set; }
-		private static Listing Listing1 { get; set; }
-		private static Listing Listing2 { get; set; }
-		private static ListingInquiry ListingInquiry1 { get; set; }
-		private static ListingInquiry ListingInquiry2 { get; set; }
-
-
 		public static void Initialize(IServiceProvider serviceProvider)
 		{
-			PopulateProperties();
+			List<Company> tempCompanies = PopulateCompanies();
+			List<Location> tempLocations = PopulateLocations();
+			List<Listing> listings = PopulateListings(tempCompanies, tempLocations);
+			List<ListingInquiry> listingInquiries = PopulateListingInquiries();
+			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
+
 			using (var context = new GTAppContext(
 							serviceProvider.GetRequiredService<
 											DbContextOptions<GTAppContext>>()))
 			{
-				SeedAddresses(context);
-				SeedCompanies(context);
-				SeedListings(context);
-				SeedListingInquiry(context);
+				SeedCompanies(context, companies);
+				SeedListings(context, listings);
+				SeedListingInquiry(context, listingInquiries);
+				SeedLocations(context, locations);
 			}
 		}
 
-		private static void SeedListingInquiry(GTAppContext context)
+		private static List<Company> PopulateCompanies()
 		{
-			if (context.ListingInquiries.Any())
+			List<Company> companies = new List<Company>();
+			List<string> companyNames = new List<string>()
 			{
-				return;
+				"Fake Company delivering Chemicals",
+				"My News Site For Animals",
+				"Another Company in IT",
+				"We are looking for Employees",
+				"This is not a fake company",
+				"We love IT and so should you",
+				"Hard software for your 4th gen device",
+				"Take the blue pill",
+				"The Binary Library",
+				"Food for thought that you bought",
+				"Flashy key rings for the Millenia",
+			};
+
+			for (int i = 0; i < companyNames.Count; i++)
+			{
+				var company = new Company()
+				{
+					Id = Guid.NewGuid().ToString(),
+					Name = companyNames[i],
+					Locations = new List<Location>()
+				};
+
+				companies.Add(company);
 			}
-			context.ListingInquiries.AddRange(ListingInquiry1, ListingInquiry2);
-			context.SaveChanges();
+
+			return companies;
 		}
 
-		private static void SeedListings(GTAppContext context)
+		private static List<Location> PopulateLocations()
 		{
-			if (context.Listings.Any())
+			List<Location> locations = new List<Location>();
+			List<string> locationNames = new List<string>()
 			{
-				return;
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+
+			for (int i = 0; i < locationNames.Count; i++)
+			{
+				var location = new Location()
+				{
+					Id = Guid.NewGuid().ToString(),
+					Name = locationNames[i],
+					Companies = new List<Company>()
+				};
+
+				locations.Add(location);
 			}
-			context.Listings.AddRange(Listing1, Listing2);
-			context.SaveChanges();
+
+			return locations;
 		}
 
-		private static void SeedCompanies(GTAppContext context)
+		private static List<Listing> PopulateListings(List<Company> companies, List<Location> locations)
+		{
+			List<Listing> listings = new List<Listing>();
+			List<string> listingTitles = new List<string>()
+			{
+				"Duktig .NET-Utvecklare till halvtidstjänst",
+				"Spännande Robot AI-utvecklare sökes till Stockholm",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+			List<string> listingDescriptions = new List<string>()
+			{
+				"Vi söker en duktig utvecklare till vår nya halvtidstjänst. Kommer jobba i ett litet team och utveckla applikationer efter kunders önskemål. Erfarenhet inom teknologioer som ASP.Net, Azure och Entity Framework är meriterande",
+				"Vill du vara del av vårt AI-team och jobba med värdelns främsta experter inom python och AI? Vi på Google söker just dig som vill vara en del av denna spännande branch. Du bör ha kunskaper inom AI-Development, Python och JS men alla är välkomna att söka",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+			List<string> jobTitles = new List<string>()
+			{
+				".Net-Utvecklare",
+				"AI developer",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+
+			var rand = new Random();
+			int salaryMin;
+			int salaryMax;
+			bool fte;
+
+			for (int i = 0; i < listingTitles.Count; i++)
+			{
+				salaryMin = rand.Next(10000, 40000);
+				salaryMax = rand.Next(salaryMin, 70000);
+				fte = false;
+				if (rand.Next(2) == 0)
+				{
+					fte = true;
+				}
+
+				var listing = new Listing()
+				{
+					Id = Guid.NewGuid().ToString(),
+					ListingTitle = listingTitles[i],
+					Description = listingDescriptions[i],
+					Employer = companies[i],
+					SalaryMin = salaryMin,
+					SalaryMax = salaryMax,
+					JobTitle = jobTitles[i],
+					Location = locations[i],
+					FTE = fte,
+					CreatedById = null,
+					CreatedDate = DateTime.Now
+				};
+
+				listings.Add(listing);
+			}
+
+			return listings;
+		}
+
+		private static List<ListingInquiry> PopulateListingInquiries(List<Listing> listings)
+		{
+			if (listings.Count <= 0 || listings == null)
+			{
+				throw new ArgumentNullException();
+			}
+			List<ListingInquiry> listingInquiries = new List<ListingInquiry>();
+			List<string> messageTitles = new List<string>()
+			{
+				"Fullstack utvecklare med lång erfarenhet inom .Net",
+				"Nyexaminerad student söker er AI-Utvecklar tjänst",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+			List<string> messageBodies = new List<string>();
+			for (int i = 0; i < messageTitles.Count; i++)
+			{
+				string message = $"I am person #{i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud";
+				messageBodies.Add(message);
+			}
+
+			List<string> linkedInLinks = new List<string>();
+			for (int i = 0; i < messageTitles.Count; i++)
+			{
+				string linkedInLink = $"linkedin.com/IAmNotReallyAPerson{i + 1}";
+				linkedInLinks.Add(linkedInLink);
+			}
+
+			for (int i = 0; i < messageTitles.Count; i++)
+			{
+				var listingInquiry = new ListingInquiry()
+				{
+					Id = Guid.NewGuid().ToString(),
+					MessageTitle = messageTitles[i],
+					MessageBody = messageBodies[i],
+					LinkedInLink = linkedInLinks[i],
+					ApplicantId = null,
+					Listing = listings[i],
+				};
+
+				listingInquiries.Add(listingInquiry);
+			}
+
+			return listingInquiries;
+		}
+
+		private static (List<Company>, List<Location>) SetCompanyLocations(List<Company> companies, List<Location> locations)
+		{
+			if (companies.Count <= 0 || companies == null || locations.Count <= 0 || locations == null)
+			{
+				throw new ArgumentNullException();
+			}
+
+			int listLength = companies.Count;
+			if (listLength < locations.Count)
+			{
+				listLength = locations.Count;
+			}
+
+			List<Company> updatedCompanies = new List<Company>();
+			List<Location> updatedLocations = new List<Location>();
+
+			for (int i = 0; i < listLength - 1; i++)
+			{
+				companies[i].Locations.Add(locations[i]);
+				locations[i].Companies.Add(companies[i]);
+				updatedCompanies.Add(companies[i]);
+				updatedLocations.Add(locations[i]);
+			}
+
+			return (updatedCompanies, updatedLocations);
+		}
+
+		private static async void SeedCompanies(GTAppContext context, List<Company> companies)
 		{
 			if (context.Companies.Any())
 			{
 				return;
 			}
-			context.Companies.AddRange(Company1, Company2);
-			context.SaveChanges();
+			context.Companies.AddRange(companies);
+			await context.SaveChangesAsync();
 		}
 
-		private static void SeedAddresses(GTAppContext context)
+		private static async void SeedListingInquiry(GTAppContext context, List<ListingInquiry> listingInquiries)
+		{
+			if (context.ListingInquiries.Any())
+			{
+				return;
+			}
+			context.ListingInquiries.AddRange(listingInquiries);
+			await context.SaveChangesAsync();
+		}
+
+		private static async void SeedListings(GTAppContext context, List<Listing> listings)
+		{
+			if (context.Listings.Any())
+			{
+				return;
+			}
+			context.Listings.AddRange(listings);
+			await context.SaveChangesAsync();
+		}
+
+		private static async void SeedLocations(GTAppContext context, List<Location> locations)
 		{
 			if (context.Locations.Any())
 			{
 				return;
 			}
-			context.Locations.AddRange(Address1, Address2);
-			context.SaveChanges();
-		}
-
-		private static void PopulateProperties()
-		{
-			Address1 = new Location()
-			{
-				Id = Guid.NewGuid().ToString(),
-				Name = "Garvargatan 3",
-				Companies = new List<Company>()
-			};
-			Address2 = new Location()
-			{
-				Id = Guid.NewGuid().ToString(),
-				Name = "Skärgårdsvägen 26B",
-				Companies = new List<Company>()
-			};
-			Company1 = new Company()
-			{
-				Id = Guid.NewGuid().ToString(),
-				Name = "Facebook",
-				Locations = new List<Location>()
-			};
-			Company2 = new Company()
-			{
-				Id = Guid.NewGuid().ToString(),
-				Name = "Google",
-				Locations = new List<Location>()
-			};
-			Listing1 = new Listing()
-			{
-				Id = Guid.NewGuid().ToString(),
-				ListingTitle = "Duktig .NET-Utvecklare till halvtidstjänst",
-				Description = "Vi söker en duktig utvecklare till vår nya halvtidstjänst. Kommer jobba i ett litet team och utveckla applikationer efter kunders önskemål. Erfarenhet inom teknologioer som ASP.Net, Azure och Entity Framework är meriterande",
-				Employer = Company1,
-				SalaryMin = 30000,
-				SalaryMax = 50000,
-				JobTitle = ".Net-Utvecklare",
-				Location = Address1,
-				FTE = false,
-				CreatedById = null,
-				CreatedDate = DateTime.Now
-			};
-			Listing2 = new Listing()
-			{
-				Id = Guid.NewGuid().ToString(),
-				ListingTitle = "Spännande Robot AI-utvecklare sökes till Stockholm",
-				Description = "Vill du vara del av vårt AI-team och jobba med värdelns främsta experter inom python och AI? Vi på Google söker just dig som vill vara en del av denna spännande branch. Du bör ha kunskaper inom AI-Development, Python och JS men alla är välkomna att söka",
-				Employer = Company2,
-				SalaryMin = 45000,
-				SalaryMax = 45555,
-				JobTitle = "AI-Developer",
-				Location = Address2,
-				FTE = true,
-				CreatedById = null,
-				CreatedDate = DateTime.Now
-			};
-			ListingInquiry1 = new ListingInquiry()
-			{
-				Id = Guid.NewGuid().ToString(),
-				MessageTitle = "Fullstack utvecklare med lång erfarenhet inom .Net",
-				MessageBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
-				LinkedInLink = "test@test.com",
-				ApplicantId = null,
-				Listing = Listing1,
-			};
-			ListingInquiry2 = new ListingInquiry()
-			{
-				Id = Guid.NewGuid().ToString(),
-				MessageTitle = "Nyexaminerad student söker er AI-Utvecklar tjänst",
-				MessageBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
-				LinkedInLink = "linkedin.com/användare2",
-				ApplicantId = null,
-				Listing = Listing2,
-			};
-			Company1.Locations.Add(Address1);
-			Company2.Locations.Add(Address2);
-			Address1.Companies.Add(Company1);
-			Address2.Companies.Add(Company2);
+			context.Locations.AddRange(locations);
+			await context.SaveChangesAsync();
 		}
 	}
 }
