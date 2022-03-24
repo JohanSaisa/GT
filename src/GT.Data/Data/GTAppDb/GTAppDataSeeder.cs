@@ -6,12 +6,104 @@ namespace GT.Data.Data.GTAppDb
 {
 	public static class GTAppDataSeeder
 	{
+		private static readonly int _numberOfItems = 11;
+
+		private static readonly List<string> _companyNames = new List<string>()
+			{
+				"Fake Company delivering Chemicals",
+				"My News Site For Animals",
+				"Another Company in IT",
+				"We are looking for Employees",
+				"This is not a fake company",
+				"We love IT and so should you",
+				"Hard software for your 4th gen device",
+				"Take the blue pill",
+				"The Binary Library",
+				"Food for thought that you bought",
+				"Flashy key rings for the Millenia",
+			};
+
+		private static readonly List<string> _locationNames = new List<string>()
+			{
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+
+		private static readonly List<string> _listingTitles = new List<string>()
+			{
+				"Duktig .NET-Utvecklare till halvtidstjänst",
+				"Spännande Robot AI-utvecklare sökes till Stockholm",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+
+		private static readonly List<string> _listingDescriptions = new List<string>()
+			{
+				"Vi söker en duktig utvecklare till vår nya halvtidstjänst. Kommer jobba i ett litet team och utveckla applikationer efter kunders önskemål. Erfarenhet inom teknologioer som ASP.Net, Azure och Entity Framework är meriterande",
+				"Vill du vara del av vårt AI-team och jobba med värdelns främsta experter inom python och AI? Vi på Google söker just dig som vill vara en del av denna spännande branch. Du bör ha kunskaper inom AI-Development, Python och JS men alla är välkomna att söka",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+
+		private static readonly List<string> _jobTitles = new List<string>()
+			{
+				".Net-Utvecklare",
+				"AI developer",
+				"ML in Python",
+				"PM for small infrastructure projects",
+				"CIO for Nordic Insurance company",
+				"Head of Project Office",
+				"SCRUM Master in Finance",
+				"Java Developer small gaming company",
+				"Front end developer React",
+				"Salesforce expert",
+				"Bid manager in Public Procurement",
+			};
+
+		private static readonly List<string> _messageTitles = new List<string>()
+			{
+				"Fullstack utvecklare med 5års erfarenhet inom .Net",
+				"Nyexaminerad student söker er AI-Utvecklar tjänst",
+				"Machine learning guru looking for opportunities in Environmental agencies",
+				"Project Manager with 4 years of experience in Aviation industry",
+				"Senior exec with experience from consulting industry",
+				"Programme manager and CTO with 20+ years of experience",
+				"Certified SCRUM Master with previous experience in Finance",
+				"Java Developer looking to develop the next minecraft",
+				"Front end developer with expertise in React, Angular and JavaScript",
+				"Certified Advanced Administrator in Salesforce looking to connect",
+				"Senior manager with experience in large scale public procurement bids",
+			};
+
 		public static void Initialize(IServiceProvider serviceProvider)
 		{
 			List<Company> tempCompanies = PopulateCompanies();
 			List<Location> tempLocations = PopulateLocations();
 			List<Listing> listings = PopulateListings(tempCompanies, tempLocations);
-			List<ListingInquiry> listingInquiries = PopulateListingInquiries();
+			List<ListingInquiry> listingInquiries = PopulateListingInquiries(tempCompanies, tempLocations);
 			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
 
 			using (var context = new GTAppContext(
@@ -28,27 +120,13 @@ namespace GT.Data.Data.GTAppDb
 		private static List<Company> PopulateCompanies()
 		{
 			List<Company> companies = new List<Company>();
-			List<string> companyNames = new List<string>()
-			{
-				"Fake Company delivering Chemicals",
-				"My News Site For Animals",
-				"Another Company in IT",
-				"We are looking for Employees",
-				"This is not a fake company",
-				"We love IT and so should you",
-				"Hard software for your 4th gen device",
-				"Take the blue pill",
-				"The Binary Library",
-				"Food for thought that you bought",
-				"Flashy key rings for the Millenia",
-			};
 
-			for (int i = 0; i < companyNames.Count; i++)
+			for (int i = 0; i < _numberOfItems; i++)
 			{
 				var company = new Company()
 				{
 					Id = Guid.NewGuid().ToString(),
-					Name = companyNames[i],
+					Name = _companyNames[i],
 					Locations = new List<Location>()
 				};
 
@@ -61,27 +139,13 @@ namespace GT.Data.Data.GTAppDb
 		private static List<Location> PopulateLocations()
 		{
 			List<Location> locations = new List<Location>();
-			List<string> locationNames = new List<string>()
-			{
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-			};
 
-			for (int i = 0; i < locationNames.Count; i++)
+			for (int i = 0; i < _numberOfItems; i++)
 			{
 				var location = new Location()
 				{
 					Id = Guid.NewGuid().ToString(),
-					Name = locationNames[i],
+					Name = _locationNames[i],
 					Companies = new List<Company>()
 				};
 
@@ -94,55 +158,13 @@ namespace GT.Data.Data.GTAppDb
 		private static List<Listing> PopulateListings(List<Company> companies, List<Location> locations)
 		{
 			List<Listing> listings = new List<Listing>();
-			List<string> listingTitles = new List<string>()
-			{
-				"Duktig .NET-Utvecklare till halvtidstjänst",
-				"Spännande Robot AI-utvecklare sökes till Stockholm",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-			};
-			List<string> listingDescriptions = new List<string>()
-			{
-				"Vi söker en duktig utvecklare till vår nya halvtidstjänst. Kommer jobba i ett litet team och utveckla applikationer efter kunders önskemål. Erfarenhet inom teknologioer som ASP.Net, Azure och Entity Framework är meriterande",
-				"Vill du vara del av vårt AI-team och jobba med värdelns främsta experter inom python och AI? Vi på Google söker just dig som vill vara en del av denna spännande branch. Du bör ha kunskaper inom AI-Development, Python och JS men alla är välkomna att söka",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-			};
-			List<string> jobTitles = new List<string>()
-			{
-				".Net-Utvecklare",
-				"AI developer",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-			};
 
 			var rand = new Random();
 			int salaryMin;
 			int salaryMax;
 			bool fte;
 
-			for (int i = 0; i < listingTitles.Count; i++)
+			for (int i = 0; i < _listingTitles.Count; i++)
 			{
 				salaryMin = rand.Next(10000, 40000);
 				salaryMax = rand.Next(salaryMin, 70000);
@@ -155,12 +177,12 @@ namespace GT.Data.Data.GTAppDb
 				var listing = new Listing()
 				{
 					Id = Guid.NewGuid().ToString(),
-					ListingTitle = listingTitles[i],
-					Description = listingDescriptions[i],
+					ListingTitle = _listingTitles[i],
+					Description = _listingDescriptions[i],
 					Employer = companies[i],
 					SalaryMin = salaryMin,
 					SalaryMax = salaryMax,
-					JobTitle = jobTitles[i],
+					JobTitle = _jobTitles[i],
 					Location = locations[i],
 					FTE = fte,
 					CreatedById = null,
@@ -180,40 +202,27 @@ namespace GT.Data.Data.GTAppDb
 				throw new ArgumentNullException();
 			}
 			List<ListingInquiry> listingInquiries = new List<ListingInquiry>();
-			List<string> messageTitles = new List<string>()
-			{
-				"Fullstack utvecklare med lång erfarenhet inom .Net",
-				"Nyexaminerad student söker er AI-Utvecklar tjänst",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-			};
+
 			List<string> messageBodies = new List<string>();
-			for (int i = 0; i < messageTitles.Count; i++)
+			for (int i = 0; i < _numberOfItems; i++)
 			{
 				string message = $"I am person #{i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud";
 				messageBodies.Add(message);
 			}
 
 			List<string> linkedInLinks = new List<string>();
-			for (int i = 0; i < messageTitles.Count; i++)
+			for (int i = 0; i < _numberOfItems; i++)
 			{
 				string linkedInLink = $"linkedin.com/IAmNotReallyAPerson{i + 1}";
 				linkedInLinks.Add(linkedInLink);
 			}
 
-			for (int i = 0; i < messageTitles.Count; i++)
+			for (int i = 0; i < _numberOfItems; i++)
 			{
 				var listingInquiry = new ListingInquiry()
 				{
 					Id = Guid.NewGuid().ToString(),
-					MessageTitle = messageTitles[i],
+					MessageTitle = _messageTitles[i],
 					MessageBody = messageBodies[i],
 					LinkedInLink = linkedInLinks[i],
 					ApplicantId = null,
@@ -233,16 +242,10 @@ namespace GT.Data.Data.GTAppDb
 				throw new ArgumentNullException();
 			}
 
-			int listLength = companies.Count;
-			if (listLength < locations.Count)
-			{
-				listLength = locations.Count;
-			}
-
 			List<Company> updatedCompanies = new List<Company>();
 			List<Location> updatedLocations = new List<Location>();
 
-			for (int i = 0; i < listLength - 1; i++)
+			for (int i = 0; i < _numberOfItems; i++)
 			{
 				companies[i].Locations.Add(locations[i]);
 				locations[i].Companies.Add(companies[i]);
