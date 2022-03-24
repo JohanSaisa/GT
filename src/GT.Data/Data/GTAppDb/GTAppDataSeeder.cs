@@ -8,6 +8,7 @@ namespace GT.Data.Data.GTAppDb
 	{
 		private static readonly int _numberOfItems = 11;
 
+		// Magic numbers for Company names, 11 items.
 		private static readonly List<string> _companyNames = new List<string>()
 			{
 				"Fake Company delivering Chemicals",
@@ -23,6 +24,7 @@ namespace GT.Data.Data.GTAppDb
 				"Flashy key rings for the Millenia",
 			};
 
+		// Magic numbers for Locations, 11 items.
 		private static readonly List<string> _locationNames = new List<string>()
 			{
 				"Stockholm",
@@ -38,36 +40,39 @@ namespace GT.Data.Data.GTAppDb
 				"Stockholm",
 			};
 
+		// Magic numbers for Listing titles, 11 items.
 		private static readonly List<string> _listingTitles = new List<string>()
 			{
 				"Duktig .NET-Utvecklare till halvtidstjänst",
 				"Spännande Robot AI-utvecklare sökes till Stockholm",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
+				"Vill du hjälpa oss att planlägga vår framtida kundbas?",
+				"Är du en projektledare som drivs av snabba projekt?",
+				"Vi söker CIO för Nordiskt försäkringsbolag",
+				"We are looking for a senior project manager to head our Project office",
+				"Certifierad SCRUM Master med erfarenhet inom Finans sökes!",
+				"Kan du Java, speldesign och trivs att arbeta i en familjär miljö?",
+				"Vi söker dig som kan React",
+				"Our Salesforce team is expanding at Food for thought that you bought.",
+				"Vi söker dig som kan orkestrera stora upphandlingar gentemot offentlig verksamhet",
 			};
 
+		// Magic numbers for Listing descriptions, 11 items.
 		private static readonly List<string> _listingDescriptions = new List<string>()
 			{
 				"Vi söker en duktig utvecklare till vår nya halvtidstjänst. Kommer jobba i ett litet team och utveckla applikationer efter kunders önskemål. Erfarenhet inom teknologioer som ASP.Net, Azure och Entity Framework är meriterande",
 				"Vill du vara del av vårt AI-team och jobba med värdelns främsta experter inom python och AI? Vi på Google söker just dig som vill vara en del av denna spännande branch. Du bör ha kunskaper inom AI-Development, Python och JS men alla är välkomna att söka",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
+				"ML: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel. Mauris sed leo augue. Suspendisse pretium imperdiet enim. Aliquam in molestie odio, ut ornare lacus. In gravida.",
+				"PM for small infrastructure projects: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"CIO for Nordic Insurance company: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"Head of Project Office: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"SCRUM Master in Finance: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"Java Developer small gaming company: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"Front end developer React: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"Salesforce expert: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
+				"Bid manager in Public Procurement: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in elementum diam. Suspendisse consectetur sed nunc quis suscipit. Fusce dignissim lectus a luctus laoreet. Donec varius magna ex, in pretium urna pharetra vel.",
 			};
 
+		// Magic numbers for Job titles for the Listing, 11 items.
 		private static readonly List<string> _jobTitles = new List<string>()
 			{
 				".Net-Utvecklare",
@@ -83,6 +88,7 @@ namespace GT.Data.Data.GTAppDb
 				"Bid manager in Public Procurement",
 			};
 
+		// Magic numbers for Listing Inquiry messages titles, 11 items.
 		private static readonly List<string> _messageTitles = new List<string>()
 			{
 				"Fullstack utvecklare med 5års erfarenhet inom .Net",
@@ -102,9 +108,9 @@ namespace GT.Data.Data.GTAppDb
 		{
 			List<Company> tempCompanies = PopulateCompanies();
 			List<Location> tempLocations = PopulateLocations();
-			List<Listing> listings = PopulateListings(tempCompanies, tempLocations);
-			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
 			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
+			List<Listing> listings = PopulateListings(companies, locations);
+			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
 
 			using (var context = new GTAppContext(
 							serviceProvider.GetRequiredService<
@@ -117,6 +123,10 @@ namespace GT.Data.Data.GTAppDb
 			}
 		}
 
+		/// <summary>
+		/// Create list of companies.
+		/// </summary>
+		/// <returns></returns>
 		private static List<Company> PopulateCompanies()
 		{
 			List<Company> companies = new List<Company>();
@@ -136,6 +146,10 @@ namespace GT.Data.Data.GTAppDb
 			return companies;
 		}
 
+		/// <summary>
+		/// Create list of locations.
+		/// </summary>
+		/// <returns></returns>
 		private static List<Location> PopulateLocations()
 		{
 			List<Location> locations = new List<Location>();
@@ -155,6 +169,40 @@ namespace GT.Data.Data.GTAppDb
 			return locations;
 		}
 
+		/// <summary>
+		/// Mapping the Companies to Locations and vice versa, returning the related objects as lists.
+		/// </summary>
+		/// <param name="companies"></param>
+		/// <param name="locations"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		private static (List<Company>, List<Location>) SetCompanyLocations(List<Company> companies, List<Location> locations)
+		{
+			if (companies.Count <= 0 || companies == null || locations.Count <= 0 || locations == null)
+			{
+				throw new ArgumentNullException();
+			}
+
+			List<Company> updatedCompanies = new List<Company>();
+			List<Location> updatedLocations = new List<Location>();
+
+			for (int i = 0; i < _numberOfItems; i++)
+			{
+				companies[i].Locations.Add(locations[i]);
+				locations[i].Companies.Add(companies[i]);
+				updatedCompanies.Add(companies[i]);
+				updatedLocations.Add(locations[i]);
+			}
+
+			return (updatedCompanies, updatedLocations);
+		}
+
+		/// <summary>
+		/// Map the listings with companies and locations.
+		/// </summary>
+		/// <param name="companies"></param>
+		/// <param name="locations"></param>
+		/// <returns></returns>
 		private static List<Listing> PopulateListings(List<Company> companies, List<Location> locations)
 		{
 			List<Listing> listings = new List<Listing>();
@@ -195,6 +243,12 @@ namespace GT.Data.Data.GTAppDb
 			return listings;
 		}
 
+		/// <summary>
+		/// Create list of ListingInquiries and mapping a Listing to it.
+		/// </summary>
+		/// <param name="listings"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		private static List<ListingInquiry> PopulateListingInquiries(List<Listing> listings)
 		{
 			if (listings.Count <= 0 || listings == null)
@@ -235,27 +289,11 @@ namespace GT.Data.Data.GTAppDb
 			return listingInquiries;
 		}
 
-		private static (List<Company>, List<Location>) SetCompanyLocations(List<Company> companies, List<Location> locations)
-		{
-			if (companies.Count <= 0 || companies == null || locations.Count <= 0 || locations == null)
-			{
-				throw new ArgumentNullException();
-			}
-
-			List<Company> updatedCompanies = new List<Company>();
-			List<Location> updatedLocations = new List<Location>();
-
-			for (int i = 0; i < _numberOfItems; i++)
-			{
-				companies[i].Locations.Add(locations[i]);
-				locations[i].Companies.Add(companies[i]);
-				updatedCompanies.Add(companies[i]);
-				updatedLocations.Add(locations[i]);
-			}
-
-			return (updatedCompanies, updatedLocations);
-		}
-
+		/// <summary>
+		/// Add the generated companies to the database.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="companies"></param>
 		private static async void SeedCompanies(GTAppContext context, List<Company> companies)
 		{
 			if (context.Companies.Any())
@@ -266,6 +304,11 @@ namespace GT.Data.Data.GTAppDb
 			await context.SaveChangesAsync();
 		}
 
+		/// <summary>
+		/// Add the generated listing inquiries to the database.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="listingInquiries"></param>
 		private static async void SeedListingInquiry(GTAppContext context, List<ListingInquiry> listingInquiries)
 		{
 			if (context.ListingInquiries.Any())
@@ -276,6 +319,11 @@ namespace GT.Data.Data.GTAppDb
 			await context.SaveChangesAsync();
 		}
 
+		/// <summary>
+		/// Add the generated listings to the database.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="listings"></param>
 		private static async void SeedListings(GTAppContext context, List<Listing> listings)
 		{
 			if (context.Listings.Any())
@@ -286,6 +334,11 @@ namespace GT.Data.Data.GTAppDb
 			await context.SaveChangesAsync();
 		}
 
+		/// <summary>
+		/// Add the generated locations to the database.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="locations"></param>
 		private static async void SeedLocations(GTAppContext context, List<Location> locations)
 		{
 			if (context.Locations.Any())
