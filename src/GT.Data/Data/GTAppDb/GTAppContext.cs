@@ -5,10 +5,11 @@ namespace GT.Data.Data.GTAppDb
 {
 	public class GTAppContext : DbContext
 	{
-		internal DbSet<Location> Locations { get; set; }
 		internal DbSet<Company> Companies { get; set; }
+		internal DbSet<ExperienceLevel> ExperienceLevels { get; set; }
 		internal DbSet<Listing> Listings { get; set; }
 		internal DbSet<ListingInquiry> ListingInquiries { get; set; }
+		internal DbSet<Location> Locations { get; set; }
 
 		public GTAppContext(DbContextOptions<GTAppContext> options)
 			: base(options)
