@@ -17,7 +17,7 @@ namespace GT.Core.Services.Impl
 		}
 
 		//TODO - Needs to be changed back to returntype IEnumerable<ListingPartialDTO>
-		public IEnumerable<Listing> GetListingsByFilter(ListingFilterModel filter)
+		public IEnumerable<Listing> GetListingsByFilter(IListingFilterModel filter)
 		{
 			//Get entitites based on filter
 

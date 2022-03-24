@@ -1,6 +1,6 @@
 ﻿namespace GT.Core.FilterModels
 {
-	public class ListingFilterModel : IFilterModel
+	public class ListingFilterModel : IListingFilterModel
 	{
 		// Includes listing title & description
 		public string? FreeText { get; set; }
