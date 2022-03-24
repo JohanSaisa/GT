@@ -104,22 +104,40 @@ namespace GT.Data.Data.GTAppDb
 				"Senior manager with experience in large scale public procurement bids",
 			};
 
-		public static void Initialize(IServiceProvider serviceProvider)
+		// Magic numbers for Experience levels, 11 items.
+		private static readonly List<string> _experienceTitles = new List<string>()
+			{
+				"Entry level",
+				"Internship",
+				"Mid-Senior level",
+				"Director",
+				"Executive",
+				"Mid-Senior level",
+				"Mid-Senior level",
+				"Entry level",
+				"Internship",
+				"Associate",
+				"Director",
+			};
+
+		/// <summary>
+		/// Initialize data seeder, adding dummy data and mapping objects.
+		/// </summary>
+		/// <param name="serviceProvider"></param>
+		public static async void Initialize(IServiceProvider serviceProvider)
 		{
 			List<Company> tempCompanies = PopulateCompanies();
+			List<ExperienceLevel> experienceLevels = PopulateExperienceLevels();
 			List<Location> tempLocations = PopulateLocations();
 			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
-			List<Listing> listings = PopulateListings(companies, locations);
+			List<Listing> listings = PopulateListings(companies, experienceLevels, locations);
 			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
 
 			using (var context = new GTAppContext(
 							serviceProvider.GetRequiredService<
 											DbContextOptions<GTAppContext>>()))
 			{
-				SeedCompanies(context, companies);
-				SeedListings(context, listings);
-				SeedListingInquiry(context, listingInquiries);
-				SeedLocations(context, locations);
+				SeedDataToDatabase(context, companies, listingInquiries, listings, locations);
 			}
 		}
 
@@ -144,6 +162,28 @@ namespace GT.Data.Data.GTAppDb
 			}
 
 			return companies;
+		}
+
+		/// <summary>
+		/// Create list of Experience levels
+		/// </summary>
+		/// <returns></returns>
+		private static List<ExperienceLevel> PopulateExperienceLevels()
+		{
+			List<ExperienceLevel> experienceLevels = new List<ExperienceLevel>();
+
+			for (int i = 0; i < _numberOfItems; i++)
+			{
+				var experienceLevel = new ExperienceLevel()
+				{
+					Id = Guid.NewGuid().ToString(),
+					Name = _experienceTitles[i]
+				};
+
+				experienceLevels.Add(experienceLevel);
+			}
+
+			return experienceLevels;
 		}
 
 		/// <summary>
@@ -203,7 +243,7 @@ namespace GT.Data.Data.GTAppDb
 		/// <param name="companies"></param>
 		/// <param name="locations"></param>
 		/// <returns></returns>
-		private static List<Listing> PopulateListings(List<Company> companies, List<Location> locations)
+		private static List<Listing> PopulateListings(List<Company> companies, List<ExperienceLevel> experienceLevels, List<Location> locations)
 		{
 			List<Listing> listings = new List<Listing>();
 
@@ -234,7 +274,8 @@ namespace GT.Data.Data.GTAppDb
 					Location = locations[i],
 					FTE = fte,
 					CreatedById = null,
-					CreatedDate = DateTime.Now
+					CreatedDate = DateTime.Now,
+					ExperienceLevel = experienceLevels[i],
 				};
 
 				listings.Add(listing);
@@ -290,63 +331,22 @@ namespace GT.Data.Data.GTAppDb
 		}
 
 		/// <summary>
-		/// Add the generated companies to the database.
+		/// Save the generated objects to the database.
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="companies"></param>
-		private static async void SeedCompanies(GTAppContext context, List<Company> companies)
-		{
-			if (context.Companies.Any())
-			{
-				return;
-			}
-			context.Companies.AddRange(companies);
-			await context.SaveChangesAsync();
-		}
-
-		/// <summary>
-		/// Add the generated listing inquiries to the database.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="listingInquiries"></param>
-		private static async void SeedListingInquiry(GTAppContext context, List<ListingInquiry> listingInquiries)
-		{
-			if (context.ListingInquiries.Any())
-			{
-				return;
-			}
-			context.ListingInquiries.AddRange(listingInquiries);
-			await context.SaveChangesAsync();
-		}
-
-		/// <summary>
-		/// Add the generated listings to the database.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="listings"></param>
-		private static async void SeedListings(GTAppContext context, List<Listing> listings)
+		private static void SeedDataToDatabase(GTAppContext context, List<Company> companies, List<ListingInquiry> listingInquiries, List<Listing> listings, List<Location> locations)
 		{
 			if (context.Listings.Any())
 			{
 				return;
 			}
-			context.Listings.AddRange(listings);
-			await context.SaveChangesAsync();
-		}
 
-		/// <summary>
-		/// Add the generated locations to the database.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="locations"></param>
-		private static async void SeedLocations(GTAppContext context, List<Location> locations)
-		{
-			if (context.Locations.Any())
-			{
-				return;
-			}
+			context.Companies.AddRange(companies);
+			context.ListingInquiries.AddRange(listingInquiries);
+			context.Listings.AddRange(listings);
 			context.Locations.AddRange(locations);
-			await context.SaveChangesAsync();
+			context.SaveChanges();
 		}
 	}
 }
