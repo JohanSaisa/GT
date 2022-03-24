@@ -6,6 +6,7 @@ using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,10 +36,9 @@ builder.Services
 
 // Add BLL services
 builder.Services
-	.AddScoped<IGTLocationService, GTLocationService>()
-	.AddScoped<IGTCompanyService, GTCompanyService>()
-	.AddScoped<IGTListingService, GTListingService>()
-	.AddScoped<IGTListingInquiryService, GTListingInquiryService>();
+	.AddScoped<IGTService, GTListingService>();
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

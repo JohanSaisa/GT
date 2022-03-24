@@ -1,7 +1,6 @@
 ﻿namespace GT.Core.Services.Interfaces
 {
-	public interface IGTCompanyService
+	public interface IGTService
 	{
-
 	}
 }

@@ -1,6 +1,6 @@
 ﻿namespace GT.Core.FilterModels
 {
-	public class ListingFilterModel : IListingFilterModel
+	public class ListingFilterModel : IFilterModel
 	{
 		// Includes listing title & description
 		public string? FreeText { get; set; }
@@ -9,6 +9,6 @@
 		// Full Time Equivelent
 		public bool? FTE { get; set; }
 		public string? Location { get; set; }
-		ICollection<string> ExperienceLevel { get; set; } = new List<string>();
+		public ICollection<string> ExperienceLevel { get; set; } = new List<string>();
 	}
 }

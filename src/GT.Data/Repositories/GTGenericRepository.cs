@@ -26,6 +26,11 @@ namespace GT.Data.Repositories
 
 		}
 
+		public virtual IQueryable<TEntity> GetAll()
+		{
+			return _context.Set<TEntity>();
+		}
+
 		/// <summary>
 		/// Gets all entities of type TEntity from the database, with optional included related data.
 		/// </summary>
