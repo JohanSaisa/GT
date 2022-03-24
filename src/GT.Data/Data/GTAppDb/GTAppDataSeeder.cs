@@ -6,8 +6,8 @@ namespace GT.Data.Data.GTAppDb
 {
 	public static class GTAppDataSeeder
 	{
-		private static Address Address1 { get; set; }
-		private static Address Address2 { get; set; }
+		private static Location Address1 { get; set; }
+		private static Location Address2 { get; set; }
 		private static Company Company1 { get; set; }
 		private static Company Company2 { get; set; }
 		private static Listing Listing1 { get; set; }
@@ -62,41 +62,39 @@ namespace GT.Data.Data.GTAppDb
 
 		private static void SeedAddresses(GTAppContext context)
 		{
-			if (context.Addresses.Any())
+			if (context.Locations.Any())
 			{
 				return;
 			}
-			context.Addresses.AddRange(Address1, Address2);
+			context.Locations.AddRange(Address1, Address2);
 			context.SaveChanges();
 		}
 
 		private static void PopulateProperties()
 		{
-			Address1 = new Address()
+			Address1 = new Location()
 			{
 				Id = Guid.NewGuid().ToString(),
-				StreetAddress = "Garvargatan 3",
-				ZipCode = "11226",
+				Name = "Garvargatan 3",
 				Companies = new List<Company>()
 			};
-			Address2 = new Address()
+			Address2 = new Location()
 			{
 				Id = Guid.NewGuid().ToString(),
-				StreetAddress = "Skärgårdsvägen 26B",
-				ZipCode = "13931",
+				Name = "Skärgårdsvägen 26B",
 				Companies = new List<Company>()
 			};
 			Company1 = new Company()
 			{
 				Id = Guid.NewGuid().ToString(),
 				Name = "Facebook",
-				Addresses = new List<Address>()
+				Locations = new List<Location>()
 			};
 			Company2 = new Company()
 			{
 				Id = Guid.NewGuid().ToString(),
 				Name = "Google",
-				Addresses = new List<Address>()
+				Locations = new List<Location>()
 			};
 			Listing1 = new Listing()
 			{
@@ -107,7 +105,7 @@ namespace GT.Data.Data.GTAppDb
 				SalaryMin = 30000,
 				SalaryMax = 50000,
 				JobTitle = ".Net-Utvecklare",
-				Address = Address1,
+				Location = Address1,
 				FTE = false,
 				CreatedById = null,
 				CreatedDate = DateTime.Now
@@ -121,7 +119,7 @@ namespace GT.Data.Data.GTAppDb
 				SalaryMin = 45000,
 				SalaryMax = 45555,
 				JobTitle = "AI-Developer",
-				Address = Address2,
+				Location = Address2,
 				FTE = true,
 				CreatedById = null,
 				CreatedDate = DateTime.Now
@@ -144,8 +142,8 @@ namespace GT.Data.Data.GTAppDb
 				ApplicantId = null,
 				Listing = Listing2,
 			};
-			Company1.Addresses.Add(Address1);
-			Company2.Addresses.Add(Address2);
+			Company1.Locations.Add(Address1);
+			Company2.Locations.Add(Address2);
 			Address1.Companies.Add(Company1);
 			Address2.Companies.Add(Company2);
 		}
