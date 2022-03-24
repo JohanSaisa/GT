@@ -25,17 +25,17 @@ namespace GT.Data.Data.GTAppDb
 
 		private static readonly List<string> _locationNames = new List<string>()
 			{
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
+				"Stockholm",
+				"Remote",
+				"Malmö",
+				"Stockholm",
+				"Södertälje",
+				"Stockholm",
+				"Åre",
+				"Göteborg",
+				"Göteborg",
+				"Stockholm",
+				"Stockholm",
 			};
 
 		private static readonly List<string> _listingTitles = new List<string>()
@@ -103,7 +103,7 @@ namespace GT.Data.Data.GTAppDb
 			List<Company> tempCompanies = PopulateCompanies();
 			List<Location> tempLocations = PopulateLocations();
 			List<Listing> listings = PopulateListings(tempCompanies, tempLocations);
-			List<ListingInquiry> listingInquiries = PopulateListingInquiries(tempCompanies, tempLocations);
+			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
 			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
 
 			using (var context = new GTAppContext(
