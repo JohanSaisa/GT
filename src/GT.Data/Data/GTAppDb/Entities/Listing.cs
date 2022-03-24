@@ -31,5 +31,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public DateTime CreatedDate { get; set; }
 
 		public ICollection<ListingInquiry> Inquiries { get; set; }
+
+		public ExperienceLevel ExperienceLevel { get; set; }
 	}
 }

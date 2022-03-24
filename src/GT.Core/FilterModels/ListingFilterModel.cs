@@ -9,6 +9,6 @@
 		// Full Time Equivelent
 		public bool? FTE { get; set; }
 		public string? Location { get; set; }
-		ICollection<string>? ExperienceLevel { get; set; }
+		ICollection<string> ExperienceLevel { get; set; } = new List<string>();
 	}
 }
