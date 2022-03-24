@@ -6,8 +6,6 @@ using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,14 +28,14 @@ builder.Services.AddControllersWithViews();
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGTGenericRepository<Address>), typeof(GTGenericRepository<Address>))
+	.AddScoped(typeof(IGTGenericRepository<Location>), typeof(GTGenericRepository<Location>))
 	.AddScoped(typeof(IGTGenericRepository<Company>), typeof(GTGenericRepository<Company>))
 	.AddScoped(typeof(IGTGenericRepository<Listing>), typeof(GTGenericRepository<Listing>))
 	.AddScoped(typeof(IGTGenericRepository<ListingInquiry>), typeof(GTGenericRepository<ListingInquiry>));
 
 // Add BLL services
 builder.Services
-	.AddScoped<IGTAddressService, GTAddressService>()
+	.AddScoped<IGTLocationService, GTLocationService>()
 	.AddScoped<IGTCompanyService, GTCompanyService>()
 	.AddScoped<IGTListingService, GTListingService>()
 	.AddScoped<IGTListingInquiryService, GTListingInquiryService>();
@@ -48,15 +46,15 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
 
-  app.UseExceptionHandler("/Home/Error");
-// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-app.UseHsts();
+	app.UseExceptionHandler("/Home/Error");
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	app.UseHsts();
 }
 
-using(var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
 {
-  var services = scope.ServiceProvider;
-  GTAppDataSeeder.Initialize(services);
+	var services = scope.ServiceProvider;
+	GTAppDataSeeder.Initialize(services);
 }
 
 app.UseHttpsRedirection();

@@ -20,7 +20,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		[Column(TypeName = "nvarchar(100)")]
 		public string? JobTitle { get; set; }
 
-		public Address? Address { get; set; }
+		public Location? Location { get; set; }
 
 		//Full Time Equivelent
 		public bool? FTE { get; set; }
@@ -31,5 +31,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public DateTime CreatedDate { get; set; }
 
 		public ICollection<ListingInquiry> Inquiries { get; set; }
+
+		public ExperienceLevel ExperienceLevel { get; set; }
 	}
 }
