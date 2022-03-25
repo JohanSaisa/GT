@@ -17,10 +17,10 @@
 
 		// Search result checks the listing's salary property,
 		// and will include entities where the value of that property falls within the range between MinSalary and MaxSalary.
-		int? MaxSalary { get; set; }
-		int? MinSalary { get; set; }
+		int? SalaryMax { get; set; }
+		int? SalaryMin { get; set; }
 
 		// Earliest listing post date.
-		public DateTime? PostDate { get; set; }
+		public DateTime? CreatedDate { get; set; }
 	}
 }
