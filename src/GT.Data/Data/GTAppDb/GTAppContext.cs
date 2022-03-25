@@ -7,7 +7,7 @@ namespace GT.Data.Data.GTAppDb
 	{
 		internal DbSet<Company> Companies { get; set; }
 		internal DbSet<ExperienceLevel> ExperienceLevels { get; set; }
-		public DbSet<Listing> Listings { get; set; }
+		internal DbSet<Listing> Listings { get; set; }
 		internal DbSet<ListingInquiry> ListingInquiries { get; set; }
 		internal DbSet<Location> Locations { get; set; }
 
