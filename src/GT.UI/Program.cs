@@ -5,20 +5,20 @@ using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories;
+using GT.UI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-ConfigurationManager configuration = builder.Configuration;
+Microsoft.Extensions.Configuration.ConfigurationManager configuration = builder.Configuration;
 var identityConnectionString = builder.Configuration.GetConnectionString("GTIdentityContextConnection");
 var appConnectionString = builder.Configuration.GetConnectionString("GTApplicationContextConnection");
 
@@ -29,9 +29,14 @@ builder.Services
 		options.UseSqlServer(identityConnectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-				options.SignIn.RequireConfirmedAccount = true)
-				.AddRoles<IdentityRole>()
-				.AddEntityFrameworkStores<GTIdentityContext>();
+{
+	options.SignIn.RequireConfirmedAccount = true;
+	options.Password.RequireDigit = true;
+	options.Password.RequireNonAlphanumeric = true;
+	options.Password.RequiredLength = 8;
+})
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<GTIdentityContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -52,11 +57,16 @@ builder.Services
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+builder.Services.AddControllers();
+
 // Adding Authentication.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
 				options =>
 				{
+					AuthenticationConfiguration authenticationConfiguration = new AuthenticationConfiguration();
+					configuration.Bind("Authentication", authenticationConfiguration);
+
 					options.SaveToken = true;
 					if (builder.Environment.IsDevelopment())
 					{
@@ -66,17 +76,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 					options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
 					{
 						AuthenticationType = JwtBearerDefaults.AuthenticationScheme,
+						ValidIssuer = authenticationConfiguration.Issuer,
+						ValidAudience = authenticationConfiguration.Audience,
+						ValidateIssuerSigningKey = true,
 						ValidateIssuer = true,
 						ValidateAudience = true,
-						ValidAudience = configuration["JWT:ValidAudience"],
-						ValidIssuer = configuration["JWT:ValidIssuer"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationConfiguration.AccessTokenSecret))
 					};
 				})
 		.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
 				options => builder.Configuration.Bind("CookieSettings", options));
 
-services.AddAuthorization(options =>
+builder.Services.AddAuthorization(options =>
 {
 	// change the default policy to try out all existing authentication handlers
 	options.DefaultPolicy = new AuthorizationPolicyBuilder()
