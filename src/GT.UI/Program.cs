@@ -28,14 +28,15 @@ builder.Services.AddControllersWithViews();
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGTGenericRepository<Location>), typeof(GTGenericRepository<Location>))
-	.AddScoped(typeof(IGTGenericRepository<Company>), typeof(GTGenericRepository<Company>))
-	.AddScoped(typeof(IGTGenericRepository<Listing>), typeof(GTGenericRepository<Listing>))
-	.AddScoped(typeof(IGTGenericRepository<ListingInquiry>), typeof(GTGenericRepository<ListingInquiry>));
+	.AddTransient(typeof(IGTGenericRepository<Location>), typeof(GTGenericRepository<Location>))
+	.AddTransient(typeof(IGTGenericRepository<Company>), typeof(GTGenericRepository<Company>))
+	.AddTransient(typeof(IGTGenericRepository<Listing>), typeof(GTGenericRepository<Listing>))
+	.AddTransient(typeof(IGTGenericRepository<ListingInquiry>), typeof(GTGenericRepository<ListingInquiry>))
+	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
 // Add BLL services
 builder.Services
-	.AddScoped<IGTService, GTListingService>();
+	.AddTransient<IGTListingService, GTListingService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
