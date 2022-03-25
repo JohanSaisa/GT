@@ -2,7 +2,9 @@
 using GT.Data.Data.GTAppDb.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+/// <summary>
+/// DO NOTE! Currently this controller uses entities. Once services are up this API need to be modified to work with DTOs and the Core layer. 
+/// </summary>
 
 namespace GT.UI.Controllers
 {
@@ -18,6 +20,7 @@ namespace GT.UI.Controllers
 			_logger = logger;
 			_listingService = listingService;
 		}
+
 
 		// GET: api/<JobListingController>
 		[HttpGet]
@@ -47,6 +50,7 @@ namespace GT.UI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Listing>> PostListing(Listing listing)
 		{
+			listing.Id = Guid.NewGuid().ToString();
 			_listingService.Listings.Add(listing);
 			await _listingService.SaveChangesAsync();
 			return CreatedAtAction(nameof(GetListing), new { id = listing.Id }, listing);
