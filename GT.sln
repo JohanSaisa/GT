@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GT.Data", "src\GT.Data\GT.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GT.Core", "src\GT.Core\GT.Core.csproj", "{C8951C7B-17D0-45ED-B8AA-E6C606FAD292}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GT.Core.Tests", "test\GT.Core.Tests\GT.Core.Tests.csproj", "{53414BB4-D588-432C-AE5E-113497CCD2EF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
