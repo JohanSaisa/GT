@@ -6,6 +6,7 @@ namespace GT.Data.Data.GTAppDb
 {
 	public static class GTAppDataSeeder
 	{
+		// Number of Data objects.
 		private static readonly int _numberOfItems = 11;
 
 		// Magic numbers for Company names, 11 items.
@@ -129,6 +130,8 @@ namespace GT.Data.Data.GTAppDb
 			List<Company> tempCompanies = PopulateCompanies();
 			List<ExperienceLevel> experienceLevels = PopulateExperienceLevels();
 			List<Location> tempLocations = PopulateLocations();
+
+			// Junction table connections.
 			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
 			List<Listing> listings = PopulateListings(companies, experienceLevels, locations);
 			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
