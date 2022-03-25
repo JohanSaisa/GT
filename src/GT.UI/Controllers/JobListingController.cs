@@ -1,4 +1,5 @@
-﻿using GT.Core.Services.Interfaces;
+﻿using GT.Data.Data.GTAppDb;
+using GT.Data.Data.GTAppDb.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,9 +11,9 @@ namespace GT.UI.Controllers
 	public class JobListingController : ControllerBase
 	{
 		private readonly ILogger<JobListingController> _logger;
-		private readonly IGTListingService _listingService;
+		private readonly GTAppContext _listingService;
 
-		public JobListingController(ILogger<JobListingController> logger, IGTListingService listingService)
+		public JobListingController(ILogger<JobListingController> logger, GTAppContext listingService)
 		{
 			_logger = logger;
 			_listingService = listingService;
@@ -20,22 +21,35 @@ namespace GT.UI.Controllers
 
 		// GET: api/<JobListingController>
 		[HttpGet]
-		public IEnumerable<string> Get()
+		public async Task<ActionResult<IEnumerable<Listing>>> GetListing()
 		{
-			return new string[] { "value1", "value2" };
+			var listings = await _listingService.Listings.FindAsync();
+			if (listings == null)
+			{
+				return NotFound();
+			}
+			return Ok(listings);
 		}
 
 		// GET api/<JobListingController>/5
 		[HttpGet("{id}")]
-		public string Get(string id)
+		public async Task<ActionResult<Listing>> GetListing(string id)
 		{
-			return "value";
+			var listing = await _listingService.Listings.FindAsync(id);
+			if (listing == null)
+			{
+				return NotFound();
+			}
+			return Ok(listing);
 		}
 
 		// POST api/<JobListingController>
 		[HttpPost]
-		public void Post([FromBody] string value)
+		public async Task<ActionResult<Listing>> PostListing(Listing listing)
 		{
+			_listingService.Listings.Add(listing);
+			await _listingService.SaveChangesAsync();
+			return CreatedAtAction(nameof(GetListing), new { id = listing.Id }, listing);
 		}
 
 		// PUT api/<JobListingController>/5
