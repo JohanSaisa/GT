@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var config = builder.Configuration;
 var identityConnectionString = builder.Configuration.GetConnectionString("GTIdentityContextConnection");
 var appConnectionString = builder.Configuration.GetConnectionString("GTApplicationContextConnection");
 
@@ -41,6 +41,13 @@ builder.Services
 	.AddScoped<IGTListingInquiryService, GTListingInquiryService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddAuthentication().AddCookie().AddJwtBearer(cfg =>
+{
+	cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+	{
+	};
+});
 
 var app = builder.Build();
 
