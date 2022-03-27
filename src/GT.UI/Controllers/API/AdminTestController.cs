@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GT.UI.Controllers.API
 {
-	[Route("api/[controller]")]
+	[Route("[controller]")]
 	[ApiController]
 	public class AdminTestController : Controller
 	{
