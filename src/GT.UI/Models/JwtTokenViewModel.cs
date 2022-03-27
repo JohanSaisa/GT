@@ -2,7 +2,7 @@
 
 namespace GT.UI.Models
 {
-	public class LoginViewModel
+	public class JwtTokenViewModel
 	{
 		[Required(ErrorMessage = "User name is required")]
 		public string? Username { get; set; }

@@ -59,47 +59,47 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddControllers();
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+	// Lambda to determine if user consent for non-essential cookies is needed for a given request.
+	options.CheckConsentNeeded = context => true;
+	options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
 // Adding Authentication.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-				options =>
-				{
-					AuthenticationConfiguration authenticationConfiguration = new AuthenticationConfiguration();
-					configuration.Bind("Authentication", authenticationConfiguration);
-
-					options.SaveToken = true;
-					if (builder.Environment.IsDevelopment())
-					{
-						options.RequireHttpsMetadata = false;
-					}
-
-					options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-					{
-						AuthenticationType = JwtBearerDefaults.AuthenticationScheme,
-						ValidIssuer = authenticationConfiguration.Issuer,
-						ValidAudience = authenticationConfiguration.Audience,
-						ValidateIssuerSigningKey = true,
-						ValidateIssuer = true,
-						ValidateAudience = true,
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationConfiguration.AccessTokenSecret))
-					};
-				})
-		.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-				options => builder.Configuration.Bind("CookieSettings", options));
+builder.Services.AddAuthentication()
+	.AddCookie(cfg => cfg.SlidingExpiration = true)
+	.AddJwtBearer(cfg =>
+	{
+		cfg.SaveToken = true;
+		if (builder.Environment.IsDevelopment())
+		{
+			cfg.RequireHttpsMetadata = false;
+		}
+		cfg.TokenValidationParameters = new TokenValidationParameters()
+		{
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			AuthenticationType = JwtBearerDefaults.AuthenticationScheme,
+			ValidIssuer = configuration[GTJwtConstants.Issuer],
+			ValidAudience = configuration[GTJwtConstants.Audience],
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[GTJwtConstants.Key])),
+		};
+	});
 
 builder.Services.AddAuthorization(options =>
 {
-	// change the default policy to try out all existing authentication handlers
+	// Update default Authorization to encompass Identity and Jwt
 	options.DefaultPolicy = new AuthorizationPolicyBuilder()
 			.RequireAuthenticatedUser()
-			.AddAuthenticationSchemes("Basic", JwtBearerDefaults.AuthenticationScheme)
+			.AddAuthenticationSchemes("Identity.Application", JwtBearerDefaults.AuthenticationScheme)
 			.Build();
 
-	// use it later as [Authorize(Policy = "AdminPolicy")]
+	// Implement Admin policy [Authorize(Policy = "AdminPolicy")]
 	options.AddPolicy("AdminPolicy", new AuthorizationPolicyBuilder()
 			.RequireAuthenticatedUser()
-			.AddAuthenticationSchemes("Basic", JwtBearerDefaults.AuthenticationScheme)
-			.RequireClaim(ClaimTypes.Role, "GTAdministrator")
+			.AddAuthenticationSchemes("Identity.Application", JwtBearerDefaults.AuthenticationScheme)
+			.RequireClaim(ClaimTypes.Role, "GTadmin")
 			.Build());
 });
 
@@ -134,8 +134,8 @@ app.MapControllerRoute(
 		pattern: "/{action}", // URL with parameters
 		defaults: new { controller = "Home", action = "Index" }); // Parameter defaults
 
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+		name: "default",
+		pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
