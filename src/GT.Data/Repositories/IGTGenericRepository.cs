@@ -1,6 +1,4 @@
 ﻿using GT.Data.Data;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
 
 namespace GT.Data.Repositories
 {
@@ -11,11 +9,7 @@ namespace GT.Data.Repositories
 	public interface IGTGenericRepository<TEntity>
 		where TEntity : class, IGTEntity
 	{
-		IQueryable<TEntity> GetAll(
-			Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression);
-
 		IQueryable<TEntity> GetAll();
-
 		Task<TEntity> FindAsync(params object[] keys);
 		Task<TEntity> AddAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);

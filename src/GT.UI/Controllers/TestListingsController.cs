@@ -1,6 +1,6 @@
-﻿using GT.Core.FilterModels.Impl;
+﻿using GT.Core.DTO;
+using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Impl;
-using GT.Data.Data.GTAppDb.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,7 +20,7 @@ namespace GT.UI.Controllers
 
 		// GET: api/<TestListingsController>
 		[HttpGet]
-		public async Task<IEnumerable<Listing>> Get()
+		public async Task<IEnumerable<ListingPartialDTO>> Get()
 		{
 			var filter = new ListingFilterModel()
 			{
@@ -32,10 +32,26 @@ namespace GT.UI.Controllers
 				//		null
 				//	},
 
-				ExperienceLevel = new List<string> { null }
+				ExperienceLevels = new List<string> { null }
 			};
 
 			return await _listingService.GetAsync(filter);
 		}
+
+		// GET: api/<TestListingsController>
+		[Route("tl/{id}")]
+		[HttpGet]
+		public async Task<ActionResult<ListingDTO>> Get(string id)
+		{
+			var listing = await _listingService.GetByIdAsync(id);
+
+			if (listing is null)
+			{
+				return NotFound();
+			}
+
+			return listing;
+		}
+
 	}
 }

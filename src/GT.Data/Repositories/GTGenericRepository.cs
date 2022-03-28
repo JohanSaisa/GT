@@ -1,8 +1,6 @@
 ﻿using GT.Data.Data;
 using GT.Data.Data.GTAppDb;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
 
 namespace GT.Data.Repositories
 {
@@ -24,28 +22,6 @@ namespace GT.Data.Repositories
 
 		public virtual IQueryable<TEntity> GetAll()
 		{
-			return _context.Set<TEntity>();
-		}
-
-		/// <summary>
-		/// Gets all entities of type TEntity from the database, with optional included related data.
-		/// </summary>
-		/// <param name="includeExpression">Entity related data to be included. Example:
-		/// <br>
-		/// var customers = GetAll(c => c.Include(c.Address).ThenInclude(a => a.City));
-		/// </br></param>
-		/// <returns>IQueryable containing all database entities.</returns>
-		public virtual IQueryable<TEntity> GetAll(
-				Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null)
-		{
-			// Check if any related data is to be included.
-			if (includeExpression is not null)
-			{
-				// Compile the include expression and apply it to the relevant DbSet.
-				var include = includeExpression.Compile();
-				return include(_context.Set<TEntity>());
-			}
-
 			return _context.Set<TEntity>();
 		}
 
