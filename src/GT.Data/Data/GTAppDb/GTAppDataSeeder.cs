@@ -14,6 +14,8 @@ namespace GT.Data.Data.GTAppDb
 		private static Listing Listing2 { get; set; }
 		private static ListingInquiry ListingInquiry1 { get; set; }
 		private static ListingInquiry ListingInquiry2 { get; set; }
+		private static ExperienceLevel ExperienceLevel1 { get; set; } = new ExperienceLevel() { Id = "exp1", Name = "Junior" };
+		private static ExperienceLevel ExperienceLevel2 { get; set; } = new ExperienceLevel() { Id = "exp2", Name = "Intermediate" };
 
 
 		public static void Initialize(IServiceProvider serviceProvider)
@@ -23,11 +25,22 @@ namespace GT.Data.Data.GTAppDb
 							serviceProvider.GetRequiredService<
 											DbContextOptions<GTAppContext>>()))
 			{
+				SeedExperienceLevels(context);
 				SeedAddresses(context);
 				SeedCompanies(context);
 				SeedListings(context);
 				SeedListingInquiry(context);
 			}
+		}
+
+		private static void SeedExperienceLevels(GTAppContext context)
+		{
+			if (context.ExperienceLevels.Any())
+			{
+				return;
+			}
+			context.ExperienceLevels.AddRange(ExperienceLevel1, ExperienceLevel2);
+			context.SaveChanges();
 		}
 
 		private static void SeedListingInquiry(GTAppContext context)
@@ -108,7 +121,8 @@ namespace GT.Data.Data.GTAppDb
 				Location = Address1,
 				FTE = false,
 				CreatedById = null,
-				CreatedDate = DateTime.Now
+				CreatedDate = DateTime.Now,
+				ExperienceLevel = ExperienceLevel1
 			};
 			Listing2 = new Listing()
 			{
@@ -122,7 +136,8 @@ namespace GT.Data.Data.GTAppDb
 				Location = Address2,
 				FTE = true,
 				CreatedById = null,
-				CreatedDate = DateTime.Now
+				CreatedDate = DateTime.Now,
+				ExperienceLevel = ExperienceLevel2
 			};
 			ListingInquiry1 = new ListingInquiry()
 			{
@@ -131,7 +146,7 @@ namespace GT.Data.Data.GTAppDb
 				MessageBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
 				LinkedInLink = "test@test.com",
 				ApplicantId = null,
-				Listing = Listing1,
+				Listing = Listing1
 			};
 			ListingInquiry2 = new ListingInquiry()
 			{

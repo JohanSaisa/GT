@@ -24,16 +24,15 @@ namespace GT.UI.Controllers
 		{
 			var filter = new ListingFilterModel()
 			{
-				ExperienceLevel = new List<string>
-				{
-					"Junior",
-					"Banan"
-				},
-				//FreeText = new List<string>
-				//{
-				//	"Stockholm",
-				//	"Banan"
-				//},
+				//	ExperienceLevel =
+				//new List<string>
+				//	{
+				//		"Junior",
+				//		"Banan",
+				//		null
+				//	},
+
+				ExperienceLevel = new List<string> { null }
 			};
 
 			return await _listingService.GetAsync(filter);

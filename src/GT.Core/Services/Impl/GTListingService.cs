@@ -27,10 +27,11 @@ namespace GT.Core.Services.Impl
 			var query = _listingRepository
 				.GetAll()
 				.Include(e => e.ExperienceLevel)
+				.Include(e => e.Location)
 
 				.Where(e => filter.ExperienceLevel == null
 					|| filter.ExperienceLevel.Count <= 0
-					|| filter.ExperienceLevel.Contains(e.ExperienceLevel.Name))
+					|| (e.ExperienceLevel != null && e.ExperienceLevel.Name != null && filter.ExperienceLevel.Contains(e.ExperienceLevel.Name)))
 
 				.Where(e =>
 					filter.FTE == null
@@ -54,20 +55,21 @@ namespace GT.Core.Services.Impl
 
 				.Where(e => filter.CreatedDate == null
 					|| (e.CreatedDate != null
-						&& filter.CreatedDate < e.CreatedDate))
+						&& filter.CreatedDate < e.CreatedDate));
 
-						//.Where(e =>
-						//	filter.FreeText == null
-						//	|| filter.FreeText.Length <= 0
-						//	|| filter.FreeText.All(ft =>
-						//		(e.JobTitle != null
-						//			&& e.JobTitle.Contains(ft, StringComparison.OrdinalIgnoreCase))
-						//		|| (e.Description != null
-						//			&& e.Description.Contains(ft, StringComparison.OrdinalIgnoreCase))
-						//		|| (e.Location != null
-						//			&& e.Location.Name != null
-						//			&& e.Location.Name.Contains(ft, StringComparison.OrdinalIgnoreCase))))
-						;
+			if (filter.FreeText is not null)
+			{
+				foreach (var keyword in filter.FreeText)
+				{
+					if (keyword is not null)
+					{
+						query = query.Where(e =>
+							(e.JobTitle != null && e.JobTitle.Contains(keyword))
+							|| (e.Description != null && e.Description.Contains(keyword))
+							|| (e.Location != null && e.Location.Name != null && e.Location.Name.Contains(keyword)));
+					}
+				}
+			}
 
 			return await query
 				.ToListAsync();
