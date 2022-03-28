@@ -5,6 +5,7 @@ using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories;
+using GT.UI.Enums;
 using GT.UI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -96,10 +97,11 @@ builder.Services.AddAuthorization(options =>
 			.Build();
 
 	// Implement Admin policy [Authorize(Policy = "AdminPolicy")]
+	string adminRole = GTRole.GTadmin.ToString();
 	options.AddPolicy("AdminPolicy", new AuthorizationPolicyBuilder()
 			.RequireAuthenticatedUser()
 			.AddAuthenticationSchemes("Identity.Application", JwtBearerDefaults.AuthenticationScheme)
-			.RequireClaim(ClaimTypes.Role, "GTadmin")
+			.RequireClaim(ClaimTypes.Role, adminRole)
 			.Build());
 });
 
