@@ -4,11 +4,11 @@
 	{
 		// Search result checks the listing's experience level property, 
 		// and will include all entities matching at least one value in the array.
-		string[]? ExperienceLevel { get; set; }
+		List<string>? ExperienceLevel { get; set; }
 
 		// Search result checks the listing's title, description and location properties,
 		// and will only include entities where each value in the array is present in at least one of those properties.
-		string[]? FreeText { get; set; }
+		List<string>? FreeText { get; set; }
 
 		// First Time Equivalent.
 		bool? FTE { get; set; }

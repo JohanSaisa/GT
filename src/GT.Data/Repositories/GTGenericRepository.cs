@@ -1,4 +1,5 @@
 ﻿using GT.Data.Data;
+using GT.Data.Data.GTAppDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
@@ -10,20 +11,15 @@ namespace GT.Data.Repositories
 	/// </summary>
 	/// <typeparam name="TEntity">The database entity handled by the repository.</typeparam>
 	public class GTGenericRepository<TEntity>
-	: IGTGenericRepository<TEntity>, IDisposable
+	: IGTGenericRepository<TEntity>
 			where TEntity : class, IGTEntity
 	{
-		protected readonly DbContext _context;
+		protected readonly GTAppContext _context;
 		protected bool _disposed;
 
-		public GTGenericRepository(DbContext context)
+		public GTGenericRepository(GTAppContext context)
 		{
 			_context = context;
-		}
-
-		public GTGenericRepository()
-		{
-
 		}
 
 		public virtual IQueryable<TEntity> GetAll()
@@ -157,23 +153,23 @@ namespace GT.Data.Repositories
 				.Any(e => e.Id == id);
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!_disposed)
-			{
-				if (disposing)
-				{
-					_context.Dispose();
-				}
-			}
+		//protected virtual void Dispose(bool disposing)
+		//{
+		//	if (!_disposed)
+		//	{
+		//		if (disposing)
+		//		{
+		//			_context.Dispose();
+		//		}
+		//	}
 
-			_disposed = true;
-		}
+		//	_disposed = true;
+		//}
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+		//public void Dispose()
+		//{
+		//	Dispose(true);
+		//	GC.SuppressFinalize(this);
+		//}
 	}
 }

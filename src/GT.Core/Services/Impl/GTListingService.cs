@@ -1,5 +1,4 @@
-﻿using GT.Core.DTO;
-using GT.Core.FilterModels.Impl;
+﻿using GT.Core.FilterModels.Impl;
 using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
@@ -18,9 +17,8 @@ namespace GT.Core.Services.Impl
 			_listingRepository = listingRepository;
 			_identityRepository = identityRepository;
 		}
-		public async Task<List<Listing>> Get(IListingFilterModel? filter = null)
+		public async Task<List<Listing>> GetAsync(IListingFilterModel? filter = null)
 		{
-			//var customers = GetAll(c => c.Include(c.Address).ThenInclude(a => a.City));
 			if (filter is null)
 			{
 				filter = new ListingFilterModel();
@@ -28,23 +26,11 @@ namespace GT.Core.Services.Impl
 
 			var query = _listingRepository
 				.GetAll()
-				.Where(e =>
-					filter.ExperienceLevel == null
-					|| filter.ExperienceLevel.Length <= 0
-					|| filter.ExperienceLevel.Any(el => e.ExperienceLevel == null
-						|| string.Equals(el, e.ExperienceLevel.Name, StringComparison.OrdinalIgnoreCase)))
+				.Include(e => e.ExperienceLevel)
 
-				.Where(e =>
-					filter.FreeText == null
-					|| filter.FreeText.Length <= 0
-					|| filter.FreeText.All(ft =>
-						(e.JobTitle != null
-							&& e.JobTitle.Contains(ft, StringComparison.OrdinalIgnoreCase))
-						|| (e.Description != null
-							&& e.Description.Contains(ft, StringComparison.OrdinalIgnoreCase))
-						|| (e.Location != null
-							&& e.Location.Name != null
-							&& e.Location.Name.Contains(ft, StringComparison.OrdinalIgnoreCase))))
+				.Where(e => filter.ExperienceLevel == null
+					|| filter.ExperienceLevel.Count <= 0
+					|| filter.ExperienceLevel.Contains(e.ExperienceLevel.Name))
 
 				.Where(e =>
 					filter.FTE == null
@@ -68,7 +54,20 @@ namespace GT.Core.Services.Impl
 
 				.Where(e => filter.CreatedDate == null
 					|| (e.CreatedDate != null
-						&& filter.CreatedDate < e.CreatedDate));
+						&& filter.CreatedDate < e.CreatedDate))
+
+						//.Where(e =>
+						//	filter.FreeText == null
+						//	|| filter.FreeText.Length <= 0
+						//	|| filter.FreeText.All(ft =>
+						//		(e.JobTitle != null
+						//			&& e.JobTitle.Contains(ft, StringComparison.OrdinalIgnoreCase))
+						//		|| (e.Description != null
+						//			&& e.Description.Contains(ft, StringComparison.OrdinalIgnoreCase))
+						//		|| (e.Location != null
+						//			&& e.Location.Name != null
+						//			&& e.Location.Name.Contains(ft, StringComparison.OrdinalIgnoreCase))))
+						;
 
 			return await query
 				.ToListAsync();

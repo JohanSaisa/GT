@@ -1,11 +1,10 @@
 using GT.Core.Services.Impl;
-using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb;
-using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,14 +23,16 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 		 .AddEntityFrameworkStores<GTIdentityContext>();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+	.AddControllersWithViews()
+	.AddNewtonsoftJson(o =>
+	{
+		o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+	});
 
 // Add DAL repositories
 builder.Services
-	.AddTransient(typeof(IGTGenericRepository<Location>), typeof(GTGenericRepository<Location>))
-	.AddTransient(typeof(IGTGenericRepository<Company>), typeof(GTGenericRepository<Company>))
-	.AddTransient(typeof(IGTGenericRepository<Listing>), typeof(GTGenericRepository<Listing>))
-	.AddTransient(typeof(IGTGenericRepository<ListingInquiry>), typeof(GTGenericRepository<ListingInquiry>))
+	.AddTransient(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
 	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
 // Add BLL services

@@ -5,6 +5,6 @@ namespace GT.Core.Services.Impl
 {
 	public interface IGTListingService
 	{
-		Task<List<Listing>> Get(IListingFilterModel? filter = null);
+		Task<List<Listing>> GetAsync(IListingFilterModel? filter = null);
 	}
 }

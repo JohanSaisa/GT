@@ -2,11 +2,11 @@
 
 namespace GT.Core.FilterModels.Impl
 {
-  public class ListingFilterModel : IListingFilterModel
-  {
-		public string[]? ExperienceLevel { get; set; }
+	public class ListingFilterModel : IListingFilterModel
+	{
+		public List<string>? ExperienceLevel { get; set; }
 
-		public string[]? FreeText { get; set; }
+		public List<string>? FreeText { get; set; }
 
 		public bool? FTE { get; set; }
 
@@ -17,5 +17,5 @@ namespace GT.Core.FilterModels.Impl
 		public int? SalaryMin { get; set; }
 
 		public DateTime? CreatedDate { get; set; }
-  }
+	}
 }
