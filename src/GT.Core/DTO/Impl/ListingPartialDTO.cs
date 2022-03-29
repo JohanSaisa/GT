@@ -12,6 +12,7 @@ namespace GT.Core.DTO.Impl
 	{
 		public string Id { get; set; }
 		public string ListingTitle { get; set; }
+		public string EmployerName { get; set; }
 		public int? SalaryMin { get; set; }
 		public int? SalaryMax { get; set; }
 		public string? JobTitle { get; set; }
