@@ -1,19 +1,18 @@
 using GT.Core.Services.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb;
-using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
-using GT.Data.Repositories;
+using GT.Data.Repositories.Impl;
+using GT.Data.Repositories.Interfaces;
 using GT.UI.Enums;
 using GT.UI.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -40,21 +39,21 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 	.AddEntityFrameworkStores<GTIdentityContext>();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+	.AddControllersWithViews()
+	.AddNewtonsoftJson(o =>
+	{
+		o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+	});
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGTGenericRepository<Location>), typeof(GTGenericRepository<Location>))
-	.AddScoped(typeof(IGTGenericRepository<Company>), typeof(GTGenericRepository<Company>))
-	.AddScoped(typeof(IGTGenericRepository<Listing>), typeof(GTGenericRepository<Listing>))
-	.AddScoped(typeof(IGTGenericRepository<ListingInquiry>), typeof(GTGenericRepository<ListingInquiry>));
+	.AddTransient(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
+	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
 // Add BLL services
 builder.Services
-	.AddScoped<IGTLocationService, GTLocationService>()
-	.AddScoped<IGTCompanyService, GTCompanyService>()
-	.AddScoped<IGTListingService, GTListingService>()
-	.AddScoped<IGTListingInquiryService, GTListingInquiryService>();
+	.AddTransient<IGTListingService, GTListingService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

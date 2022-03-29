@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.31912.275
+VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{78D6EA98-79C1-48E6-B9F7-DEB9DD3CD891}"
 EndProject
@@ -29,6 +28,13 @@ Global
 		{C8951C7B-17D0-45ED-B8AA-E6C606FAD292}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8951C7B-17D0-45ED-B8AA-E6C606FAD292}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8951C7B-17D0-45ED-B8AA-E6C606FAD292}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53414BB4-D588-432C-AE5E-113497CCD2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53414BB4-D588-432C-AE5E-113497CCD2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53414BB4-D588-432C-AE5E-113497CCD2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53414BB4-D588-432C-AE5E-113497CCD2EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,6 @@ Global
 		{C8951C7B-17D0-45ED-B8AA-E6C606FAD292} = {78D6EA98-79C1-48E6-B9F7-DEB9DD3CD891}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {DAA84FF8-F704-4706-850C-0A49398A8163}
+		SolutionGuid = {0EEC84FB-1DCC-4CA0-AE64-5B82961565B4}
 	EndGlobalSection
 EndGlobal

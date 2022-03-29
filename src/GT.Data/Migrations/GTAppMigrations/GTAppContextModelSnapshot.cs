@@ -57,7 +57,6 @@ namespace GT.Data.Migrations.GTAppMigrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -73,7 +72,7 @@ namespace GT.Data.Migrations.GTAppMigrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("Date");
 
                     b.Property<string>("Description")
@@ -83,7 +82,6 @@ namespace GT.Data.Migrations.GTAppMigrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ExperienceLevelId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("FTE")
@@ -182,9 +180,7 @@ namespace GT.Data.Migrations.GTAppMigrations
 
                     b.HasOne("GT.Data.Data.GTAppDb.Entities.ExperienceLevel", "ExperienceLevel")
                         .WithMany("Listings")
-                        .HasForeignKey("ExperienceLevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ExperienceLevelId");
 
                     b.HasOne("GT.Data.Data.GTAppDb.Entities.Location", "Location")
                         .WithMany()
