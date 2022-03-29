@@ -1,5 +1,6 @@
 ﻿using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Interfaces;
+using GT.Data.Data.GTAppDb.Entities;
 
 namespace GT.Core.Services.Interfaces
 {
@@ -22,5 +23,14 @@ namespace GT.Core.Services.Interfaces
 		Task UpdateAsync(ListingDTO listingDTO, string id);
 		Task DeleteAsync(string id);
 		Task<bool> ExistsByIdAsync(string id);
+
+		/// <summary>
+		/// Maps a listing DTO to a listing entity. If the listing entitys sub-entities do not exist 
+		/// the method creates new entitites and populates the database.
+		/// </summary>
+		/// <param name="listingDTO"></param>
+		/// <param name="signedInUserId">Current signed in user which will the the mapped to the CreatedBy property.</param>
+		/// <returns></returns>
+		Task<Listing> CreateListingEntityWithSubEntities(ListingDTO listingDTO, string signedInUserId);
 	}
 }

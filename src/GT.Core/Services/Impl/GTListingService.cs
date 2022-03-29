@@ -47,20 +47,28 @@ namespace GT.Core.Services.Impl
 
 		public async Task<ListingDTO> AddAsync(ListingDTO listingDTO, string signedInUserId)
 		{
-			if (listingDTO is null)
+			try
 			{
-				_logger.LogError($"Attempted to add a null reference to the database.");
+				if (listingDTO is null)
+				{
+					_logger.LogError($"Attempted to add a null reference to the database.");
+					return null;
+				}
+				var newListing = await CreateListingEntityWithSubEntities(listingDTO, signedInUserId);
+				await _listingRepository.AddAsync(newListing);
+
+				// Assigning the updated id to the DTO.
+				listingDTO.Id = newListing.Id;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"{e.Message}");
 				return null;
 			}
-			var newListing = await CreateListingEntity(listingDTO, signedInUserId);
-			await _listingRepository.AddAsync(newListing);
-
-			// Map updates to DTO and return the updated ListingDTO
-			listingDTO.Id = newListing.Id;
 			return listingDTO;
 		}
 
-		public async Task<Listing> CreateListingEntity(ListingDTO listingDTO, string signedInUserId)
+		public async Task<Listing> CreateListingEntityWithSubEntities(ListingDTO listingDTO, string signedInUserId)
 		{
 			var newListing = new Listing();
 
@@ -74,49 +82,66 @@ namespace GT.Core.Services.Impl
 			newListing.CreatedDate = listingDTO.CreatedDate;
 			newListing.CreatedById = signedInUserId;
 
-			if (listingDTO.Employer is not null)
+			// Add sub entity Company
+			try
 			{
-				if (!await _companyService.ExistsByNameAsync(listingDTO.Employer))
+				if (listingDTO.Employer is not null)
 				{
-					await _companyService.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
+					if (!await _companyService.ExistsByNameAsync(listingDTO.Employer))
+					{
+						await _companyService.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
+					}
+					newListing.Employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
 				}
-				newListing.Employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"{e}");
 			}
 
-			if (listingDTO.Location is not null)
+			// Add sub entity Location
+			try
 			{
-				if (!await _locationService.ExistsByNameAsync(listingDTO.Location))
+				if (listingDTO.Location is not null)
 				{
-					await _locationService.AddAsync(new LocationDTO() { Name = listingDTO.Location });
+					if (!await _locationService.ExistsByNameAsync(listingDTO.Location))
+					{
+						await _locationService.AddAsync(new LocationDTO() { Name = listingDTO.Location });
+					}
+					newListing.Location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
 				}
-				newListing.Location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"{e}");
 			}
 
-			if (listingDTO.ExperienceLevel is not null)
+			// Add sub entity ExperienceLevel
+			try
 			{
-				if (!await _experienceLevelService.ExistsByNameAsync(listingDTO.ExperienceLevel))
+				if (listingDTO.ExperienceLevel is not null)
 				{
-					await _experienceLevelService.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
+					if (!await _experienceLevelService.ExistsByNameAsync(listingDTO.ExperienceLevel))
+					{
+						await _experienceLevelService.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
+					}
+					newListing.ExperienceLevel = await _experienceLevelRepository.GetAll().Where(e => e.Name == listingDTO.ExperienceLevel).FirstOrDefaultAsync();
 				}
-				newListing.ExperienceLevel = await _experienceLevelRepository.GetAll().Where(e => e.Name == listingDTO.ExperienceLevel).FirstOrDefaultAsync();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"{e}");
 			}
 
 			return newListing;
 		}
 
-		// TODO - Should this return anything if string id is not found? Return a delete success/fail bool?
 		public async Task DeleteAsync(string id)
 		{
 			if (_listingRepository.GetAll().Any(e => e.Id == id))
 			{
 				await _listingRepository.DeleteAsync(id);
 			}
-		}
-
-		public Task<bool> ExistsById(string id)
-		{
-			// TODO - Check if exists
-			throw new NotImplementedException();
 		}
 
 		public async Task<List<ListingPartialDTO>> GetAsync(IListingFilterModel? filter = null)
@@ -255,6 +280,11 @@ namespace GT.Core.Services.Impl
 
 			//}
 
+		}
+
+		public async Task<bool> ExistsByIdAsync(string id)
+		{
+			return await _listingRepository.GetAll().Where(e => e.Id == id).AnyAsync();
 		}
 	}
 }
