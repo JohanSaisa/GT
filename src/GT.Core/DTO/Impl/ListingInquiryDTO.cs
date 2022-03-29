@@ -14,6 +14,9 @@ namespace GT.Core.DTO.Impl
 		[StringLength(450)]
 		public string ListingId { get; set; }
 
+		[StringLength(450)]
+		public string? ApplicantId { get; set; }
+
 		[StringLength(100)]
 		public string MessageTitle { get; set; }
 
