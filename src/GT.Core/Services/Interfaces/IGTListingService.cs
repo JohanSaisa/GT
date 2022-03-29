@@ -7,11 +7,13 @@ namespace GT.Core.Services.Interfaces
 	public interface IGTListingService : IGTService
 	{
 		/// <summary>
-		/// Gets partial listings for list view in UI.
+		/// Gets a list of listings meant for list view in UI, where some properties have been stripped from the view model.
 		/// </summary>
-		/// <param name="filter"></param>
+		/// <param name="filter">Optional filter paramater.</param>
+		/// <returns>Returns all listings which match the provided filtered values. Returns all listings if no filter is provided.</returns>
 		Task<List<ListingPartialDTO>> GetAsync(IListingFilterModel? filter = null);
-		Task<ListingDTO> GetByIdAsync(string id);
+
+		Task<ListingDTO?> GetByIdAsync(string listingId);
 
 		/// <summary>
 		/// Converts a DTO to entities and updates the database.
@@ -19,18 +21,27 @@ namespace GT.Core.Services.Interfaces
 		/// </summary>
 		/// <param name="listingDTO"></param>
 		/// <returns>The input DTO with an updated Id.</returns>
-		Task<ListingDTO> AddAsync(ListingDTO listingDTO, string signedInUserId);
-		Task UpdateAsync(ListingDTO listingDTO, string id);
-		Task DeleteAsync(string id);
-		Task<bool> ExistsByIdAsync(string id);
+		Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId);
 
 		/// <summary>
-		/// Maps a listing DTO to a listing entity. If the listing entitys sub-entities do not exist 
+		/// 
+		/// </summary>
+		/// <param name="listingDTO"></param>
+		/// <param name="listingId"></param>
+		/// <returns></returns>
+		Task UpdateAsync(ListingDTO listingDTO, string listingId);
+		Task DeleteAsync(string listingId);
+		Task<bool> ExistsByIdAsync(string listingId);
+
+		/// <summary>
+		/// Generates and maps a listing entity. If the listing entitys sub-entities do not exist 
 		/// the method creates new entitites and populates the database.
 		/// </summary>
 		/// <param name="listingDTO"></param>
-		/// <param name="signedInUserId">Current signed in user which will the the mapped to the CreatedBy property.</param>
+		/// <param name="signedInUserId">Optional parameter used when creating a new listing.</param>
+		/// <param name="listingId">Optional parameter used when updating an existing listing.</param>
 		/// <returns></returns>
-		Task<Listing> CreateListingEntityWithSubEntities(ListingDTO listingDTO, string signedInUserId);
+		Task<Listing> CreateListingEntityWithSubEntities(ListingDTO listingDTO, string? signedInUserId = null, string? listingId = null);
+
 	}
 }
