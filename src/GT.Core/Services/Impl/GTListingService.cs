@@ -43,12 +43,6 @@ namespace GT.Core.Services.Impl
 			_experienceLevelRepository = experienceLevelRepository;
 		}
 
-		/// <summary>
-		/// Converts a DTO to entities and updates the database. 
-		/// Requires the signed in users Id for assignment of CreatedBy property.
-		/// </summary>
-		/// <param name="listingDTO"></param>
-		/// <returns>The input DTO with an updated Id.</returns>
 		public async Task<ListingDTO> AddAsync(ListingDTO listingDTO, string signedInUserId)
 		{
 			if (listingDTO is null)
@@ -56,27 +50,18 @@ namespace GT.Core.Services.Impl
 				_logger.LogError($"Attempted to add a null reference to the database.");
 				return null;
 			}
-
-			// Map DTO to entity
-
 			var newListing = await CreateListingEntity(listingDTO, signedInUserId);
-
-			// Update database
 			await _listingRepository.AddAsync(newListing);
 
-
-			// Map updates to DTO
+			// Map updates to DTO and return the updated ListingDTO
 			listingDTO.Id = newListing.Id;
-
-			// return the updated ListingDTO
 			return listingDTO;
 		}
 
 		public async Task<Listing> CreateListingEntity(ListingDTO listingDTO, string signedInUserId)
 		{
-			var newListing = new Listing()
-			{
-			};
+			var newListing = new Listing();
+
 			newListing.Id = Guid.NewGuid().ToString();
 			newListing.ListingTitle = listingDTO.ListingTitle;
 			newListing.Description = listingDTO.Description;
@@ -87,9 +72,7 @@ namespace GT.Core.Services.Impl
 			newListing.CreatedDate = listingDTO.CreatedDate;
 			newListing.CreatedById = signedInUserId;
 
-
-			// Check if company exists
-			if (listingDTO.Employer is not null)
+			if (listingDTO.Employer is not null && await _companyService.ExistsByName(listingDTO.Employer))
 			{
 				// TODO if exists 
 				var employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
@@ -137,6 +120,7 @@ namespace GT.Core.Services.Impl
 
 		public Task<bool> ExistsById(string id)
 		{
+			// TODO - Check if exists
 			throw new NotImplementedException();
 		}
 
