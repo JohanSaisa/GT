@@ -1,65 +1,138 @@
-﻿using GT.Core.DTO;
+﻿using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
 using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
-using GT.Data.Repositories;
+using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTListingService : IGTService, IGTListingService
+	/// <summary>
+	/// Contains business logic for listing objects. Used to map and convert data transfer objects and entities.
+	/// </summary>
+	public class GTListingService : IGTListingService
 	{
 		private readonly ILogger<GTListingService> _logger;
+		private readonly IGTCompanyService _companyService;
+		private readonly IGTExperienceLevelService _experienceLevelService;
+		private readonly IGTLocationService _locationService;
 		private readonly IGTGenericRepository<Listing> _listingRepository;
-		private readonly IGTIdentityRepository _identityRepository;
+		private readonly IGTGenericRepository<Company> _companyRepository;
+		private readonly IGTGenericRepository<Location> _locationRepository;
+		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
-		public GTListingService(ILogger<GTListingService> logger, IGTGenericRepository<Listing> listingRepository, IGTIdentityRepository identityRepository)
+		public GTListingService(
+			ILogger<GTListingService> logger,
+			IGTCompanyService companyService,
+			IGTExperienceLevelService experienceLevelService,
+			IGTLocationService locationService,
+			IGTGenericRepository<Listing> listingRepository,
+			IGTGenericRepository<Company> companyRepository,
+			IGTGenericRepository<Location> locationRepository,
+			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
 			_logger = logger;
+			_companyService = companyService;
+			_experienceLevelService = experienceLevelService;
+			_locationService = locationService;
 			_listingRepository = listingRepository;
-			_identityRepository = identityRepository;
+			_companyRepository = companyRepository;
+			_locationRepository = locationRepository;
+			_experienceLevelRepository = experienceLevelRepository;
 		}
 
-		public Task<ListingDTO> AddAsync(CreateListingDTO listingDTO)
+		/// <summary>
+		/// Converts a DTO to entities and updates the database. 
+		/// Requires the signed in users Id for assignment of CreatedBy property.
+		/// </summary>
+		/// <param name="listingDTO"></param>
+		/// <returns>The input DTO with an updated Id.</returns>
+		public async Task<ListingDTO> AddAsync(ListingDTO listingDTO, string signedInUserId)
 		{
-			// Map DTO to entity
-			var newListing = new Listing()
+			if (listingDTO is null)
 			{
-				Id = Guid.NewGuid().ToString(),
-				ListingTitle = listingDTO.ListingTitle,
-				Description = listingDTO.Description,
-				// Map to employer
-				Employer = listingDTO.Employer?.Name,
-				SalaryMin = listingDTO.SalaryMin,
-				SalaryMax = listingDTO.SalaryMax,
-				JobTitle = listingDTO.JobTitle,
-				// Map to Location
-				Location = listingDTO.Location?.Name,
-				FTE = listingDTO.FTE,
-				CreatedDate = listingDTO.CreatedDate,
-				// Map to experience level
-				ExperienceLevel = listingDTO.ExperienceLevel?.Name
+				_logger.LogError($"Attempted to add a null reference to the database.");
+				return null;
+			}
 
-				//Created by needs to get their name from Identity
-			};
+			// Map DTO to entity
+
+			var newListing = await CreateListingEntity(listingDTO, signedInUserId);
 
 			// Update database
+			await _listingRepository.AddAsync(newListing);
 
-			_listingRepository.AddAsync(newListing);
 
-
-			// Map model to DTO
-			var newListingDTO = new ListingDTO
+			// Map updates to DTO
+			listingDTO.Id = newListing.Id;
 
 			// return the updated ListingDTO
-			return;
+			return listingDTO;
 		}
 
-		public Task DeleteAsync(string id)
+		public async Task<Listing> CreateListingEntity(ListingDTO listingDTO, string signedInUserId)
 		{
-			throw new NotImplementedException();
+			var newListing = new Listing()
+			{
+			};
+			newListing.Id = Guid.NewGuid().ToString();
+			newListing.ListingTitle = listingDTO.ListingTitle;
+			newListing.Description = listingDTO.Description;
+			newListing.SalaryMin = listingDTO.SalaryMin;
+			newListing.SalaryMax = listingDTO.SalaryMax;
+			newListing.JobTitle = listingDTO.JobTitle;
+			newListing.FTE = listingDTO.FTE;
+			newListing.CreatedDate = listingDTO.CreatedDate;
+			newListing.CreatedById = signedInUserId;
+
+
+			// Check if company exists
+			if (listingDTO.Employer is not null)
+			{
+				// TODO if exists 
+				var employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
+				if (employer is null)
+				{
+					await _companyService.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
+				}
+
+				newListing.Employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
+			}
+
+
+			// Check if location exists
+			if (listingDTO.Location is not null)
+			{
+				var location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
+				if (location is null)
+				{
+					await _locationService.AddAsync(new LocationDTO() { Name = listingDTO.Location });
+				}
+				newListing.Location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
+			}
+
+
+			// Check if experienceLevel exists
+			var experienceLevel = await _experienceLevelRepository.GetAll().Where(e => e.Name == listingDTO.ExperienceLevel).FirstOrDefaultAsync();
+			if (experienceLevel is null)
+			{
+				// TODO - ExperienceLevel does not exist and need to be created.
+			}
+			newListing.ExperienceLevel = experienceLevel;
+
+
+			return newListing;
+		}
+
+		// TODO - Should this return anything if string id is not found? Return a delete success/fail bool?
+		public async Task DeleteAsync(string id)
+		{
+			if (_listingRepository.GetAll().Any(e => e.Id == id))
+			{
+				await _listingRepository.DeleteAsync(id);
+			}
 		}
 
 		public async Task<List<ListingPartialDTO>> GetAsync(IListingFilterModel? filter = null)
@@ -77,7 +150,8 @@ namespace GT.Core.Services.Impl
 
 				.Where(e => filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
-					|| (e.ExperienceLevel != null && (e.ExperienceLevel.Name != null || filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
+					|| (e.ExperienceLevel != null && (e.ExperienceLevel.Name != null
+					|| filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
 
 				.Where(e =>
 					filter.FTE == null
@@ -117,8 +191,7 @@ namespace GT.Core.Services.Impl
 				}
 			}
 
-			var entities = await query
-				.ToListAsync();
+			var entities = await query.ToListAsync();
 
 			// Map entities to DTOs
 
@@ -181,9 +254,24 @@ namespace GT.Core.Services.Impl
 			return listing;
 		}
 
-		public Task UpdateAsync(ListingDTO listingDTO, string id)
+		public async Task UpdateAsync(ListingDTO listingDTO, string id)
 		{
+
 			throw new NotImplementedException();
+
+			//// TODO - Check this link out https://docs.microsoft.com/en-us/archive/msdn-magazine/2009/brownfield/n-tier-application-patterns
+
+			//// Check if exists. Error handling.
+
+			//if (listingDTO.Id == id && _listingRepository.GetAll().Any(e => e.Id == id))
+			//{
+			//	// TODO map to entity
+
+			//	await _listingRepository.UpdateAsync( , id);
+
+			//}
+
 		}
 	}
 }
+

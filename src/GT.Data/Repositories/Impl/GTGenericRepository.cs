@@ -1,8 +1,9 @@
 ﻿using GT.Data.Data;
 using GT.Data.Data.GTAppDb;
+using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace GT.Data.Repositories
+namespace GT.Data.Repositories.Impl
 {
 	/// <summary>
 	/// Base repository class.
@@ -128,6 +129,8 @@ namespace GT.Data.Repositories
 				.Set<TEntity>()
 				.Any(e => e.Id == id);
 		}
+
+		// TODO - Delete these if unused 
 
 		//protected virtual void Dispose(bool disposing)
 		//{

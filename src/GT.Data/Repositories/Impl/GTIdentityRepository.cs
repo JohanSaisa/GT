@@ -1,7 +1,8 @@
 ﻿using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
+using GT.Data.Repositories.Interfaces;
 
-namespace GT.Data.Repositories
+namespace GT.Data.Repositories.Impl
 {
 	public class GTIdentityRepository : IGTIdentityRepository
 	{

@@ -1,12 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GT.Core.DTO.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
-namespace GT.Core.DTO
+namespace GT.Core.DTO.Impl
 {
 	/// <summary>
-	/// Used for creating new listings. Lacks property for Id as it is set by the service layer
+	/// Represents a listing view and create model.
 	/// </summary>
-	public class CreateListingDTO
+	public class ListingDTO : IGTDataTransferObject
 	{
+		[StringLength(450)]
+		public string Id { get; set; }
+
 		[StringLength(100)]
 		public string ListingTitle { get; set; }
 

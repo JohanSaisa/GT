@@ -1,6 +1,6 @@
 ﻿using GT.Data.Data;
 
-namespace GT.Data.Repositories
+namespace GT.Data.Repositories.Interfaces
 {
 	/// <summary>
 	/// Defines what functionalities that need to be present in any implementation of a generic repository.

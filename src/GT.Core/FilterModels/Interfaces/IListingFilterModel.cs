@@ -1,6 +1,9 @@
 ﻿namespace GT.Core.FilterModels.Interfaces
 {
-	public interface IListingFilterModel : IFilterModel
+	/// <summary>
+	/// Represents a model containing paramaters used for filtering against the database.
+	/// </summary>
+	public interface IListingFilterModel
 	{
 		/// <summary>
 		/// Search result checks the listing's experience level property, 

@@ -1,8 +1,10 @@
 using GT.Core.Services.Impl;
+using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
-using GT.Data.Repositories;
+using GT.Data.Repositories.Impl;
+using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Reflection;

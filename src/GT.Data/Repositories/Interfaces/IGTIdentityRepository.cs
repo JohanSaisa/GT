@@ -1,6 +1,6 @@
 ﻿using GT.Data.Data.GTIdentityDb.Entities;
 
-namespace GT.Data.Repositories
+namespace GT.Data.Repositories.Interfaces
 {
 	public interface IGTIdentityRepository
 	{
