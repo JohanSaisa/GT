@@ -135,6 +135,11 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public Task<bool> ExistsById(string id)
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task<List<ListingPartialDTO>> GetAsync(IListingFilterModel? filter = null)
 		{
 			// Gets entities from database
