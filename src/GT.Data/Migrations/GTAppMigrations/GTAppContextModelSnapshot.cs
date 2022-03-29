@@ -57,7 +57,6 @@ namespace GT.Data.Migrations.GTAppMigrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

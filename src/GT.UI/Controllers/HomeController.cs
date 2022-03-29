@@ -4,49 +4,49 @@ using System.Diagnostics;
 
 namespace GT.UI.Controllers
 {
-  public class HomeController : Controller
-  {
-    private readonly ILogger<HomeController> _logger;
+	public class HomeController : Controller
+	{
+		private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
-    {
-      _logger = logger;
-    }
+		public HomeController(ILogger<HomeController> logger)
+		{
+			_logger = logger;
+		}
 
-    [Route("")]
-    public IActionResult Index()
-    {
-      return View();
-    }
+		[Route("")]
+		public IActionResult Index()
+		{
+			return View();
+		}
 
-    [Route("Kontakt")]
-    public IActionResult Contact()
-    {
-      return View();
-    }
+		[Route("Kontakt")]
+		public IActionResult Contact()
+		{
+			return View();
+		}
 
-    [Route("Annonser")]
-    public IActionResult Listings()
-    {
-      return View();
-    }
+		[Route("Annonser")]
+		public IActionResult Listings()
+		{
+			return View();
+		}
 
-    [Route("Info")]
-    public IActionResult About()
-    {
-      return View();
-    }
+		[Route("Info")]
+		public IActionResult About()
+		{
+			return View();
+		}
 
-    [Route("Om-cookies")]
-    public IActionResult Privacy()
-    {
-      return View();
-    }
+		[Route("Om-cookies")]
+		public IActionResult Privacy()
+		{
+			return View();
+		}
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-      return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-  }
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		public IActionResult Error()
+		{
+			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+		}
+	}
 }

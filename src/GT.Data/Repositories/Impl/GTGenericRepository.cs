@@ -1,50 +1,28 @@
 ﻿using GT.Data.Data;
+using GT.Data.Data.GTAppDb;
+using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
 
-namespace GT.Data.Repositories
+namespace GT.Data.Repositories.Impl
 {
 	/// <summary>
 	/// Base repository class.
 	/// </summary>
 	/// <typeparam name="TEntity">The database entity handled by the repository.</typeparam>
 	public class GTGenericRepository<TEntity>
-	: IGTGenericRepository<TEntity>, IDisposable
+	: IGTGenericRepository<TEntity>
 			where TEntity : class, IGTEntity
 	{
-		protected readonly DbContext _context;
+		protected readonly GTAppContext _context;
 		protected bool _disposed;
 
-		public GTGenericRepository(DbContext context)
+		public GTGenericRepository(GTAppContext context)
 		{
 			_context = context;
 		}
 
-		public GTGenericRepository()
+		public virtual IQueryable<TEntity> GetAll()
 		{
-
-		}
-
-		/// <summary>
-		/// Gets all entities of type TEntity from the database, with optional included related data.
-		/// </summary>
-		/// <param name="includeExpression">Entity related data to be included. Example:
-		/// <br>
-		/// var customers = GetAll(c => c.Include(c.Address).ThenInclude(a => a.City));
-		/// </br></param>
-		/// <returns>IQueryable containing all database entities.</returns>
-		public virtual IQueryable<TEntity> GetAll(
-				Expression<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includeExpression = null)
-		{
-			// Check if any related data is to be included.
-			if (includeExpression is not null)
-			{
-				// Compile the include expression and apply it to the relevant DbSet.
-				var include = includeExpression.Compile();
-				return include(_context.Set<TEntity>());
-			}
-
 			return _context.Set<TEntity>();
 		}
 
@@ -152,23 +130,25 @@ namespace GT.Data.Repositories
 				.Any(e => e.Id == id);
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!_disposed)
-			{
-				if (disposing)
-				{
-					_context.Dispose();
-				}
-			}
+		// TODO - Delete these if unused 
 
-			_disposed = true;
-		}
+		//protected virtual void Dispose(bool disposing)
+		//{
+		//	if (!_disposed)
+		//	{
+		//		if (disposing)
+		//		{
+		//			_context.Dispose();
+		//		}
+		//	}
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+		//	_disposed = true;
+		//}
+
+		//public void Dispose()
+		//{
+		//	Dispose(true);
+		//	GC.SuppressFinalize(this);
+		//}
 	}
 }

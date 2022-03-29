@@ -28,9 +28,9 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public string? CreatedById { get; set; }
 
 		[Column(TypeName = "Date")]
-		public DateTime CreatedDate { get; set; }
+		public DateTime? CreatedDate { get; set; }
 
-		public ICollection<ListingInquiry> Inquiries { get; set; }
+		public ICollection<ListingInquiry>? Inquiries { get; set; }
 
 		public ExperienceLevel? ExperienceLevel { get; set; }
 	}
