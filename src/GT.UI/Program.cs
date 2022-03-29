@@ -57,8 +57,6 @@ builder.Services
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
 builder.Services.AddControllers();
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
