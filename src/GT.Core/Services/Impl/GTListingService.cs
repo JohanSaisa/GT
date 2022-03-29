@@ -15,9 +15,11 @@ namespace GT.Core.Services.Impl
 	public class GTListingService : IGTListingService
 	{
 		private readonly ILogger<GTListingService> _logger;
+
 		private readonly IGTCompanyService _companyService;
 		private readonly IGTExperienceLevelService _experienceLevelService;
 		private readonly IGTLocationService _locationService;
+
 		private readonly IGTGenericRepository<Listing> _listingRepository;
 		private readonly IGTGenericRepository<Company> _companyRepository;
 		private readonly IGTGenericRepository<Location> _locationRepository;
@@ -72,39 +74,32 @@ namespace GT.Core.Services.Impl
 			newListing.CreatedDate = listingDTO.CreatedDate;
 			newListing.CreatedById = signedInUserId;
 
-			if (listingDTO.Employer is not null && await _companyService.ExistsByName(listingDTO.Employer))
+			if (listingDTO.Employer is not null)
 			{
-				// TODO if exists 
-				var employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
-				if (employer is null)
+				if (!await _companyService.ExistsByNameAsync(listingDTO.Employer))
 				{
 					await _companyService.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
 				}
-
 				newListing.Employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
 			}
 
-
-			// Check if location exists
 			if (listingDTO.Location is not null)
 			{
-				var location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
-				if (location is null)
+				if (!await _locationService.ExistsByNameAsync(listingDTO.Location))
 				{
 					await _locationService.AddAsync(new LocationDTO() { Name = listingDTO.Location });
 				}
 				newListing.Location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
 			}
 
-
-			// Check if experienceLevel exists
-			var experienceLevel = await _experienceLevelRepository.GetAll().Where(e => e.Name == listingDTO.ExperienceLevel).FirstOrDefaultAsync();
-			if (experienceLevel is null)
+			if (listingDTO.ExperienceLevel is not null)
 			{
-				// TODO - ExperienceLevel does not exist and need to be created.
+				if (!await _experienceLevelService.ExistsByNameAsync(listingDTO.ExperienceLevel))
+				{
+					await _experienceLevelService.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
+				}
+				newListing.ExperienceLevel = await _experienceLevelRepository.GetAll().Where(e => e.Name == listingDTO.ExperienceLevel).FirstOrDefaultAsync();
 			}
-			newListing.ExperienceLevel = experienceLevel;
-
 
 			return newListing;
 		}
