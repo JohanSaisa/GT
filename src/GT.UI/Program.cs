@@ -52,8 +52,10 @@ builder.Services
 	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
 // Add BLL services
+// TODO Uncomment when services are implemented.
 //builder.Services
-//	.AddTransient<IGTListingService, GTListingService>();
+//	.AddTransient<IGTListingService, GTListingService>()
+//	.AddTransient<IGTCompanyService, GTCompanyService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
