@@ -1,3 +1,4 @@
+using GT.Core.Services.Impl;
 using GT.Data.Data.GTAppDb;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
@@ -8,6 +9,7 @@ using GT.UI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -54,6 +56,10 @@ builder.Services
 //builder.Services
 //	.AddTransient<IGTListingService, GTListingService>()
 //	.AddTransient<IGTCompanyService, GTCompanyService>();
+
+//Add Email service
+builder.Services
+	.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
