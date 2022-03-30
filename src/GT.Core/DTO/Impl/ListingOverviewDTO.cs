@@ -10,7 +10,7 @@ namespace GT.Core.DTO.Impl
 	/// </summary>
 	public class ListingOverviewDTO : IGTDataTransferObject
 	{
-		public string Id { get; set; }
+		public string? Id { get; set; }
 		public string? ListingTitle { get; set; }
 		public string? EmployerName { get; set; }
 		public int? SalaryMin { get; set; }
