@@ -1,8 +1,11 @@
 ﻿#nullable disable
-using GT.Data.Data.GTAppDb;
-using GT.Data.Data.GTAppDb.Entities;
+
+using GT.Core.DTO.Impl;
+using GT.Core.FilterModels.Interfaces;
+using GT.Core.Services.Interfaces;
+using GT.Data.Data.GTIdentityDb.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GT.UI.Controllers
 {
@@ -10,61 +13,56 @@ namespace GT.UI.Controllers
 	[ApiController]
 	public class ListingsController : ControllerBase
 	{
-		private readonly GTAppContext _context;
+		private readonly IGTListingService _listingService;
+		private readonly UserManager<ApplicationUser> _userManager;
 
-		public ListingsController(GTAppContext context)
+		public ListingsController(IGTListingService listingService, UserManager<ApplicationUser> userManager)
 		{
-			_context = context;
+			_listingService = listingService;
+			_userManager = userManager;
 		}
 
 		// GET: api/Listings
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Listing>>> GetListings()
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(IListingFilterModel filterModel = null)
 		{
-			return await _context.Listings.ToListAsync();
+			// TODO Populate and create a filtermodel
+
+			var listingDTOs = await _listingService.GetAsync(filterModel);
+
+			if (listingDTOs == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(listingDTOs);
 		}
 
 		// GET: api/Listings/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Listing>> GetListing(string id)
+		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
-			var listing = await _context.Listings.FindAsync(id);
+			var listing = await _listingService.GetByIdAsync(id);
 
 			if (listing == null)
 			{
 				return NotFound();
 			}
 
-			return listing;
+			return Ok(listing);
 		}
 
 		// PUT: api/Listings/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutListing(string id, Listing listing)
+		public async Task<IActionResult> PutListing(string id, ListingDTO listing)
 		{
 			if (id != listing.Id)
 			{
 				return BadRequest();
 			}
 
-			_context.Entry(listing).State = EntityState.Modified;
-
-			try
-			{
-				await _context.SaveChangesAsync();
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!ListingExists(id))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
+			await _listingService.UpdateAsync(listing, id);
 
 			return NoContent();
 		}
@@ -72,47 +70,28 @@ namespace GT.UI.Controllers
 		// POST: api/Listings
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Listing>> PostListing(Listing listing)
+		public async Task<ActionResult<ListingDTO>> PostListing(ListingDTO listing)
 		{
-			_context.Listings.Add(listing);
-			try
+			var listingDTO = await _listingService.AddAsync(listing, _userManager.GetUserId(User));
+			if (listingDTO == null)
 			{
-				await _context.SaveChangesAsync();
+				return BadRequest();
 			}
-			catch (DbUpdateException)
-			{
-				if (ListingExists(listing.Id))
-				{
-					return Conflict();
-				}
-				else
-				{
-					throw;
-				}
-			}
-
-			return CreatedAtAction("GetListing", new { id = listing.Id }, listing);
+			return CreatedAtAction("GetListing", listingDTO);
 		}
 
 		// DELETE: api/Listings/5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string id)
 		{
-			var listing = await _context.Listings.FindAsync(id);
-			if (listing == null)
+			if (!await _listingService.ExistsByIdAsync(id))
 			{
 				return NotFound();
 			}
 
-			_context.Listings.Remove(listing);
-			await _context.SaveChangesAsync();
+			await _listingService.DeleteAsync(id);
 
 			return NoContent();
-		}
-
-		private bool ListingExists(string id)
-		{
-			return _context.Listings.Any(e => e.Id == id);
 		}
 	}
 }
