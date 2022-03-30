@@ -8,11 +8,11 @@ namespace GT.Core.DTO.Impl
 	/// all necessary properties needed for the creation of the listing entity.
 	/// Instead use the ListingDTO.
 	/// </summary>
-	public class ListingPartialDTO : IGTDataTransferObject
+	public class ListingOverviewDTO : IGTDataTransferObject
 	{
 		public string Id { get; set; }
-		public string ListingTitle { get; set; }
-		public string EmployerName { get; set; }
+		public string? ListingTitle { get; set; }
+		public string? EmployerName { get; set; }
 		public int? SalaryMin { get; set; }
 		public int? SalaryMax { get; set; }
 		public string? JobTitle { get; set; }

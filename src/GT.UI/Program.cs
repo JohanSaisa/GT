@@ -1,5 +1,3 @@
-using GT.Core.Services.Impl;
-using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
@@ -52,8 +50,10 @@ builder.Services
 	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
 // Add BLL services
-builder.Services
-	.AddTransient<IGTListingService, GTListingService>();
+// TODO Uncomment when services are implemented.
+//builder.Services
+//	.AddTransient<IGTListingService, GTListingService>()
+//	.AddTransient<IGTCompanyService, GTCompanyService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
