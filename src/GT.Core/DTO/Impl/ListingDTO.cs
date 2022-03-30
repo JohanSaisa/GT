@@ -9,10 +9,10 @@ namespace GT.Core.DTO.Impl
 	public class ListingDTO : IGTDataTransferObject
 	{
 		[StringLength(450)]
-		public string Id { get; set; }
+		public string? Id { get; set; }
 
 		[StringLength(100)]
-		public string ListingTitle { get; set; }
+		public string? ListingTitle { get; set; }
 
 		[StringLength(2000)]
 		public string? Description { get; set; }

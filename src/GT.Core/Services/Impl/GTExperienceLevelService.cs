@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTCompanyService : IGTCompanyService
+	public class GTExperienceLevelService : IGTExperienceLevelService
 	{
 		private readonly ILogger<GTCompanyService> _logger;
-		private readonly IGTGenericRepository<Company> _companyRepository;
+		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
-		public GTCompanyService(ILogger<GTCompanyService> logger, IGTGenericRepository<Company> companyRepository)
+		public GTExperienceLevelService(ILogger<GTCompanyService> logger, IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
 			_logger = logger;
-			_companyRepository = companyRepository;
+			_experienceLevelRepository = experienceLevelRepository;
 		}
 
-		public async Task<CompanyDTO> AddAsync(CompanyDTO dto)
+		public async Task<ExperienceLevelDTO> AddAsync(ExperienceLevelDTO dto)
 		{
 			try
 			{
@@ -31,7 +31,7 @@ namespace GT.Core.Services.Impl
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-					var entity = await _companyRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _experienceLevelRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
 					// TODO - Use IMapper
 					if (entity is not null)
@@ -44,13 +44,13 @@ namespace GT.Core.Services.Impl
 				}
 
 				// TODO - Use IMapper
-				var newEntity = new Company()
+				var newEntity = new ExperienceLevel()
 				{
 					Id = Guid.NewGuid().ToString(),
 					Name = dto.Name
 				};
 
-				await _companyRepository.AddAsync(newEntity);
+				await _experienceLevelRepository.AddAsync(newEntity);
 
 				// Assigning the updated id to the DTO as it is the only property with a new value.
 				dto.Id = newEntity.Id;
@@ -67,7 +67,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _companyRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _experienceLevelRepository.GetAll().Where(e => e.Name == name).AnyAsync();
 			}
 			catch (Exception e)
 			{
