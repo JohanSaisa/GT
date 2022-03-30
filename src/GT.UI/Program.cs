@@ -51,9 +51,13 @@ builder.Services
 	.AddTransient(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
 	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
-// Add BLL services
+//Add BLL services
 builder.Services
-	.AddTransient<IGTListingService, GTListingService>();
+	.AddTransient<IGTListingService, GTListingService>()
+	.AddTransient<IGTCompanyService, GTCompanyService>()
+	.AddTransient<IGTLocationService, GTLocationService>()
+	.AddTransient<IGTListingInquiryService, GTListingInquiryService>()
+	.AddTransient<IGTExperienceLevelService, GTExperienceLevelService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -85,6 +89,11 @@ builder.Services.AddAuthentication()
 			ValidAudience = configuration[GTJwtConstants.Audience],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[GTJwtConstants.Key])),
 		};
+	})
+	.AddGoogle(googleOptions =>
+	{
+		googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+		googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 	});
 
 builder.Services.AddAuthorization(options =>
