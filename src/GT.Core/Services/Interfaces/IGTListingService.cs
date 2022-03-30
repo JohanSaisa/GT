@@ -1,22 +1,24 @@
 ﻿using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Interfaces;
-using GT.Data.Data.GTAppDb.Entities;
 
 namespace GT.Core.Services.Interfaces
 {
 	public interface IGTListingService : IGTService
 	{
 		/// <summary>
-		/// Gets a list of listings meant for list view in UI, where some properties have been stripped from the view model.
+		/// Get high level view of all relevant listings with possibly applied filter for display.
 		/// </summary>
 		/// <param name="filter">Optional filter paramater.</param>
 		/// <returns>Returns all listings which match the provided filtered values. Returns all listings if no filter is provided.</returns>
-		Task<List<ListingPartialDTO>> GetAsync(IListingFilterModel? filter = null);
+		Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null);
 
+		/// <summary>
+		/// Sends request to the repository to delete the entity from the database.
+		/// </summary>
 		Task<ListingDTO?> GetByIdAsync(string listingId);
 
 		/// <summary>
-		/// Converts a DTO to entities and updates the database.
+		/// Converts a DTO to entities and sends a request to update the database.
 		/// Requires the signed in users Id for assignment of CreatedBy property.
 		/// </summary>
 		/// <param name="listingDTO"></param>
@@ -24,24 +26,24 @@ namespace GT.Core.Services.Interfaces
 		Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId);
 
 		/// <summary>
-		/// 
+		/// Converts a DTO to entities and sends a request to update the database.
+		/// Requires the listingId for model validation.
 		/// </summary>
 		/// <param name="listingDTO"></param>
 		/// <param name="listingId"></param>
 		/// <returns></returns>
 		Task UpdateAsync(ListingDTO listingDTO, string listingId);
-		Task DeleteAsync(string listingId);
-		Task<bool> ExistsByIdAsync(string listingId);
 
 		/// <summary>
-		/// Generates and maps a listing entity. If the listing entitys sub-entities do not exist 
-		/// the method creates new entitites and populates the database.
+		/// Sends request to the repository to delete the entity from the database.
 		/// </summary>
-		/// <param name="listingDTO"></param>
-		/// <param name="signedInUserId">Optional parameter used when creating a new listing.</param>
-		/// <param name="listingId">Optional parameter used when updating an existing listing.</param>
-		/// <returns></returns>
-		Task<Listing> CreateListingEntityWithSubEntities(ListingDTO listingDTO, string? signedInUserId = null, string? listingId = null);
+		/// <param name="listingId"></param>
+		Task DeleteAsync(string listingId);
 
+		/// <summary>
+		/// Asks the repository if an entity with the assigned id exists.
+		/// </summary>
+		/// <param name="listingId">Confirmation as true if entity is found, false if not.</param>
+		Task<bool> ExistsByIdAsync(string listingId);
 	}
 }
