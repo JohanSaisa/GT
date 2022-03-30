@@ -1,8 +1,8 @@
 ﻿#nullable disable
 
 using GT.Core.DTO.Impl;
+using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,21 +24,23 @@ namespace GT.UI.Controllers
 
 		// GET: api/Listings
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Listing>>> GetListings()
+		public async Task<ActionResult<IEnumerable<ListingDTO>>> GetListings(IListingFilterModel filterModel = null)
 		{
-			var listings = await _listingService.GetAsync();
+			// TODO Populate and create a filtermodel
 
-			if (listings == null)
+			var listingDTOs = await _listingService.GetAsync(filterModel);
+
+			if (listingDTOs == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(listings);
+			return Ok(listingDTOs);
 		}
 
 		// GET: api/Listings/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Listing>> GetListing(string id)
+		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
 			var listing = await _listingService.GetByIdAsync(id);
 
@@ -68,10 +70,14 @@ namespace GT.UI.Controllers
 		// POST: api/Listings
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Listing>> PostListing(ListingDTO listing)
+		public async Task<ActionResult<ListingDTO>> PostListing(ListingDTO listing)
 		{
-			await _listingService.AddAsync(listing, _userManager.GetUserId(User));
-			return CreatedAtAction("GetListing", new { id = listing.Id }, listing);
+			var listingDTO = await _listingService.AddAsync(listing, _userManager.GetUserId(User));
+			if (listingDTO == null)
+			{
+				return BadRequest();
+			}
+			return CreatedAtAction("GetListing", listingDTO);
 		}
 
 		// DELETE: api/Listings/5
@@ -87,6 +93,5 @@ namespace GT.UI.Controllers
 
 			return NoContent();
 		}
-
 	}
 }
