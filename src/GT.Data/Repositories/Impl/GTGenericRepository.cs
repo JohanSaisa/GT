@@ -2,6 +2,7 @@
 using GT.Data.Data.GTAppDb;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GT.Data.Repositories.Impl
 {
@@ -14,16 +15,25 @@ namespace GT.Data.Repositories.Impl
 			where TEntity : class, IGTEntity
 	{
 		protected readonly GTAppContext _context;
-		protected bool _disposed;
+		protected ILogger _logger;
 
-		public GTGenericRepository(GTAppContext context)
+		public GTGenericRepository(GTAppContext context, ILogger<GTGenericRepository<TEntity>> logger)
 		{
 			_context = context;
+			_logger = logger;
 		}
 
-		public virtual IQueryable<TEntity> GetAll()
+		public virtual IQueryable<TEntity>? GetAll()
 		{
-			return _context.Set<TEntity>();
+			try
+			{
+				return _context.Set<TEntity>();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -31,11 +41,28 @@ namespace GT.Data.Repositories.Impl
 		/// </summary>
 		/// <param name="keys"></param>
 		/// <returns></returns>
-		public async Task<TEntity> FindAsync(params object[] keys)
+		public async Task<TEntity?> FindAsync(params object[] keys)
 		{
-			return await _context
-				.Set<TEntity>()
-				.FindAsync(keys);
+			if (keys is null || !keys.Any())
+			{
+				return null;
+			}
+
+			keys = keys
+				.Where(key => key != null)
+				.ToArray();
+
+			try
+			{
+				return await _context
+					.Set<TEntity>()
+					.FindAsync(keys);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -59,9 +86,9 @@ namespace GT.Data.Repositories.Impl
 
 				await _context.SaveChangesAsync();
 			}
-			catch (DbUpdateException)
+			catch (Exception ex)
 			{
-				throw;
+				_logger.LogError(ex.Message);
 			}
 
 			return entity;
@@ -81,6 +108,11 @@ namespace GT.Data.Repositories.Impl
 				throw new ArgumentNullException(nameof(entity));
 			}
 
+			if (id is null)
+			{
+				throw new ArgumentNullException(nameof(id));
+			}
+
 			if (!ItemExists(id))
 			{
 				try
@@ -88,9 +120,9 @@ namespace GT.Data.Repositories.Impl
 					_context.Update(entity);
 					await _context.SaveChangesAsync();
 				}
-				catch (DbUpdateConcurrencyException)
+				catch (Exception ex)
 				{
-					throw;
+					_logger.LogError(ex.Message);
 				}
 			}
 		}
@@ -102,13 +134,18 @@ namespace GT.Data.Repositories.Impl
 		/// <returns></returns>
 		public async Task DeleteAsync(string id)
 		{
-			var item = await _context
-				.Set<TEntity>()
-				.FirstOrDefaultAsync(e => e.Id == id);
-
-			if (item is not null)
+			if(id is null)
 			{
-				try
+				throw new ArgumentNullException(nameof(id));
+			}
+
+			try
+			{
+				var item = await _context
+					.Set<TEntity>()
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (item is not null)
 				{
 					_context
 						.Set<TEntity>()
@@ -116,39 +153,31 @@ namespace GT.Data.Repositories.Impl
 
 					await _context.SaveChangesAsync();
 				}
-				catch (DbUpdateException)
-				{
-					throw;
-				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
 			}
 		}
 
 		protected bool ItemExists(string id)
 		{
-			return _context
-				.Set<TEntity>()
-				.Any(e => e.Id == id);
+			if(id is null)
+			{
+				throw new ArgumentNullException(nameof(id));
+			}
+
+			try
+			{
+				return _context
+					.Set<TEntity>()
+					.Any(e => e.Id == id);
+			}
+			catch(Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return false;
+			}		
 		}
-
-		// TODO - Delete these if unused 
-
-		//protected virtual void Dispose(bool disposing)
-		//{
-		//	if (!_disposed)
-		//	{
-		//		if (disposing)
-		//		{
-		//			_context.Dispose();
-		//		}
-		//	}
-
-		//	_disposed = true;
-		//}
-
-		//public void Dispose()
-		//{
-		//	Dispose(true);
-		//	GC.SuppressFinalize(this);
-		//}
 	}
 }

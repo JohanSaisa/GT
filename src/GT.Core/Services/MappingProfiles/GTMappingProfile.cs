@@ -18,7 +18,7 @@ namespace GT.Core.Services.MappingProfiles
 				.ReverseMap();
 
 			CreateMap<Location, LocationDTO>()
-			.ReverseMap();
+				.ReverseMap();
 		}
 	}
 }

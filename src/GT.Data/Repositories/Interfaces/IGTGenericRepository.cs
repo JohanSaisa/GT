@@ -9,8 +9,8 @@ namespace GT.Data.Repositories.Interfaces
 	public interface IGTGenericRepository<TEntity>
 		where TEntity : class, IGTEntity
 	{
-		IQueryable<TEntity> GetAll();
-		Task<TEntity> FindAsync(params object[] keys);
+		IQueryable<TEntity>? GetAll();
+		Task<TEntity?> FindAsync(params object[] keys);
 		Task<TEntity> AddAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);
 		Task DeleteAsync(string id);

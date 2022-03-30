@@ -49,7 +49,7 @@ namespace GT.Core.Services.Impl
 		/// </summary>
 		/// <param name="listingDTO"></param>
 		/// <returns>The input DTO with an updated Id.</returns>
-		public async Task<ListingDTO> AddAsync(ListingDTO listingDTO, string signedInUserId)
+		public async Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId)
 		{
 			if (listingDTO is null)
 			{
