@@ -10,5 +10,6 @@ namespace GT.Core.Services.Interfaces
 		Task<ListingInquiryDTO> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null);
 		Task UpdateAsync(ListingInquiryDTO inquiryDTO, string id);
 		Task DeleteAsync(string id);
+		Task<bool> ExistsById(string id);
 	}
 }

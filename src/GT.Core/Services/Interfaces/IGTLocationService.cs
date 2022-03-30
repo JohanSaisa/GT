@@ -10,6 +10,6 @@ namespace GT.Core.Services.Interfaces
 		Task<LocationDTO> AddAsync(LocationDTO dto);
 		Task UpdateAsync(LocationDTO dto, string id);
 		Task DeleteAsync(string id);
-		Task<bool> Exists(string name);
+		Task<bool> ExistsByName(string name);
 	}
 }
