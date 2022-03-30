@@ -12,7 +12,8 @@ namespace GT.Core.Services.Impl
 		private readonly ILogger<GTCompanyService> _logger;
 		private readonly IGTGenericRepository<Company> _companyRepository;
 
-		public GTCompanyService(ILogger<GTCompanyService> logger, IGTGenericRepository<Company> companyRepository)
+		public GTCompanyService(ILogger<GTCompanyService> logger,
+			IGTGenericRepository<Company> companyRepository)
 		{
 			_logger = logger;
 			_companyRepository = companyRepository;

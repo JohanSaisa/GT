@@ -9,7 +9,7 @@ namespace GT.Core.Services.Impl
 {
 	public class GTLocationService : IGTLocationService
 	{
-		private readonly ILogger<GTCompanyService> _logger;
+		private readonly ILogger<GTLocationService> _logger;
 		private readonly IGTGenericRepository<Location> _locationRepository;
 
 		public GTLocationService(ILogger<GTCompanyService> logger, IGTGenericRepository<Location> locationRepository)
