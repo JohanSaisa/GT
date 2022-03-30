@@ -24,7 +24,7 @@ namespace GT.UI.Controllers
 
 		// GET: api/Listings
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingDTO>>> GetListings(IListingFilterModel filterModel = null)
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(IListingFilterModel filterModel = null)
 		{
 			// TODO Populate and create a filtermodel
 
@@ -84,7 +84,7 @@ namespace GT.UI.Controllers
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string id)
 		{
-			if (!_listingService.ExistsById(id).Result)
+			if (!await _listingService.ExistsByIdAsync(id))
 			{
 				return NotFound();
 			}
