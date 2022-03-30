@@ -12,7 +12,7 @@ namespace GT.Core.Services.Impl
 		private readonly ILogger<GTLocationService> _logger;
 		private readonly IGTGenericRepository<Location> _locationRepository;
 
-		public GTLocationService(ILogger<GTCompanyService> logger, IGTGenericRepository<Location> locationRepository)
+		public GTLocationService(ILogger<GTLocationService> logger, IGTGenericRepository<Location> locationRepository)
 		{
 			_logger = logger;
 			_locationRepository = locationRepository;

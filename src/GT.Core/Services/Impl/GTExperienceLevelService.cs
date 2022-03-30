@@ -12,7 +12,7 @@ namespace GT.Core.Services.Impl
 		private readonly ILogger<GTExperienceLevelService> _logger;
 		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
-		public GTExperienceLevelService(ILogger<GTCompanyService> logger,
+		public GTExperienceLevelService(ILogger<GTExperienceLevelService> logger,
 			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
 			_logger = logger;
