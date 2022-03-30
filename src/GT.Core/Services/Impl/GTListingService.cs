@@ -271,11 +271,19 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (await ExistsByIdAsync(id))
+				if (listingDTO.Id is not null || id is not null)
 				{
-					var updatedEntity = await GetUpdatedListingEntityWithSubEntities(listingDTO);
-					await _listingRepository.UpdateAsync(updatedEntity, id);
+					if (await ExistsByIdAsync(id))
+					{
+						var updatedEntity = await GetUpdatedListingEntityWithSubEntities(listingDTO);
+						await _listingRepository.UpdateAsync(updatedEntity, id);
+					}
 				}
+				else
+				{
+					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+				}
+
 			}
 			catch (Exception e)
 			{
