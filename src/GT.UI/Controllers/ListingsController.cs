@@ -1,10 +1,11 @@
 ﻿#nullable disable
+
 using GT.Core.DTO.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GT.UI.Controllers
 {
@@ -12,13 +13,12 @@ namespace GT.UI.Controllers
 	[ApiController]
 	public class ListingsController : ControllerBase
 	{
-		private readonly IGTListingService _ListingService;
-		private readonly UserManager<IdentityUser> _userManager;
+		private readonly IGTListingService _listingService;
+		private readonly UserManager<ApplicationUser> _userManager;
 
-
-		public ListingsController(IGTListingService iGTListingService, UserManager<IdentityUser> userManager)
-{
-			_ListingService = iGTListingService;
+		public ListingsController(IGTListingService listingService, UserManager<ApplicationUser> userManager)
+		{
+			_listingService = listingService;
 			_userManager = userManager;
 		}
 
@@ -26,9 +26,9 @@ namespace GT.UI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Listing>>> GetListings()
 		{
-			var listings = await _ListingService.GetAsync();
+			var listings = await _listingService.GetAsync();
 
-			if(listings == null)
+			if (listings == null)
 			{
 				return NotFound();
 			}
@@ -40,7 +40,7 @@ namespace GT.UI.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Listing>> GetListing(string id)
 		{
-			var listing = await _ListingService.GetByIdAsync(id);
+			var listing = await _listingService.GetByIdAsync(id);
 
 			if (listing == null)
 			{
@@ -60,25 +60,9 @@ namespace GT.UI.Controllers
 				return BadRequest();
 			}
 
-			try
-			{
-				await _ListingService.UpdateAsync(listing, id);
-			}
-
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!ListingExists(id))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
+			await _listingService.UpdateAsync(listing, id);
 
 			return NoContent();
-
 		}
 
 		// POST: api/Listings
@@ -86,7 +70,7 @@ namespace GT.UI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Listing>> PostListing(ListingDTO listing)
 		{
-			await _ListingService.AddAsync(listing, _userManager.GetUserId(User));
+			await _listingService.AddAsync(listing, _userManager.GetUserId(User));
 			return CreatedAtAction("GetListing", new { id = listing.Id }, listing);
 		}
 
@@ -94,20 +78,15 @@ namespace GT.UI.Controllers
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string id)
 		{
-			var listing = await _ListingService.GetByIdAsync(id);
-			if (listing == null)
+			if (!_listingService.ExistsById(id).Result)
 			{
 				return NotFound();
 			}
 
-			await _ListingService.DeleteAsync(id);
+			await _listingService.DeleteAsync(id);
 
 			return NoContent();
 		}
 
-		private bool ListingExists(string id)
-		{
-			return _ListingService.ExistsById(id).Result;
-		}
 	}
 }
