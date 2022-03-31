@@ -29,9 +29,9 @@ namespace GT.Data.Repositories.Impl
 			{
 				return _context.Set<TEntity>();
 			}
-			catch (Exception ex)
+			catch (Exception e)
 			{
-				_logger.LogError(ex.Message);
+				_logger.LogError(e.Message);
 				return null;
 			}
 		}
@@ -71,27 +71,29 @@ namespace GT.Data.Repositories.Impl
 		/// <param name="entity"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public async Task<TEntity> AddAsync(TEntity entity)
+		public async Task<TEntity?> AddAsync(TEntity entity)
 		{
-			if (entity is null)
+			if (entity is not null)
 			{
-				throw new ArgumentNullException(nameof(entity));
-			}
+				try
+				{
+					await _context
+						.Set<TEntity>()
+						.AddAsync(entity);
 
-			try
+					await _context.SaveChangesAsync();
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex.Message);
+				}
+				return entity;
+			}
+			else
 			{
-				await _context
-					.Set<TEntity>()
-					.AddAsync(entity);
-
-				await _context.SaveChangesAsync();
+				_logger.LogWarning("Attempted to add a null reference entity to the database.");
+				return null;
 			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex.Message);
-			}
-
-			return entity;
 		}
 
 		/// <summary>
@@ -103,27 +105,24 @@ namespace GT.Data.Repositories.Impl
 		/// <exception cref="ArgumentNullException"></exception>
 		public async Task UpdateAsync(TEntity entity, string id)
 		{
-			if (entity is null)
+			if (entity is not null && id is not null)
 			{
-				throw new ArgumentNullException(nameof(entity));
-			}
-
-			if (id is null)
-			{
-				throw new ArgumentNullException(nameof(id));
-			}
-
-			if (!ItemExists(id))
-			{
-				try
+				if (!ItemExists(id))
 				{
-					_context.Update(entity);
-					await _context.SaveChangesAsync();
+					try
+					{
+						_context.Entry(entity).State = EntityState.Modified;
+						await _context.SaveChangesAsync();
+					}
+					catch (Exception ex)
+					{
+						_logger.LogError(ex.Message);
+					}
 				}
-				catch (Exception ex)
-				{
-					_logger.LogError(ex.Message);
-				}
+			}
+			else
+			{
+				_logger.LogWarning("Attempted to update a null reference entity to the database.");
 			}
 		}
 
@@ -134,35 +133,37 @@ namespace GT.Data.Repositories.Impl
 		/// <returns></returns>
 		public async Task DeleteAsync(string id)
 		{
-			if(id is null)
+			if (id is not null)
 			{
-				throw new ArgumentNullException(nameof(id));
-			}
-
-			try
-			{
-				var item = await _context
-					.Set<TEntity>()
-					.FirstOrDefaultAsync(e => e.Id == id);
-
-				if (item is not null)
+				try
 				{
-					_context
+					var item = await _context
 						.Set<TEntity>()
-						.Remove(item);
+						.FirstOrDefaultAsync(e => e.Id == id);
 
-					await _context.SaveChangesAsync();
+					if (item is not null)
+					{
+						_context
+							.Set<TEntity>()
+							.Remove(item);
+
+						await _context.SaveChangesAsync();
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex.Message);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex.Message);
+				_logger.LogWarning("Attempted to update a null reference entity to the database.");
 			}
 		}
 
 		protected bool ItemExists(string id)
 		{
-			if(id is null)
+			if (id is null)
 			{
 				throw new ArgumentNullException(nameof(id));
 			}
@@ -173,11 +174,11 @@ namespace GT.Data.Repositories.Impl
 					.Set<TEntity>()
 					.Any(e => e.Id == id);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
 				return false;
-			}		
+			}
 		}
 	}
 }

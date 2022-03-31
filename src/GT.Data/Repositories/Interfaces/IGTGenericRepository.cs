@@ -11,7 +11,7 @@ namespace GT.Data.Repositories.Interfaces
 	{
 		IQueryable<TEntity>? GetAll();
 		Task<TEntity?> FindAsync(params object[] keys);
-		Task<TEntity> AddAsync(TEntity entity);
+		Task<TEntity?> AddAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);
 		Task DeleteAsync(string id);
 	}
