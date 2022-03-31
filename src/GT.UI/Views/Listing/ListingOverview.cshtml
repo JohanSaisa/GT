@@ -1,15 +1,12 @@
-﻿@page
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@model List<GT.Core.DTO.Impl.ListingOverviewDTO>
 @{
 	ViewData["Title"] = "Annonser";
 }
 <h1>@ViewData["Title"]</h1>
-<form>
-	<p>
-		Search keyword(s):
-		<input type="text" asp-for="SearchString" />
-		<input type="submit" value="Filter" />
-	</p>
-</form>
+
 @*public string? Id { get; set; }
 	public string? ListingTitle { get; set; }
 	public string? EmployerName { get; set; }
@@ -20,27 +17,49 @@
 	public bool? FTE { get; set; }
 	public DateTime? CreatedDate { get; set; }
 	public string? ExperienceLevel { get; set; }*@
-<table class="table">
-	<thead>
-		<tr>
-			<th>
-				<p>ListingTitle</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in Model.ListOverview)
+
+@using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
+{
+	<p>
+		Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+		<input type="submit" value="Search" />
+	</p>
+}
+<table>
+	<tr>
+		<th>
+			ListingTitle
+		</th>
+		@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
 		{
-			<tr>
-				<td>
-					@Html.DisplayFor(modelItem => item.ListingTitle)
-				</td>
-				<td>
-					<a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-					<a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-					<a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-				</td>
-			</tr>
+			<th>
+				Delete
+			</th>
+			<th>
+				Edit
+			</th>
 		}
-	</tbody>
+	</tr>
+
+	@foreach (var item in Model)
+	{
+		<tr>
+		  <td>
+			<div class="card border-1">
+				<h5 class="card-title">@Html.ActionLink(item.JobTitle, "GetListing", new { id=item.Id }, new { @class="stretched-link" })</h5>
+				<p class="card-text">@Html.DisplayFor(modelItem => item.ListingTitle)</p>
+			</div>
+			</td>
+			@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
+			{
+				<td>
+					@Html.ActionLink("Edit", "Edit", new { id=item.Id })
+				</td>
+				<td>
+					@Html.ActionLink("Delete", "Delete", new { id=item.Id })
+				</td>
+			}
+		</tr>
+	}
 </table>
+<br />
