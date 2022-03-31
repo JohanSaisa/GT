@@ -81,7 +81,7 @@ namespace GT.Data.Repositories.Impl
 				throw new ArgumentNullException(nameof(entity));
 			}
 
-			if (!ItemExists(id))
+			if (ItemExists(id))
 			{
 				try
 				{

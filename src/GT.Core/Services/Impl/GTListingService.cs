@@ -45,6 +45,12 @@ namespace GT.Core.Services.Impl
 			_experienceLevelRepository = experienceLevelRepository;
 		}
 
+		/// <summary>
+		/// Converts a DTO to entities and updates the database. 
+		/// Requires the signed in users Id for assignment of CreatedBy property.
+		/// </summary>
+		/// <param name="listingDTO"></param>
+		/// <returns>The input DTO with an updated Id.</returns>
 		public async Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId)
 		{
 			try
@@ -54,11 +60,11 @@ namespace GT.Core.Services.Impl
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
 				}
-				if (signedInUserId is null)
-				{
-					_logger.LogWarning($"Attempted to add a new listing with a null reference on signedInUserId.");
-					return null;
-				}
+				//if (signedInUserId is null)
+				//{
+				//	_logger.LogWarning($"Attempted to add a new listing with a null reference on signedInUserId.");
+				//	return null;
+				//}
 
 				var newListing = await GetNewListingEntityWithSubEntities(listingDTO, signedInUserId);
 
@@ -83,9 +89,14 @@ namespace GT.Core.Services.Impl
 				{
 					if (!await _companyService.ExistsByNameAsync(listingDTO.Employer))
 					{
-						await _companyService.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
+						await _companyService
+							.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
 					}
-					entity.Employer = await _companyRepository.GetAll().Where(e => e.Name == listingDTO.Employer).FirstOrDefaultAsync();
+					var emp = await _companyRepository
+						.GetAll()
+						.FirstOrDefaultAsync(e => e.Name == listingDTO.Employer);
+
+					entity.Employer = emp;
 				}
 
 				// Add sub entity Location
@@ -93,9 +104,14 @@ namespace GT.Core.Services.Impl
 				{
 					if (!await _locationService.ExistsByNameAsync(listingDTO.Location))
 					{
-						await _locationService.AddAsync(new LocationDTO() { Name = listingDTO.Location });
+						await _locationService
+							.AddAsync(new LocationDTO() { Name = listingDTO.Location });
 					}
-					entity.Location = await _locationRepository.GetAll().Where(e => e.Name == listingDTO.Location).FirstOrDefaultAsync();
+					var loc = await _locationRepository
+						.GetAll()
+						.FirstOrDefaultAsync(e => e.Name == listingDTO.Location);
+
+					entity.Location = loc;
 				}
 
 				// Add sub entity ExperienceLevel
@@ -103,9 +119,14 @@ namespace GT.Core.Services.Impl
 				{
 					if (!await _experienceLevelService.ExistsByNameAsync(listingDTO.ExperienceLevel))
 					{
-						await _experienceLevelService.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
+						await _experienceLevelService
+							.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
 					}
-					entity.ExperienceLevel = await _experienceLevelRepository.GetAll().Where(e => e.Name == listingDTO.ExperienceLevel).FirstOrDefaultAsync();
+					var exp = await _experienceLevelRepository
+						.GetAll()
+						.FirstOrDefaultAsync(e => e.Name == listingDTO.ExperienceLevel);
+
+					entity.ExperienceLevel = exp;
 				}
 				return entity;
 			}
@@ -295,7 +316,9 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _listingRepository.GetAll().Where(e => e.Id == id).AnyAsync();
+				return await _listingRepository
+					.GetAll()
+					.AnyAsync(e => e.Id == id);
 			}
 			catch (Exception e)
 			{
@@ -317,7 +340,12 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentNullException(nameof(listingDTO), message);
 			}
 
-			var oldEntity = await _listingRepository.FindAsync(listingDTO.Id);
+			var oldEntity = await _listingRepository
+				.GetAll()
+				.Include(e => e.Location)
+				.Include(e => e.Employer)
+				.Include(e => e.ExperienceLevel)
+				.FirstOrDefaultAsync(e => e.Id == listingDTO.Id);
 
 			if (oldEntity is null)
 			{
@@ -332,9 +360,8 @@ namespace GT.Core.Services.Impl
 			oldEntity.SalaryMax = listingDTO.SalaryMax;
 			oldEntity.JobTitle = listingDTO.JobTitle;
 			oldEntity.FTE = listingDTO.FTE;
-			var newEntity = await AddSubEntitiesToListing(listingDTO, oldEntity);
 
-			return newEntity;
+			return await AddSubEntitiesToListing(listingDTO, oldEntity);
 		}
 
 		/// <summary>
@@ -347,21 +374,24 @@ namespace GT.Core.Services.Impl
 			if (listingDTO is null)
 			{
 				var message = $"Attempted to pass a null object to {nameof(GetNewListingEntityWithSubEntities)}.";
+
 				_logger.LogError(message);
+
 				throw new ArgumentNullException(nameof(listingDTO), message);
 			}
 
 			var newListingEntity = new Listing();
 
 			newListingEntity.Id = Guid.NewGuid().ToString();
-			newListingEntity.ListingTitle = listingDTO.ListingTitle;
+			newListingEntity.ListingTitle = listingDTO.ListingTitle!;
 			newListingEntity.Description = listingDTO.Description;
 			newListingEntity.SalaryMin = listingDTO.SalaryMin;
 			newListingEntity.SalaryMax = listingDTO.SalaryMax;
 			newListingEntity.JobTitle = listingDTO.JobTitle;
 			newListingEntity.FTE = listingDTO.FTE;
-			newListingEntity.CreatedDate = listingDTO.CreatedDate;
+			newListingEntity.CreatedDate = DateTime.Now;
 			newListingEntity.CreatedById = signedInUserId;
+
 			newListingEntity = await AddSubEntitiesToListing(listingDTO, newListingEntity);
 
 			return newListingEntity;
