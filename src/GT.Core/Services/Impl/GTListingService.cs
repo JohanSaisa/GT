@@ -6,6 +6,7 @@ using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace GT.Core.Services.Impl
 {
@@ -169,7 +170,7 @@ namespace GT.Core.Services.Impl
 				.Where(e => filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
 					|| (e.ExperienceLevel != null && (e.ExperienceLevel.Name != null
-					|| filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
+					&& filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
 
 				.Where(e =>
 					filter.FTE == null
@@ -195,17 +196,20 @@ namespace GT.Core.Services.Impl
 					|| (e.CreatedDate != null
 						&& filter.IncludeListingsFromDate < e.CreatedDate));
 
-			if (filter.Keywords is not null)
+			var keywords = filter?.Keywords?
+				.Where(k => k != null)
+				.ToArray();
+
+			if (keywords is not null && keywords.Any())
 			{
-				foreach (var keyword in filter.Keywords)
+				foreach (var keyword in keywords)
 				{
-					if (keyword is not null)
-					{
-						query = query.Where(e =>
-							(e.JobTitle != null && e.JobTitle.Contains(keyword))
-							|| (e.Description != null && e.Description.Contains(keyword))
-							|| (e.Location != null && e.Location.Name != null && e.Location.Name.Contains(keyword)));
-					}
+					query = query.Where(e =>
+						(e.Employer != null && e.Employer.Name != null && EF.Functions.Like(e.Employer.Name, $"%{keyword}%"))
+						|| (e.ListingTitle != null && EF.Functions.Like(e.ListingTitle, $"%{keyword}%"))
+						|| (e.JobTitle != null && EF.Functions.Like(e.JobTitle, $"%{keyword}%"))
+						|| (e.Description != null && EF.Functions.Like(e.Description, $"%{keyword}%"))
+						|| (e.Location != null && e.Location.Name != null && EF.Functions.Like(e.Location.Name, $"%{keyword}%")));
 				}
 			}
 
