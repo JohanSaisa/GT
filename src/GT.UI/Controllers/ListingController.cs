@@ -35,7 +35,7 @@ namespace GT.UI.Controllers
 			return Ok(listingDTOs);
 		}
 
-		// GET:/Listing/
+		// GET:/GetListing/
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
