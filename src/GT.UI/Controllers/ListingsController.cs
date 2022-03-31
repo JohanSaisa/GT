@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using GT.Core.DTO.Impl;
+using GT.Core.FilterModels.Impl;
 using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
@@ -24,7 +25,7 @@ namespace GT.UI.Controllers
 
 		// GET: api/Listings
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(IListingFilterModel filterModel = null)
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(ListingFilterModel filterModel = null)
 		{
 			// TODO Populate and create a filtermodel
 

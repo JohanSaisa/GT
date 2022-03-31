@@ -1,5 +1,4 @@
 ﻿@page
-@model GT.UI.Pages.Listings.IndexModel
 @{
 	ViewData["Title"] = "Annonser";
 }
@@ -34,7 +33,7 @@
 		{
 			<tr>
 				<td>
-					@Html.DisplayNameFor(modelItem => item.ListingTitle)
+					@Html.DisplayFor(modelItem => item.ListingTitle)
 				</td>
 				<td>
 					<a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
