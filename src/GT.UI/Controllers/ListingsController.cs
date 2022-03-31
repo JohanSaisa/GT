@@ -1,9 +1,11 @@
 ﻿#nullable disable
 
 using GT.Core.DTO.Impl;
+using GT.Core.FilterModels.Impl;
 using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,13 +26,11 @@ namespace GT.UI.Controllers
 
 		// GET: api/Listings
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(IListingFilterModel filterModel = null)
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(ListingFilterModel filterModel)
 		{
-			// TODO Populate and create a filtermodel
-
 			var listingDTOs = await _listingService.GetAsync(filterModel);
 
-			if (listingDTOs == null)
+			if (listingDTOs == null || listingDTOs.Count <= 0)
 			{
 				return NotFound();
 			}
@@ -55,6 +55,7 @@ namespace GT.UI.Controllers
 		// PUT: api/Listings/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
+		[Authorize(Policy = "AdminPolicy")]
 		public async Task<IActionResult> PutListing(string id, ListingDTO listing)
 		{
 			if (id != listing.Id)
@@ -70,6 +71,7 @@ namespace GT.UI.Controllers
 		// POST: api/Listings
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
+		[Authorize(Policy = "AdminPolicy")]
 		public async Task<ActionResult<ListingDTO>> PostListing(ListingDTO listing)
 		{
 			var listingDTO = await _listingService.AddAsync(listing, _userManager.GetUserId(User));
@@ -82,6 +84,7 @@ namespace GT.UI.Controllers
 
 		// DELETE: api/Listings/5
 		[HttpDelete("{id}")]
+		[Authorize(Policy = "AdminPolicy")]
 		public async Task<IActionResult> DeleteListing(string id)
 		{
 			if (!await _listingService.ExistsByIdAsync(id))
