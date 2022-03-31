@@ -45,6 +45,12 @@ namespace GT.Core.Services.Impl
 			_experienceLevelRepository = experienceLevelRepository;
 		}
 
+		/// <summary>
+		/// Converts a DTO to entities and updates the database. 
+		/// Requires the signed in users Id for assignment of CreatedBy property.
+		/// </summary>
+		/// <param name="listingDTO"></param>
+		/// <returns>The input DTO with an updated Id.</returns>
 		public async Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId)
 		{
 			try
