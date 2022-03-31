@@ -61,11 +61,11 @@ namespace GT.Core.Services.Impl
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
 				}
-				//if (signedInUserId is null)
-				//{
-				//	_logger.LogWarning($"Attempted to add a new listing with a null reference on signedInUserId.");
-				//	return null;
-				//}
+				if (signedInUserId is null)
+				{
+					_logger.LogWarning($"Attempted to add a new listing with a null reference on signedInUserId.");
+					return null;
+				}
 
 				var newListing = await GetNewListingEntityWithSubEntities(listingDTO, signedInUserId);
 
