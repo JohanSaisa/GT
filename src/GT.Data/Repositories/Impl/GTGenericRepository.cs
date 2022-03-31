@@ -107,16 +107,16 @@ namespace GT.Data.Repositories.Impl
 		{
 			if (entity is not null && id is not null)
 			{
-				if (!ItemExists(id))
+				if (ItemExists(id))
 				{
 					try
 					{
 						_context.Entry(entity).State = EntityState.Modified;
 						await _context.SaveChangesAsync();
 					}
-					catch (Exception ex)
+					catch (Exception e)
 					{
-						_logger.LogError(ex.Message);
+						_logger.LogError(e.Message);
 					}
 				}
 			}
