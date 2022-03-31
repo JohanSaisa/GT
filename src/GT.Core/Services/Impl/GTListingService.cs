@@ -93,11 +93,10 @@ namespace GT.Core.Services.Impl
 						await _companyService
 							.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
 					}
-					var emp = await _companyRepository
+
+					entity.Employer = await _companyRepository
 						.GetAll()
 						.FirstOrDefaultAsync(e => e.Name == listingDTO.Employer);
-
-					entity.Employer = emp;
 				}
 
 				// Add sub entity Location
@@ -108,11 +107,10 @@ namespace GT.Core.Services.Impl
 						await _locationService
 							.AddAsync(new LocationDTO() { Name = listingDTO.Location });
 					}
-					var loc = await _locationRepository
+
+					entity.Location = await _locationRepository
 						.GetAll()
 						.FirstOrDefaultAsync(e => e.Name == listingDTO.Location);
-
-					entity.Location = loc;
 				}
 
 				// Add sub entity ExperienceLevel
@@ -123,11 +121,10 @@ namespace GT.Core.Services.Impl
 						await _experienceLevelService
 							.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
 					}
-					var exp = await _experienceLevelRepository
+
+					entity.ExperienceLevel = await _experienceLevelRepository
 						.GetAll()
 						.FirstOrDefaultAsync(e => e.Name == listingDTO.ExperienceLevel);
-
-					entity.ExperienceLevel = exp;
 				}
 				return entity;
 			}
