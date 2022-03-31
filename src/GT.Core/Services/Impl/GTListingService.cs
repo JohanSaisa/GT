@@ -25,6 +25,7 @@ namespace GT.Core.Services.Impl
 		private readonly IGTGenericRepository<Company> _companyRepository;
 		private readonly IGTGenericRepository<Location> _locationRepository;
 		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
+		private readonly IGTGenericRepository<ListingInquiry> _inquiryRepository;
 
 		public GTListingService(
 			ILogger<GTListingService> logger,
@@ -34,7 +35,8 @@ namespace GT.Core.Services.Impl
 			IGTGenericRepository<Listing> listingRepository,
 			IGTGenericRepository<Company> companyRepository,
 			IGTGenericRepository<Location> locationRepository,
-			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
+			IGTGenericRepository<ExperienceLevel> experienceLevelRepository,
+			IGTGenericRepository<ListingInquiry> inquiryRepository)
 		{
 			_logger = logger;
 			_companyService = companyService;
@@ -44,6 +46,7 @@ namespace GT.Core.Services.Impl
 			_companyRepository = companyRepository;
 			_locationRepository = locationRepository;
 			_experienceLevelRepository = experienceLevelRepository;
+			_inquiryRepository = inquiryRepository;
 		}
 
 		/// <summary>
@@ -141,6 +144,17 @@ namespace GT.Core.Services.Impl
 			{
 				if (_listingRepository.GetAll().Any(e => e.Id == id))
 				{
+					var linkedInquiries = _inquiryRepository
+						.GetAll()
+						.Include(e => e.Listing)
+						.Where(e => e.Listing.Id == id)
+						.Select(e => e.Id).ToArray();
+
+					foreach (var inquiryId in linkedInquiries)
+					{
+						await _inquiryRepository.DeleteAsync(inquiryId);
+					}
+
 					await _listingRepository.DeleteAsync(id);
 				}
 			}
