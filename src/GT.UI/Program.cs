@@ -1,4 +1,5 @@
 using GT.Core.Services.Impl;
+using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb;
 using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
@@ -51,11 +52,13 @@ builder.Services
 	.AddTransient(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
 	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
 
-// Add BLL services
-// TODO Uncomment when services are implemented.
-//builder.Services
-//	.AddTransient<IGTListingService, GTListingService>()
-//	.AddTransient<IGTCompanyService, GTCompanyService>();
+//Add BLL services
+builder.Services
+	.AddTransient<IGTListingService, GTListingService>()
+	.AddTransient<IGTCompanyService, GTCompanyService>()
+	.AddTransient<IGTLocationService, GTLocationService>()
+	.AddTransient<IGTListingInquiryService, GTListingInquiryService>()
+	.AddTransient<IGTExperienceLevelService, GTExperienceLevelService>();
 
 //Add Email service
 builder.Services
