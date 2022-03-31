@@ -1,1 +1,69 @@
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
+@model List<GT.Core.DTO.Impl.ListingOverviewDTO>
+@{
+	ViewData["Title"] = "Annonser";
+}
+<h1>@ViewData["Title"]</h1>
+
+@*TODO: Select which props to display in overview.
+
+	Properties available for Listing search results:
+
+	public string? Id { get; set; }
+	public string? ListingTitle { get; set; }
+	public string? EmployerName { get; set; }
+	public int? SalaryMin { get; set; }
+	public int? SalaryMax { get; set; }
+	public string? JobTitle { get; set; }
+	public string? Location { get; set; }
+	public bool? FTE { get; set; }
+	public DateTime? CreatedDate { get; set; }
+	public string? ExperienceLevel { get; set; }*@
+
+@using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
+{
+	<p>
+		Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+		<input type="submit" value="Search" />
+	</p>
+}
+<table>
+	<tr>
+		<th>
+			ListingTitle
+		</th>
+		@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
+		{
+			<th>
+				Delete
+			</th>
+			<th>
+				Edit
+			</th>
+		}
+	</tr>
+
+	@foreach (var item in Model)
+	{
+		<tr>
+		  <td>
+			<div class="card border-1">
+				<h5 class="card-title">@Html.ActionLink(item.JobTitle, "GetListing", new { id=item.Id }, new { @class="stretched-link" })</h5>
+				<p class="card-text">@Html.DisplayFor(modelItem => item.ListingTitle)</p>
+			</div>
+			</td>
+			@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
+			{
+				<td>
+					@Html.ActionLink("Edit", "Edit", new { id=item.Id })
+				</td>
+				<td>
+					@Html.ActionLink("Delete", "Delete", new { id=item.Id })
+				</td>
+			}
+		</tr>
+	}
+</table>
+<br />

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GT.UI.Controllers
 {
-	[Route("[controller]")]
 	public class ListingController : Controller
 	{
 		private readonly IGTListingService _listingService;
@@ -19,12 +18,17 @@ namespace GT.UI.Controllers
 			_userManager = userManager;
 		}
 
-		// GET: api/Listings
+		// GET: Listings
+		[Route("Annonser")]
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(ListingFilterModel filterModel = null)
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(string? searchString)
 		{
-			// TODO Populate and create a filtermodel
-
+			var filterModel = new ListingFilterModel();
+			if (searchString != null)
+			{
+				var keywords = searchString.Split(' ').ToList();
+				filterModel.Keywords = keywords;
+			}
 			var listingDTOs = await _listingService.GetAsync(filterModel);
 
 			if (listingDTOs == null)
@@ -32,7 +36,7 @@ namespace GT.UI.Controllers
 				return NotFound();
 			}
 
-			return Ok(listingDTOs);
+			return View(listingDTOs);
 		}
 
 		// GET: api/Listings/5
