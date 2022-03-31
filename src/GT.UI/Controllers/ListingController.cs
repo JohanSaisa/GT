@@ -37,7 +37,7 @@ namespace GT.UI.Controllers
 
 		// GET:/Listing/
 		[HttpGet("{id}")]
-		public async Task<ActionResult<ListingDTO>> Listing(string id)
+		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
 			var listing = await _listingService.GetByIdAsync(id);
 
