@@ -13,7 +13,7 @@ namespace GT.UI.Pages.Listings
 		[BindProperty(SupportsGet = true)]
 		public string? SearchString { get; set; }
 
-		public List<ListingOverviewDTO> ListOverview { get; set; }
+		public List<ListingOverviewDTO> ListOverview { get; set; } = new List<ListingOverviewDTO>();
 
 		public IndexModel(IGTListingService listingService)
 		{
