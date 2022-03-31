@@ -50,7 +50,7 @@ namespace GT.UI.Controllers
 				return NotFound();
 			}
 
-			return View(listing);
+			return View("Listing", listing);
 		}
 	}
 }
