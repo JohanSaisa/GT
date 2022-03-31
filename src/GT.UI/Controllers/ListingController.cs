@@ -35,9 +35,9 @@ namespace GT.UI.Controllers
 			return Ok(listingDTOs);
 		}
 
-		// GET: api/Listings/5
+		// GET:/Listing/
 		[HttpGet("{id}")]
-		public async Task<ActionResult<ListingDTO>> GetListing(string id)
+		public async Task<ActionResult<ListingDTO>> Listing(string id)
 		{
 			var listing = await _listingService.GetByIdAsync(id);
 
@@ -46,7 +46,7 @@ namespace GT.UI.Controllers
 				return NotFound();
 			}
 
-			return Ok(listing);
+			return View(listing);
 		}
 	}
 }
