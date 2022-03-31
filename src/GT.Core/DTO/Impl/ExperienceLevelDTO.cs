@@ -9,9 +9,9 @@ namespace GT.Core.DTO.Impl
 	public class ExperienceLevelDTO : IGTDataTransferObject
 	{
 		[StringLength(450)]
-		public string Id { get; set; }
+		public string? Id { get; set; }
 
 		[StringLength(100)]
-		public string Name { get; set; }
+		public string? Name { get; set; }
 	}
 }
