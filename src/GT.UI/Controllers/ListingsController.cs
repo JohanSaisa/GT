@@ -2,7 +2,6 @@
 
 using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
-using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -28,8 +27,6 @@ namespace GT.UI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(ListingFilterModel filterModel)
 		{
-			// TODO Populate and create a filtermodel
-
 			var listingDTOs = await _listingService.GetAsync(filterModel);
 
 			if (listingDTOs == null || listingDTOs.Count <= 0)
@@ -38,11 +35,9 @@ namespace GT.UI.Controllers
 			}
 
 			return Ok(listingDTOs);
-}
+		}
 
-
-// GET: api/Listings/5
-		
+		// GET: api/Listings/5
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
