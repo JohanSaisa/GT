@@ -39,7 +39,7 @@ namespace GT.UI.Controllers
 			return View(listingDTOs);
 		}
 
-		// GET: api/Listings/5
+		// GET:/GetListing/
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
@@ -50,7 +50,7 @@ namespace GT.UI.Controllers
 				return NotFound();
 			}
 
-			return Ok(listing);
+			return View(listing);
 		}
 	}
 }

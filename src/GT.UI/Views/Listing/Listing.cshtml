@@ -1,5 +1,24 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model GT.Core.DTO.Impl.ListingDTO
 @{
+	ViewData["Title"] = "Annons";
+
 }
+
+<h1>Annons</h1>
+
+<h2>@Model.ListingTitle</h2>
+<div class="listingData">
+	@Model.Employer
+	<br />
+	@Model.JobTitle
+	<br />
+	@Model.Description
+	<br />
+	@Model.SalaryMin @Model.SalaryMax
+	<br />
+	@Model.Location
+	<br />
+	@Model.FTE
+	<br />
+	@Model.ExperienceLevel
+</div>

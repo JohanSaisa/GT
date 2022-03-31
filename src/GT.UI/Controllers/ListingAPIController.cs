@@ -13,12 +13,12 @@ namespace GT.UI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class ListingsController : ControllerBase
+	public class ListingAPIController : ControllerBase
 	{
 		private readonly IGTListingService _listingService;
 		private readonly UserManager<ApplicationUser> _userManager;
 
-		public ListingsController(IGTListingService listingService, UserManager<ApplicationUser> userManager)
+		public ListingAPIController(IGTListingService listingService, UserManager<ApplicationUser> userManager)
 		{
 			_listingService = listingService;
 			_userManager = userManager;
