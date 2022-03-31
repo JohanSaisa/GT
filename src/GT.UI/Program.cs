@@ -59,7 +59,7 @@ builder.Services
 
 //Add Email service
 builder.Services
-	.AddTransient<IEmailSender, EmailSender>();
+	.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
