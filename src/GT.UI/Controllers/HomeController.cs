@@ -25,11 +25,11 @@ namespace GT.UI.Controllers
 			return View();
 		}
 
-		[Route("Annonser")]
-		public IActionResult Listings()
-		{
-			return View();
-		}
+		//[Route("Annonser")]
+		//public IActionResult Listings()
+		//{
+		//	return View();
+		//}
 
 		[Route("Info")]
 		public IActionResult About()

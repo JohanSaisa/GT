@@ -2,6 +2,7 @@
 
 using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
+using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Authorization;
