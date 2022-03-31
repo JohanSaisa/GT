@@ -23,7 +23,6 @@ namespace GT.UI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(string? searchString)
 		{
-			// TODO Populate and create a filtermodel
 			var filterModel = new ListingFilterModel();
 			if (searchString != null)
 			{
