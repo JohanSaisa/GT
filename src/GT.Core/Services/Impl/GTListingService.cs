@@ -307,7 +307,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (listingDTO.Id is not null || id is not null)
+				if (listingDTO.Id is not null && id is not null)
 				{
 					if (await ExistsByIdAsync(id))
 					{
