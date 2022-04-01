@@ -4,21 +4,79 @@
 
 }
 
-<h1>Annons</h1>
-
-<h2>@Model.ListingTitle</h2>
-<div class="listingData">
-	@Model.Employer
-	<br />
-	@Model.JobTitle
-	<br />
-	@Model.Description
-	<br />
-	@Model.SalaryMin @Model.SalaryMax
-	<br />
-	@Model.Location
-	<br />
-	@Model.FTE
-	<br />
-	@Model.ExperienceLevel
+<h1>@ViewData["Title"]: @Model.JobTitle</h1>
+<div class="container">
+	<div class="row">
+		<div class="col-2">
+			<h2>Listing Title:</h2>
+		</div>
+		<div class="col-10">
+			<h2>@Model.ListingTitle</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Company:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.Employer</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Job title:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.JobTitle</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Description:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.Description</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Salary min:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.SalaryMin</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Salary max:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.SalaryMax</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Location:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.Location</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Employment type:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.FTE</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Experience level:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.ExperienceLevel</p>
+		</div>
+	</div>
+	<partial name="_SendInquiry" />
 </div>
