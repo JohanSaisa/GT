@@ -207,7 +207,9 @@ namespace GT.Core.Services.Impl
 					|| (e.CreatedDate != null
 						&& filter.IncludeListingsFromDate < e.CreatedDate));
 
-			var keywords = filter?.Keywords?
+			// TODO: Refactor to split at user defined character
+			var keywords = filter?.KeywordsRawText?
+				.Split(' ')
 				.Where(k => k != null)
 				.ToArray();
 

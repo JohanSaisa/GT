@@ -6,7 +6,7 @@ namespace GT.Core.FilterModels.Impl
 	{
 		public List<string>? ExperienceLevels { get; set; }
 
-		public List<string>? Keywords { get; set; }
+		public string? KeywordsRawText { get; set; }
 
 		public bool? FTE { get; set; }
 

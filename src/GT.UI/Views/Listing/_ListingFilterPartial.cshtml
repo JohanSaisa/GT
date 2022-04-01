@@ -1,0 +1,25 @@
+﻿@model GT.Core.FilterModels.Impl.ListingFilterModel
+	<p>
+		Find by name: @Html.TextBoxFor(fm => fm.KeywordsRawText)		
+	</p>
+
+    <p>
+      Job type: @Html.DropDownListFor(
+        fm => fm.FTE,
+        new SelectList(new List<object>
+        {
+          new { Text = "Any", Value = (bool?)null },
+          new { Text = "Full Time", Value = true },
+          new { Text = "Part Time", Value = false }
+        }, "Value", "Text"))
+    </p>
+
+    <p>
+      Earliest creation date: @Html.TextBoxFor(
+        fm => fm.IncludeListingsFromDate, 
+        "{0:dd/MM/yyyy}", 
+        new { @type="date" })
+    </p>
+    <p>
+      <input type="submit" value="Filter" />
+    </p>
