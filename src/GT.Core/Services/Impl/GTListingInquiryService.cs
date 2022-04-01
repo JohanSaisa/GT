@@ -18,7 +18,7 @@ namespace GT.Core.Services.Impl
 			_listingInquiryRepository = listingInquiryRepository;
 		}
 
-		public Task<ListingInquiryDTO> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null)
+		public Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null)
 		{
 			throw new NotImplementedException();
 		}
@@ -33,12 +33,12 @@ namespace GT.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		public Task<List<ListingInquiryDTO>> GetAsync()
+		public Task<List<ListingInquiryDTO?>> GetAsync()
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<ListingInquiryDTO> GetByIdAsync(string id)
+		public Task<ListingInquiryDTO?> GetByIdAsync(string id)
 		{
 			throw new NotImplementedException();
 		}
