@@ -24,10 +24,8 @@
 
 @using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
 {
-	<p>
-		Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
-		<input type="submit" value="Search" />
-	</p>
+  @await Html.PartialAsync("_ListingFilterPartial", 
+    new GT.Core.FilterModels.Impl.ListingFilterModel());
 }
 <table>
 	<tr>

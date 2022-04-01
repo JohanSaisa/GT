@@ -15,7 +15,7 @@
 		/// Search result checks the listing's title, description and location properties,
 		/// and will only include entities where each value in the array is present in at least one of those properties.
 		/// </summary>
-		List<string>? Keywords { get; set; }
+		string KeywordsRawText { get; set; }
 
 		/// <summary>
 		/// Full Time Equivalent, where true represents Full Time and false represents part time.

@@ -21,15 +21,10 @@ namespace GT.UI.Controllers
 		// GET: Listings
 		[Route("Annonser")]
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(string? searchString)
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(ListingFilterModel? filter)
 		{
-			var filterModel = new ListingFilterModel();
-			if (searchString != null)
-			{
-				var keywords = searchString.Split(' ').ToList();
-				filterModel.Keywords = keywords;
-			}
-			var listingDTOs = await _listingService.GetAsync(filterModel);
+			var listingDTOs = await _listingService
+				.GetAsync(filter);
 
 			if (listingDTOs == null)
 			{

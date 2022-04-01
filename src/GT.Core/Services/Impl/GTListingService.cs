@@ -50,7 +50,7 @@ namespace GT.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Converts a DTO to entities and updates the database. 
+		/// Converts a DTO to entities and updates the database.
 		/// Requires the signed in users Id for assignment of CreatedBy property.
 		/// </summary>
 		/// <param name="listingDTO"></param>
@@ -207,7 +207,9 @@ namespace GT.Core.Services.Impl
 					|| (e.CreatedDate != null
 						&& filter.IncludeListingsFromDate < e.CreatedDate));
 
-			var keywords = filter?.Keywords?
+			// TODO: Refactor to split at user defined character
+			var keywords = filter?.KeywordsRawText?
+				.Split(' ')
 				.Where(k => k != null)
 				.ToArray();
 
@@ -233,6 +235,7 @@ namespace GT.Core.Services.Impl
 			catch (Exception e)
 			{
 				_logger.LogError(e.Message);
+				return null;
 			}
 
 			// Map entities to DTOs
@@ -263,7 +266,6 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-
 				// Get entity
 				var entity = await _listingRepository
 					.GetAll()
@@ -307,7 +309,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (listingDTO.Id is not null || id is not null)
+				if (listingDTO.Id is not null && id is not null)
 				{
 					if (await ExistsByIdAsync(id))
 					{
@@ -319,7 +321,6 @@ namespace GT.Core.Services.Impl
 				{
 					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
 				}
-
 			}
 			catch (Exception e)
 			{
@@ -380,12 +381,11 @@ namespace GT.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Maps a DTO to a new instance of an entity and sends a request to the repository to add the entity. 
+		/// Maps a DTO to a new instance of an entity and sends a request to the repository to add the entity.
 		/// If the listings entitys sub-entities do not exist the method creates new entitites and populates the database.
 		/// </summary>
 		private async Task<Listing?> GetNewListingEntityWithSubEntities(ListingDTO listingDTO, string? signedInUserId = null)
 		{
-
 			if (listingDTO is null)
 			{
 				var message = $"Attempted to pass a null object to {nameof(GetNewListingEntityWithSubEntities)}.";
@@ -413,4 +413,3 @@ namespace GT.Core.Services.Impl
 		}
 	}
 }
-
