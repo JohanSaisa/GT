@@ -49,16 +49,16 @@ builder.Services
 
 // Add DAL repositories
 builder.Services
-	.AddTransient(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
-	.AddTransient<IGTIdentityRepository, GTIdentityRepository>();
+	.AddScoped(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
+	.AddScoped<IGTIdentityRepository, GTIdentityRepository>();
 
 //Add BLL services
 builder.Services
-	.AddTransient<IGTListingService, GTListingService>()
-	.AddTransient<IGTCompanyService, GTCompanyService>()
-	.AddTransient<IGTLocationService, GTLocationService>()
-	.AddTransient<IGTListingInquiryService, GTListingInquiryService>()
-	.AddTransient<IGTExperienceLevelService, GTExperienceLevelService>();
+	.AddScoped<IGTListingService, GTListingService>()
+	.AddScoped<IGTCompanyService, GTCompanyService>()
+	.AddScoped<IGTLocationService, GTLocationService>()
+	.AddScoped<IGTListingInquiryService, GTListingInquiryService>()
+	.AddScoped<IGTExperienceLevelService, GTExperienceLevelService>();
 
 //Add Email service
 builder.Services
