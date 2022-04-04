@@ -76,5 +76,30 @@ namespace GT.Core.Services.Impl
 				return false;
 			}
 		}
+
+		public async Task<List<ExperienceLevelDTO?>> GetAllAsync()
+		{
+			try
+			{
+				var experienceLevelEntitiess = await _experienceLevelRepository.GetAll().ToListAsync();
+				var experienceLevelDTOs = new List<ExperienceLevelDTO>();
+				//TODO automapper
+				foreach (var entity in experienceLevelEntitiess)
+				{
+					experienceLevelDTOs.Add(new ExperienceLevelDTO()
+					{
+						Id = entity.Id,
+						Name = entity.Name
+					});
+				}
+				return experienceLevelDTOs;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
+
+		}
 	}
 }
