@@ -1,25 +1,43 @@
 ﻿@model GT.Core.FilterModels.Impl.ListingFilterModel
 	<p>
-		Find by name: @Html.TextBoxFor(fm => fm.KeywordsRawText)		
+		Keywords (Separate by space, use underscore for spaces inside keywords): 
+    @Html.TextBoxFor(fm => fm.KeywordsRawText, new { @id="keywordstextbox" })		
 	</p>
 
     <p>
-      Job type: @Html.DropDownListFor(
+      Job type: 
+      @Html.DropDownListFor(
         fm => fm.FTE,
         new SelectList(new List<object>
         {
           new { Text = "Any", Value = (bool?)null },
           new { Text = "Full Time", Value = true },
           new { Text = "Part Time", Value = false }
-        }, "Value", "Text"))
+        }, "Value", "Text"), new { @id="jobtypedropdown" })
     </p>
 
     <p>
-      Earliest creation date: @Html.TextBoxFor(
+      Earliest creation date: 
+      @Html.TextBoxFor(
         fm => fm.IncludeListingsFromDate, 
         "{0:dd/MM/yyyy}", 
-        new { @type="date" })
+        new { @type="date", @id="creationdatetextbox"})
     </p>
+
+    <p>
+      Minimum expected salary: 
+      @Html.TextBoxFor(
+        fm => fm.SalaryMin, 
+        new { @type="number", @min=0 })
+    </p>
+      Maximum expected salary: 
+      @Html.TextBoxFor(
+        fm => fm.SalaryMax, 
+        new { @type="number", @min=0 })
+    <p>
+
+    </p>
+
     <p>
       <input type="submit" value="Filter" />
     </p>

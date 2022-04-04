@@ -167,13 +167,14 @@ namespace GT.Core.Services.Impl
 		public async Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null)
 		{
 			// Get entities from database
+
 			if (filter is null)
 			{
 				filter = new ListingFilterModel();
 			}
 
-			var query = _listingRepository
-				.GetAll()
+			var query = _listingRepository?
+				.GetAll()?
 				.Include(e => e.ExperienceLevel)
 				.Include(e => e.Location)
 				.Include(e => e.Employer)
@@ -195,13 +196,13 @@ namespace GT.Core.Services.Impl
 
 				.Where(e =>
 					filter.SalaryMin == null
-					|| (e.SalaryMax != null
-						&& e.SalaryMax >= filter.SalaryMin))
+					|| (e.SalaryMin != null
+						&& e.SalaryMin >= filter.SalaryMin))
 
 				.Where(e =>
 					filter.SalaryMax == null
-					|| (e.SalaryMin != null
-						&& e.SalaryMin <= filter.SalaryMax))
+					|| (e.SalaryMax != null
+						&& e.SalaryMax <= filter.SalaryMax))
 
 				.Where(e => filter.IncludeListingsFromDate == null
 					|| (e.CreatedDate != null
@@ -213,53 +214,46 @@ namespace GT.Core.Services.Impl
 				.Where(k => k != null)
 				.ToArray();
 
-			if (keywords is not null && keywords.Any())
+			if (keywords is not null 
+				&& query is not null 
+				&& keywords.Any())
 			{
-				foreach (var keyword in keywords)
+				for(int i = 0; i < keywords.Length; i++)
 				{
+					var keyword = keywords[i].Replace('_', ' ');
+
 					query = query.Where(e =>
 						(e.Employer != null && e.Employer.Name != null && EF.Functions.Like(e.Employer.Name, $"%{keyword}%"))
-						|| (e.ListingTitle != null && EF.Functions.Like(e.ListingTitle, $"%{keyword}%"))
-						|| (e.JobTitle != null && EF.Functions.Like(e.JobTitle, $"%{keyword}%"))
-						|| (e.Description != null && EF.Functions.Like(e.Description, $"%{keyword}%"))
-						|| (e.Location != null && e.Location.Name != null && EF.Functions.Like(e.Location.Name, $"%{keyword}%")));
+							|| (e.ListingTitle != null && EF.Functions.Like(e.ListingTitle, $"%{keyword}%"))
+							|| (e.JobTitle != null && EF.Functions.Like(e.JobTitle, $"%{keyword}%"))
+							|| (e.Description != null && EF.Functions.Like(e.Description, $"%{keyword}%"))
+							|| (e.Location != null && e.Location.Name != null && EF.Functions.Like(e.Location.Name, $"%{keyword}%")));
 				}
 			}
 
-			var entities = new List<Listing>();
-
 			try
 			{
-				entities = await query.ToListAsync();
+				return await query?
+					.Select(entity => new ListingOverviewDTO
+					{
+						Id = entity.Id,
+						ListingTitle = entity.ListingTitle,
+						SalaryMax = entity.SalaryMax,
+						SalaryMin = entity.SalaryMin,
+						FTE = entity.FTE,
+						CreatedDate = entity.CreatedDate,
+						JobTitle = entity.JobTitle,
+						EmployerName = entity.Employer == null ? null : entity.Employer.Name,
+						Location = entity.Location == null ? null : entity.Location.Name,
+						ExperienceLevel = entity.ExperienceLevel == null ? null : entity.ExperienceLevel.Name
+					})
+					.ToListAsync()!;
 			}
-			catch (Exception e)
+			catch(Exception e)
 			{
 				_logger.LogError(e.Message);
-				return null;
+				return null!;
 			}
-
-			// Map entities to DTOs
-
-			var listings = new List<ListingOverviewDTO>();
-
-			foreach (var entity in entities)
-			{
-				listings.Add(new ListingOverviewDTO
-				{
-					Id = entity.Id,
-					ListingTitle = entity.ListingTitle,
-					SalaryMax = entity.SalaryMax,
-					SalaryMin = entity.SalaryMin,
-					FTE = entity.FTE,
-					CreatedDate = entity.CreatedDate,
-					JobTitle = entity.JobTitle,
-					EmployerName = entity.Employer == null ? null : entity.Employer.Name,
-					Location = entity.Location == null ? null : entity.Location.Name,
-					ExperienceLevel = entity.ExperienceLevel == null ? null : entity.ExperienceLevel.Name
-				});
-			}
-
-			return listings;
 		}
 
 		public async Task<ListingDTO?> GetByIdAsync(string id)

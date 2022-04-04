@@ -1,5 +1,6 @@
 ﻿using GT.Core.DTO.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 
 namespace GT.Core.DTO.Impl
 {
