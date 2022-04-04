@@ -1,29 +1,55 @@
-﻿@model GT.Core.DTO.Impl.ListingDTO
-@section Scripts {
-<script src="~/js/sendInquiry.js"></script>
-}
+﻿@model GT.Core.DTO.Impl.ListingInquiryDTO
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-	Launch demo modal
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+	Apply for this job
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
+				<h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				...
+				<form asp-action="Create">
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<div class="form-group">
+						<label asp-for="MessageTitle" class="control-label"></label>
+						<input asp-for="MessageTitle" class="form-control" />
+						<span asp-validation-for="MessageTitle" class="text-danger"></span>
+					</div>
+					<div class="form-group">
+						<label asp-for="MessageBody" class="control-label"></label>
+						<input asp-for="MessageBody" class="form-control" />
+						<span asp-validation-for="MessageBody" class="text-danger"></span>
+					</div>
+					<div class="form-group">
+						<label asp-for="LinkedInLink" class="control-label"></label>
+						<input asp-for="LinkedInLink" class="form-control" />
+						<span asp-validation-for="LinkedInLink" class="text-danger"></span>
+					</div>
+					@if (SignInManager.IsSignedIn(User))
+					{
+						<p>User Id: UserManager.GetUserId(User)</p>
+					}
+					else
+					{
+						<p>You are not logged in.</p>
+					}
+
+					<div class="form-group">
+						<input type="submit" value="Create" class="btn btn-primary" />
+					</div>
+				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Save changes</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary">Submit</button>
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,6 @@
 ﻿@model GT.Core.DTO.Impl.ListingDTO
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
 	ViewData["Title"] = "Annons";
 }
@@ -77,5 +79,12 @@
 			<p>@Model.ExperienceLevel</p>
 		</div>
 	</div>
+	@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+	{
+		<partial name="_Inquiries" />
+	}
 	<partial name="_SendInquiry" />
+	<div>
+		<a asp-action="Index">Back to List</a>
+	</div>
 </div>
