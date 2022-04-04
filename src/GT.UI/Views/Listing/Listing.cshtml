@@ -83,7 +83,7 @@
 	{
 		<partial name="_Inquiries" />
 	}
-	<partial name="_SendInquiry" />
+	@await Html.PartialAsync("_SendInquiry",	new GT.Core.DTO.Impl.ListingInquiryDTO())
 	<div>
 		<a asp-action="Index">Back to List</a>
 	</div>
