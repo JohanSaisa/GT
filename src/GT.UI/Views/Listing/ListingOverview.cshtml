@@ -21,10 +21,9 @@
 	public bool? FTE { get; set; }
 	public DateTime? CreatedDate { get; set; }
 	public string? ExperienceLevel { get; set; }*@
-
 @using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
 {
-  @await Html.PartialAsync("_ListingFilterPartial", 
+  @await Html.PartialAsync("_ListingFilterPartial",
     new GT.Core.FilterModels.Impl.ListingFilterModel());
 }
 <table>

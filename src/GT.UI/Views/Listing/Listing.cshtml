@@ -79,12 +79,12 @@
 			<p>@Model.ExperienceLevel</p>
 		</div>
 	</div>
-	@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+	@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
 	{
-		<partial name="_Inquiries" />
+		@await Html.PartialAsync("_InquiriesButton",	new List<GT.Core.DTO.Impl.ListingInquiryDTO>())
 	}
-	@await Html.PartialAsync("_SendInquiry",	new GT.Core.DTO.Impl.ListingInquiryDTO())
-	<div>
-		<a asp-action="Index">Back to List</a>
-	</div>
+	else
+	{
+		@await Html.PartialAsync("_SendInquiry",	new GT.Core.DTO.Impl.ListingInquiryDTO(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+	}
 </div>

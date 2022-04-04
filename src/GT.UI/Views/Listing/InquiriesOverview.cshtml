@@ -1,0 +1,17 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@model List<GT.Core.DTO.Impl.ListingInquiryDTO>
+@{
+	ViewData["Title"] = "Ansökningar";
+	ViewData["JobTitle"] = "Placeholder att ersättas av controller";
+}
+
+<h5 class="modal-title" id="staticBackdropLabel">Applications for @ViewBag["JobTitle"]. </h5>
+<div>
+	@foreach (var item in Model)
+	{
+		<h5 class="card-title">@Html.ActionLink(item.MessageTitle, "GetInquiry", new { id=item.Id }, new { @class="stretched-link" })</h5>
+		<p class="card-text">@item.LinkedInLink</p>
+	}
+</div>

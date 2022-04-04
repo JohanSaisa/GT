@@ -1,0 +1,9 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@model List<GT.Core.DTO.Impl.ListingInquiryDTO>
+
+@using (Html.BeginForm("GetInquiries", "Inquiry", FormMethod.Get))
+{
+	@Html.ActionLink($"Applications: {@Model.Count()}", "GetInquiries", "Inquiry", null, new { @class="btn btn-primary" })
+}
