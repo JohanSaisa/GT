@@ -21,26 +21,17 @@
 	public bool? FTE { get; set; }
 	public DateTime? CreatedDate { get; set; }
 	public string? ExperienceLevel { get; set; }*@
-
 @using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
 {
-  @await Html.PartialAsync("_ListingFilterPartial", 
+  @await Html.PartialAsync("_ListingFilterPartial",
     new GT.Core.FilterModels.Impl.ListingFilterModel());
 }
 <table>
 	<tr>
 		<th>
-			ListingTitle
+			<h3>Våra aktuella jobbannonser</h3>
 		</th>
-		@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
-		{
-			<th>
-				Delete
-			</th>
-			<th>
-				Edit
-			</th>
-		}
+		
 	</tr>
 
 	@foreach (var item in Model)
@@ -55,10 +46,10 @@
 			@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
 			{
 				<td>
-					@Html.ActionLink("Edit", "Edit", new { id=item.Id })
+					@Html.ActionLink("Edit", "Edit", new { id=item.Id }, new { @class="btn btn-warning" })
 				</td>
 				<td>
-					@Html.ActionLink("Delete", "Delete", new { id=item.Id })
+					@Html.ActionLink("Delete", "Delete", new { id=item.Id }, new { @class="btn btn-danger" })
 				</td>
 			}
 		</tr>
