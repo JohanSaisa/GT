@@ -181,8 +181,8 @@ namespace GT.Core.Services.Impl
 
 				.Where(e => filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
-					|| (e.ExperienceLevel != null && (e.ExperienceLevel.Name != null
-						&& filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
+					|| (e.ExperienceLevel != null && e.ExperienceLevel.Name != null
+						&& filter.ExperienceLevels.Any(el => string.Equals(e.ExperienceLevel.Name, el))))
 
 				.Where(e =>
 					filter.FTE == null
@@ -192,7 +192,7 @@ namespace GT.Core.Services.Impl
 					filter.Location == null
 					|| (e.Location != null
 						&& e.Location.Name != null
-						&& string.Equals(filter.Location, e.Location.Name)))
+						&& EF.Functions.Like(e.Location.Name, filter.Location)))
 
 				.Where(e =>
 					filter.SalaryMin == null

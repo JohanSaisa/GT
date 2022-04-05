@@ -34,7 +34,7 @@ namespace GT.UI.Controllers
 				&& filterModel.Filter is not null)
 			{
 			filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
-				.Where(el => el!= null && el.IsSelected)
+				.Where(el => el != null && el.IsSelected)
 				.Select(el => el.Name)
 				.ToList();
 			}

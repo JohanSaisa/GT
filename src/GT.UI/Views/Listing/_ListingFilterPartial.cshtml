@@ -47,6 +47,7 @@
             @Model.ExperienceLevels[i].Name
           </label>
           @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected)
+          @Html.HiddenFor(fm => Model.ExperienceLevels[i].Name)
         </p>
       }
     </p>
