@@ -182,7 +182,7 @@ namespace GT.Core.Services.Impl
 				.Where(e => filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
 					|| (e.ExperienceLevel != null && (e.ExperienceLevel.Name != null
-					&& filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
+						&& filter.ExperienceLevels.Contains(e.ExperienceLevel.Name))))
 
 				.Where(e =>
 					filter.FTE == null

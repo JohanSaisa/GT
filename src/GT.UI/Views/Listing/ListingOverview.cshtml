@@ -25,8 +25,12 @@
 @using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
 {
   @await Html.PartialAsync("_ListingFilterPartial", 
-    new GT.Core.FilterModels.Impl.ListingFilterModel());
+    new GT.UI.Models.ListingFilterViewModel
+    {
+      ExperienceLevels = (List<ExperienceLevelItem>)ViewData["ExperienceLevels"]
+    })
 }
+
 <table>
 	<tr>
 		<th>

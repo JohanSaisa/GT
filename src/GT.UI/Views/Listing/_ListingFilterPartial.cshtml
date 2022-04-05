@@ -1,13 +1,14 @@
-﻿@model GT.Core.FilterModels.Impl.ListingFilterModel
+﻿@model GT.UI.Models.ListingFilterViewModel
+
 	<p>
 		Keywords (Separate by space, use underscore for spaces inside keywords): 
-    @Html.TextBoxFor(fm => fm.KeywordsRawText, new { @id="keywordstextbox" })		
+    @Html.TextBoxFor(fm => fm.Filter.KeywordsRawText, new { @id="keywordstextbox" })		
 	</p>
 
     <p>
       Job type: 
       @Html.DropDownListFor(
-        fm => fm.FTE,
+        fm => fm.Filter.FTE,
         new SelectList(new List<object>
         {
           new { Text = "Any", Value = (bool?)null },
@@ -19,25 +20,38 @@
     <p>
       Earliest creation date: 
       @Html.TextBoxFor(
-        fm => fm.IncludeListingsFromDate, 
+        fm => fm.Filter.IncludeListingsFromDate, 
         "{0:dd/MM/yyyy}", 
-        new { @type="date", @id="creationdatetextbox"})
+        new { @type="date", @id="creationdatetextbox" })
     </p>
 
     <p>
       Minimum expected salary: 
       @Html.TextBoxFor(
-        fm => fm.SalaryMin, 
+        fm => fm.Filter.SalaryMin, 
         new { @type="number", @min=0 })
     </p>
+
+    <p>
       Maximum expected salary: 
       @Html.TextBoxFor(
-        fm => fm.SalaryMax, 
+        fm => fm.Filter.SalaryMax, 
         new { @type="number", @min=0 })
-    <p>
+    </p>
 
+    <p>
+      @for(int i = 0; i < Model.ExperienceLevels.Count; i++)
+      {
+        <p>
+          <label>
+            @Model.ExperienceLevels[i].Name
+          </label>
+          @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected)
+        </p>
+      }
     </p>
 
     <p>
       <input type="submit" value="Filter" />
     </p>
+

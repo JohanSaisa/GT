@@ -32,6 +32,7 @@ namespace GT.Core.Services.Impl
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
+
 					var entity = await _experienceLevelRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
 					// TODO - Use IMapper
@@ -55,6 +56,7 @@ namespace GT.Core.Services.Impl
 
 				// Assigning the updated id to the DTO as it is the only property with a new value.
 				dto.Id = newEntity.Id;
+
 				return dto;
 			}
 			catch (Exception e)
@@ -81,8 +83,12 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var experienceLevelEntitiess = await _experienceLevelRepository.GetAll().ToListAsync();
+				var experienceLevelEntitiess = await _experienceLevelRepository
+					.GetAll()
+					.ToListAsync();
+
 				var experienceLevelDTOs = new List<ExperienceLevelDTO>();
+
 				//TODO automapper
 				foreach (var entity in experienceLevelEntitiess)
 				{
@@ -92,6 +98,7 @@ namespace GT.Core.Services.Impl
 						Name = entity.Name
 					});
 				}
+
 				return experienceLevelDTOs;
 			}
 			catch (Exception e)
