@@ -80,6 +80,7 @@
 			<p>@Model.ExperienceLevel</p>
 		</div>
 	</div>
+	@*Verify that the user is Authenticated and that the user is in role admin*@
 	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
 	{
 		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml", new List<GT.Core.DTO.Impl.ListingInquiryDTO>(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
