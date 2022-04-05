@@ -5,5 +5,5 @@
 
 @using (Html.BeginForm("GetInquiries", "Inquiry", FormMethod.Get))
 {
-	@Html.ActionLink($"Applications: {@Model.Count()}", "GetInquiries", "Inquiry", null, new { @class="btn btn-primary" })
+	@Html.ActionLink($"Applications: { @Model.Count() }", "GetInquiries", "Inquiry", null, new { @class="btn btn-primary" })
 }

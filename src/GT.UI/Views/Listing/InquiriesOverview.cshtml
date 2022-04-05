@@ -11,7 +11,11 @@
 <div>
 	@foreach (var item in Model)
 	{
-		<h5 class="card-title">@Html.ActionLink(item.MessageTitle, "GetInquiry", new { id=item.Id }, new { @class="stretched-link" })</h5>
-		<p class="card-text">@item.LinkedInLink</p>
+			<div class="card-body">
+			@Html.ActionLink(item.MessageTitle, "GetInquiry", new { id=item.Id }, new { @class="h5 card-title stretched-link" })
+				<p class="card-text">@item.LinkedInLink</p>
+			@Html.ActionLink("Edit", "EditInquiry", new { id=item.Id }, new { @class="btn btn-alert"})
+			@Html.ActionLink("Delete", "DeleteInquiry", new { id=item.Id }, new { @class="btn btn-warning"})
+			</div>
 	}
 </div>
