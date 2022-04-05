@@ -82,10 +82,10 @@
 	</div>
 	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
 	{
-		@await Html.PartialAsync("_InquiriesOverview", new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml", new List<GT.Core.DTO.Impl.ListingInquiryDTO>(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
 	}
 	else
 	{
-		@await Html.PartialAsync("_SendInquiry",	new GT.Core.DTO.Impl.ListingInquiryDTO(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+		@await Html.PartialAsync("~/Views/Inquiries/_SendInquiry.cshtml",	new GT.Core.DTO.Impl.ListingInquiryDTO(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
 	}
 </div>

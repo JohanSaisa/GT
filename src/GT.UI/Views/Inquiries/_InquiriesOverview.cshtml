@@ -4,8 +4,8 @@
 @model List<GT.Core.DTO.Impl.ListingInquiryDTO>
 @{
 	ViewData["Title"] = "Ansökningar";
-
 }
+
 @using (Html.BeginForm("GetInquiries", "Inquiries", FormMethod.Get))
 {
 	<div>
@@ -16,7 +16,7 @@
 				<div class="card-body">
 					<h5>@Html.ActionLink(item.MessageTitle, "GetInquiry", new { id=item.Id }, new { @class="card-title stretched-link" })</h5>
 					<p class="card-text">@item.LinkedInLink</p>
-					@Html.ActionLink("Delete", "DeleteInquiry", new { id=item.Id }, new { @class="btn btn-warning"})
+					@Html.ActionLink("Delete", "DeleteInquiry", new { id=item.Id }, new { @class="btn btn-danger"})
 				</div>
 			}
 		</div>
