@@ -1,24 +1,92 @@
-﻿@model GT.Core.DTO.Impl.ListingDTO
+﻿@using GT.UI.Enums
+@model GT.Core.DTO.Impl.ListingDTO
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
 	ViewData["Title"] = "Annons";
-
 }
 
-<h1>Annons</h1>
-
-<h2>@Model.ListingTitle</h2>
-<div class="listingData">
-	@Model.Employer
-	<br />
-	@Model.JobTitle
-	<br />
-	@Model.Description
-	<br />
-	@Model.SalaryMin @Model.SalaryMax
-	<br />
-	@Model.Location
-	<br />
-	@Model.FTE
-	<br />
-	@Model.ExperienceLevel
+<h1>@ViewData["Title"]: @Model.JobTitle</h1>
+<div class="container">
+	<div class="row">
+		<div class="col-2">
+			<h2>Listing Title:</h2>
+		</div>
+		<div class="col-10">
+			<h2>@Model.ListingTitle</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Company:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.Employer</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Job title:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.JobTitle</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Description:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.Description</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Salary min:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.SalaryMin</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Salary max:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.SalaryMax</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Location:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.Location</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Employment type:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.FTE</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<p>Experience level:</p>
+		</div>
+		<div class="col-10">
+			<p>@Model.ExperienceLevel</p>
+		</div>
+	</div>
+	@*Verify that the user is Authenticated and that the user is in role admin*@
+	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
+	{
+		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml", new List<GT.Core.DTO.Impl.ListingInquiryDTO>(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+	}
+	else
+	{
+		@await Html.PartialAsync("~/Views/Inquiries/_SendInquiry.cshtml",	new GT.Core.DTO.Impl.ListingInquiryDTO(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+	}
 </div>
