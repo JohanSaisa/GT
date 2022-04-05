@@ -91,43 +91,46 @@ namespace GT.Core.Services.Impl
 			{
 				if (listingDTO.Employer is not null)
 				{
-					if (!await _companyService.ExistsByNameAsync(listingDTO.Employer))
+					var employerName = listingDTO.Employer.Trim();
+					if (!await _companyService.ExistsByNameAsync(employerName))
 					{
 						await _companyService
-							.AddAsync(new CompanyDTO() { Name = listingDTO.Employer });
+							.AddAsync(new CompanyDTO() { Name = employerName });
 					}
 
 					entity.Employer = await _companyRepository
 						.GetAll()
-						.FirstOrDefaultAsync(e => e.Name == listingDTO.Employer);
+						.FirstOrDefaultAsync(e => e.Name == employerName);
 				}
 
 				// Add sub entity Location
 				if (listingDTO.Location is not null)
 				{
-					if (!await _locationService.ExistsByNameAsync(listingDTO.Location))
+					var locationName = listingDTO.Location.Trim();
+					if (!await _locationService.ExistsByNameAsync(locationName))
 					{
 						await _locationService
-							.AddAsync(new LocationDTO() { Name = listingDTO.Location });
+							.AddAsync(new LocationDTO() { Name = locationName });
 					}
 
 					entity.Location = await _locationRepository
 						.GetAll()
-						.FirstOrDefaultAsync(e => e.Name == listingDTO.Location);
+						.FirstOrDefaultAsync(e => e.Name == locationName);
 				}
 
 				// Add sub entity ExperienceLevel
 				if (listingDTO.ExperienceLevel is not null)
 				{
-					if (!await _experienceLevelService.ExistsByNameAsync(listingDTO.ExperienceLevel))
+					var experienceLevelName = listingDTO.ExperienceLevel.Trim();
+					if (!await _experienceLevelService.ExistsByNameAsync(experienceLevelName))
 					{
 						await _experienceLevelService
-							.AddAsync(new ExperienceLevelDTO() { Name = listingDTO.ExperienceLevel });
+							.AddAsync(new ExperienceLevelDTO() { Name = experienceLevelName });
 					}
 
 					entity.ExperienceLevel = await _experienceLevelRepository
 						.GetAll()
-						.FirstOrDefaultAsync(e => e.Name == listingDTO.ExperienceLevel);
+						.FirstOrDefaultAsync(e => e.Name == experienceLevelName);
 				}
 				return entity;
 			}
@@ -369,12 +372,11 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 
-			oldEntity.Id = listingDTO.Id;
-			oldEntity.ListingTitle = listingDTO.ListingTitle;
-			oldEntity.Description = listingDTO.Description;
+			oldEntity.ListingTitle = listingDTO.ListingTitle == null ? null : listingDTO.ListingTitle.Trim();
+			oldEntity.Description = listingDTO.Description == null ? null : listingDTO.Description.Trim();
 			oldEntity.SalaryMin = listingDTO.SalaryMin;
 			oldEntity.SalaryMax = listingDTO.SalaryMax;
-			oldEntity.JobTitle = listingDTO.JobTitle;
+			oldEntity.JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim();
 			oldEntity.FTE = listingDTO.FTE;
 
 			return await AddSubEntitiesToListing(listingDTO, oldEntity);
@@ -398,11 +400,11 @@ namespace GT.Core.Services.Impl
 			var newListingEntity = new Listing();
 
 			newListingEntity.Id = Guid.NewGuid().ToString();
-			newListingEntity.ListingTitle = listingDTO.ListingTitle!;
-			newListingEntity.Description = listingDTO.Description;
+			newListingEntity.ListingTitle = listingDTO.ListingTitle! == null ? null : listingDTO.ListingTitle.Trim();
+			newListingEntity.Description = listingDTO.Description == null ? null : listingDTO.Description.Trim();
 			newListingEntity.SalaryMin = listingDTO.SalaryMin;
 			newListingEntity.SalaryMax = listingDTO.SalaryMax;
-			newListingEntity.JobTitle = listingDTO.JobTitle;
+			newListingEntity.JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim();
 			newListingEntity.FTE = listingDTO.FTE;
 			newListingEntity.CreatedDate = DateTime.Now;
 			newListingEntity.CreatedById = signedInUserId;
