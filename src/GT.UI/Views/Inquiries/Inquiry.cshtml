@@ -6,6 +6,10 @@
 <p>@Model.Id</p>
 <p>@Model.ListingId</p>
 <p>@Model.ApplicantId</p>
+@if(Model.ApplicantEmail is not null)
+{
+  <p>@Model.ApplicantEmail</p>
+}
 <p>@Model.MessageTitle</p>
 <p>@Model.MessageBody</p>
 <p>@Model.LinkedInLink</p>

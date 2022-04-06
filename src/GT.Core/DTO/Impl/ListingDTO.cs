@@ -48,6 +48,8 @@ namespace GT.Core.DTO.Impl
 		[StringLength(100)]
 		public string? ExperienceLevel { get; set; }
 
+		public List<ListingInquiryDTO>? Inquiries { get; set; }
+    
 		/// <summary>
 		/// Maps to an ApplicationDeadline name in the database.
 		/// </summary>
