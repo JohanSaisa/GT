@@ -4,7 +4,7 @@ namespace GT.Core.DTO.Impl
 {
 	public class CompanyLogoDTO
 	{
-		public string FileName { get; set; }
+		public string CompanyId { get; set; }
 		public IFormFile File { get; set; }
 	}
 }

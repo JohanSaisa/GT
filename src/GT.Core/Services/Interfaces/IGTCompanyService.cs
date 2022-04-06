@@ -1,4 +1,5 @@
 ﻿using GT.Core.DTO.Impl;
+using Microsoft.AspNetCore.Http;
 
 namespace GT.Core.Services.Interfaces
 {
@@ -6,13 +7,13 @@ namespace GT.Core.Services.Interfaces
 	{
 		Task<CompanyDTO> AddAsync(CompanyDTO dto);
 
-		Task<CompanyDTO> GetAsync();
+		Task<List<CompanyDTO>> GetAsync();
 
 		Task<CompanyDTO> GetByIdAsync(string companyId);
 
 		Task<bool> ExistsByNameAsync(string name);
 
-		void AddCompanyLogo(CompanyLogoDTO file, string companyId);
+		void AddCompanyLogo(CompanyLogoDTO companyLogoDTO);
 
 		void DeleteCompanyLogo(string companyLogoId);
 

@@ -2,9 +2,9 @@
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
 namespace GT.Core.Services.Impl
 {
 	public class GTCompanyService : IGTCompanyService
@@ -64,20 +64,34 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public void AddCompanyLogo(CompanyLogoDTO file, string companyId)
+		public async void AddCompanyLogo(CompanyLogoDTO companyLogoDTO)
 		{
 			string path = Path.Combine(Directory.GetCurrentDirectory(), "src/GT.UI/wwwroot/img");
-			var company = GetByIdAsync(companyId);
 
-			using (var stream = new FileStream(file.FileName + path, FileMode.Create))
+			var company = await GetByIdAsync(companyLogoDTO.CompanyId);
+			if(company == null)
 			{
-				file.File.CopyTo(stream);
+				return;
 			}
+
+			if(company.CompanyLogoId == null || company.CompanyLogoId == String.Empty)
+			{
+				company.CompanyLogoId = Guid.NewGuid().ToString();
+			}
+
+
 		}
 
-		public Task DeleteAsync(string companyId)
+		public async Task DeleteAsync(string id)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				await _companyRepository.DeleteAsync(id);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 
 		public void DeleteCompanyLogo(string companyLogoId)
@@ -89,7 +103,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _companyRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _companyRepository.GetAll().Where(c => c.Name == name).AnyAsync();
 			}
 			catch (Exception e)
 			{
@@ -98,21 +112,47 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public Task<CompanyDTO> GetAsync()
+		public async Task<List<CompanyDTO>> GetAsync()
 		{
-			throw new NotImplementedException();
+			try
+			{
+				var entities = await _companyRepository.GetAll().ToListAsync();
+				var companyDTOs = new List<CompanyDTO>();
+
+				foreach (var entity in entities)
+				{
+					// TODO add automapper
+					companyDTOs.Add(new CompanyDTO
+					{
+						Id = entity.Id,
+						Name = entity.Name,
+						CompanyLogoId = entity.CompanyLogoId,
+					});
+				}
+
+				return companyDTOs;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
 		}
 
 		public async Task<CompanyDTO> GetByIdAsync(string id)
 		{
+			if (id is null)
+			{
+				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByIdAsync)}");
+				return null;
+			}
+
 			try
 			{
 				// Get entity
 				var entity = await _companyRepository
 					.GetAll()
-					.Include(c => c.Name)
-					.Include(c => c.CompanyLogoId)
-					.FirstOrDefaultAsync(c => c.Id == id);
+					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)
 				{
