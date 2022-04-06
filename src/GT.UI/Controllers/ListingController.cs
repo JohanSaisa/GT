@@ -12,15 +12,18 @@ namespace GT.UI.Controllers
 	{
 		private readonly IGTListingService _listingService;
 		private readonly IGTExperienceLevelService _experienceService;
+		private readonly IGTListingInquiryService _listingInquiryService;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
 			IGTListingService listingService, 
-			IGTExperienceLevelService experienceService, 
+			IGTExperienceLevelService experienceService,
+			IGTListingInquiryService listingInquiryService,
 			UserManager<ApplicationUser> userManager)
 		{
 			_listingService = listingService;
 			_experienceService = experienceService;
+			_listingInquiryService = listingInquiryService;
 			_userManager = userManager;
 		}
 
@@ -73,12 +76,16 @@ namespace GT.UI.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
-			var listing = await _listingService.GetByIdAsync(id);
+			var listing = await _listingService
+				.GetByIdAsync(id);
 
 			if (listing == null)
 			{
 				return NotFound();
 			}
+
+			listing.Inquiries = await _listingInquiryService
+				.GetByListingIdAsync(listing.Id!);
 
 			return View("Listing", listing);
 		}

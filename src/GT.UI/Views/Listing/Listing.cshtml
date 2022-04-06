@@ -83,10 +83,13 @@
 	@*Verify that the user is Authenticated and that the user is in role admin*@
 	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
 	{
-		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml", new List<GT.Core.DTO.Impl.ListingInquiryDTO>(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml", 
+     new List<GT.Core.DTO.Impl.ListingInquiryDTO>(), 
+     new ViewDataDictionary(ViewData){ { "JobTitle", Model.JobTitle }, { "Inquiries", Model.Inquiries } })
 	}
 	else
 	{
-		@await Html.PartialAsync("~/Views/Inquiries/_SendInquiry.cshtml",	new GT.Core.DTO.Impl.ListingInquiryDTO(), new ViewDataDictionary(ViewData){{"JobTitle", Model.JobTitle}})
+		@await Html.PartialAsync("~/Views/Inquiries/_SendInquiry.cshtml",	
+      new ViewDataDictionary(ViewData){ { "JobTitle", Model.JobTitle } })
 	}
 </div>

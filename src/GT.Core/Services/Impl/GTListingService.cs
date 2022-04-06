@@ -20,7 +20,6 @@ namespace GT.Core.Services.Impl
 		private readonly IGTCompanyService _companyService;
 		private readonly IGTExperienceLevelService _experienceLevelService;
 		private readonly IGTLocationService _locationService;
-
 		private readonly IGTGenericRepository<Listing> _listingRepository;
 		private readonly IGTGenericRepository<Company> _companyRepository;
 		private readonly IGTGenericRepository<Location> _locationRepository;

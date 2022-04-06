@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using GT.Data.Data.GTIdentityDb.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
