@@ -84,7 +84,7 @@
 	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
 	{
 		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml", 
-     new List<GT.Core.DTO.Impl.ListingInquiryDTO>(), 
+     Model.Inquiries,
      new ViewDataDictionary(ViewData){ { "JobTitle", Model.JobTitle }, { "Inquiries", Model.Inquiries } })
 	}
 	else

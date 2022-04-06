@@ -47,5 +47,7 @@ namespace GT.Core.DTO.Impl
 		/// </summary>
 		[StringLength(100)]
 		public string? ExperienceLevel { get; set; }
+
+		public List<ListingInquiryDTO>? Inquiries { get; set; }
 	}
 }
