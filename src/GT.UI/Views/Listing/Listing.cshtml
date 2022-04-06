@@ -84,6 +84,8 @@
 	@*Verify that the user is Authenticated and that the user is in role admin*@
 	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
 	{
+		@Html.ActionLink("Delete this listing", "DeleteListing", new { id=Model.Id }, new { @class="btn btn-danger" })
+
 		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml",	Model.Inquiries,
 	new ViewDataDictionary(ViewData){ { "JobTitle", Model.JobTitle }, { "Inquiries", Model.Inquiries } })
 	}
