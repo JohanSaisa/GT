@@ -8,11 +8,13 @@
 
 @using (Html.BeginForm("CreateInquiry", "Inquiry", FormMethod.Post))
 {
+	@Html.HiddenFor(m => m.Id)
+	@Html.Hidden("ListingId", (object?)ViewData["ListingId"])
 	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="staticBackdropLabel">Application for @ViewData["JobTitle"]</h5>
+					<h5 class="modal-title" id="staticBackdropLabel">Application form</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -43,14 +45,14 @@
 						{
 							<p>You are not logged in.</p>
 						}
-
 						<div class="form-group">
 							<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-							<input type="submit" value="Submit" class="btn btn-primary" />
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+								<input type="submit" value="Submit" class="btn btn-primary" />
+							</div>
 						</div>
-				</div>
 					</form>
+
 				</div>
 			</div>
 		</div>

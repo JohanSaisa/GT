@@ -36,17 +36,26 @@ namespace GT.Core.Services.Impl
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
 				}
-				if (inquiryDTO.ListingId is null || await _listingService.ExistsByIdAsync(inquiryDTO.ListingId))
+				if (inquiryDTO.ListingId is null || !(await _listingService.ExistsByIdAsync(inquiryDTO.ListingId)))
 				{
 					_logger.LogWarning($"Attempted to add a listing inquiry without a listing id.");
 					return null;
 				}
 
+				if (inquiryDTO.ApplicantId != null)
+				{
+					if (_listingInquiryRepository.GetAll().Any(e => e.ApplicantId == inquiryDTO.ApplicantId && e.ListingId == inquiryDTO.ListingId))
+					{
+						_logger.LogWarning($"Attempted to add another listing inquiry by same user id.");
+						return null;
+					}
+				}
+
 				var newInquiry = new ListingInquiry();
 
 				//TODO Implement automapper
-				newInquiry.Id = inquiryDTO.Id;
-				newInquiry.ApplicantId = inquiryDTO.ApplicantId;
+				newInquiry.Id = Guid.NewGuid().ToString();
+				newInquiry.ApplicantId = signedInUserId;
 				newInquiry.ListingId = inquiryDTO.ListingId;
 				newInquiry.MessageTitle = inquiryDTO.MessageTitle;
 				newInquiry.MessageBody = inquiryDTO.MessageBody;
