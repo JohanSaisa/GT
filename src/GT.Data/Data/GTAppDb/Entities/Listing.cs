@@ -33,5 +33,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public ICollection<ListingInquiry>? Inquiries { get; set; }
 
 		public ExperienceLevel? ExperienceLevel { get; set; }
+
+		public DateTime? ApplicationDeadline { get; set; }
 	}
 }

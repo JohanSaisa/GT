@@ -64,6 +64,21 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public string AddCompanyLogo(byte[] file)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task DeleteAsync(string companyId)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DeleteCompanyLogo(string companyLogoId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
 			try
@@ -75,6 +90,16 @@ namespace GT.Core.Services.Impl
 				_logger.LogError(e.Message);
 				return false;
 			}
+		}
+
+		public Task<CompanyDTO> GetAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<CompanyDTO> GetByIdAsync(string companyId)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

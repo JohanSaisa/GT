@@ -8,6 +8,8 @@ namespace GT.Core.Services.Interfaces
 
 		Task<ListingInquiryDTO?> GetByIdAsync(string id);
 
+		Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string listingId);
+
 		Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null);
 
 		Task UpdateAsync(ListingInquiryDTO inquiryDTO, string id);

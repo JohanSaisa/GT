@@ -1,7 +1,9 @@
 ﻿using GT.Core.DTO.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -11,14 +13,17 @@ namespace GT.Core.Services.Impl
 	{
 		private readonly ILogger<GTListingInquiryService> _logger;
 		private readonly IGTGenericRepository<ListingInquiry> _listingInquiryRepository;
+		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IGTListingService _listingService;
 
 		public GTListingInquiryService(ILogger<GTListingInquiryService> logger,
 			IGTGenericRepository<ListingInquiry> listingInquiryRepository,
+			UserManager<ApplicationUser> userManager,
 			IGTListingService listingService)
 		{
 			_logger = logger;
 			_listingInquiryRepository = listingInquiryRepository;
+			_userManager = userManager;
 			_listingService = listingService;
 		}
 
@@ -104,17 +109,24 @@ namespace GT.Core.Services.Impl
 			// Get entities from database
 			try
 			{
-				var entities = await _listingInquiryRepository.GetAll().ToListAsync();
+				var entities = await _listingInquiryRepository
+					.GetAll()
+					.ToListAsync();
 
 				var inquiryDTOs = new List<ListingInquiryDTO>();
 
 				foreach (var entity in entities)
 				{
+
+					var applicant = await _userManager.FindByIdAsync(entity.ApplicantId);
+
 					// TODO add automapper
+					
 					inquiryDTOs.Add(new ListingInquiryDTO
 					{
 						Id = entity.Id,
 						ApplicantId = entity.ApplicantId,
+						ApplicantEmail = applicant?.Email,
 						ListingId = entity.ListingId,
 						LinkedInLink = entity.LinkedInLink,
 						MessageBody = entity.MessageBody,
@@ -151,11 +163,16 @@ namespace GT.Core.Services.Impl
 					return null;
 				}
 
+				var applicant = await _userManager
+					.FindByIdAsync(entity.ApplicantId);
+
 				// TODO Automapper
+
 				var inquiryDTO = new ListingInquiryDTO()
 				{
 					Id = entity.Id,
 					ApplicantId = entity.ApplicantId,
+					ApplicantEmail = applicant?.Email,
 					ListingId = entity.ListingId,
 					LinkedInLink = entity.LinkedInLink,
 					MessageBody = entity.MessageBody,
@@ -171,6 +188,46 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public async Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string listingId)
+		{
+			if(listingId is null)
+			{
+				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByListingIdAsync)}");
+				return null;
+			}
+
+			var entities = await _listingInquiryRepository
+				.GetAll()
+				.Where(e => e.ListingId == listingId)
+				.ToListAsync();
+
+			if(entities is null)
+			{
+				return null;
+			}
+
+			var listingInquiryDTOs = new List<ListingInquiryDTO>();
+
+			foreach (var entity in entities)
+			{
+				var applicant = await _userManager
+					.FindByIdAsync(entity.ApplicantId);
+
+				listingInquiryDTOs.Add(new ListingInquiryDTO
+				{
+					Id = entity.Id,
+					ApplicantId = entity.ApplicantId,
+					ApplicantEmail = applicant?.Email,
+					ListingId = entity.ListingId,
+					LinkedInLink = entity.LinkedInLink,
+					MessageBody = entity.MessageBody,
+					MessageTitle = entity.MessageTitle
+				});
+			}
+
+			return listingInquiryDTOs;
+		}
+
 		public async Task UpdateAsync(ListingInquiryDTO inquiryDTO, string id)
 		{
 			try
@@ -179,7 +236,9 @@ namespace GT.Core.Services.Impl
 				{
 					if (await ExistsByIdAsync(id))
 					{
-						var entityToUpdate = await _listingInquiryRepository.GetAll().Where(e => e.Id == id).FirstOrDefaultAsync();
+						var entityToUpdate = await _listingInquiryRepository
+							.GetAll()
+							.FirstOrDefaultAsync(e => e.Id == id);
 
 						// TODO implement automapper
 						entityToUpdate.Id = inquiryDTO.Id;
