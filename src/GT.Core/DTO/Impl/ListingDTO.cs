@@ -52,8 +52,8 @@ namespace GT.Core.DTO.Impl
 		/// Maps to an ApplicationDeadline name in the database.
 		/// </summary>
 		public DateTime? ApplicationDeadline { get; set; }
-		[StringLength(450)]
 
+		[StringLength(450)]
 		public string? CompanyLogoId { get; set; }
 	}
 }
