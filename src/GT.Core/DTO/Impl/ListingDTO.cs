@@ -53,6 +53,7 @@ namespace GT.Core.DTO.Impl
 		/// </summary>
 		public DateTime? ApplicationDeadline { get; set; }
 
+		[StringLength(450)]
 		public string? CompanyLogoId { get; set; }
 	}
 }
