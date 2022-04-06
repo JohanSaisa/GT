@@ -3,9 +3,9 @@ using GT.Core.FilterModels.Impl;
 
 namespace GT.UI.Models
 {
-	public class ListingFilterViewModel
-	{
-		public ListingFilterModel Filter { get; set; } = new();
-		public List<ExperienceLevelDTO> ExperienceLevels { get; set; } = new();
-	}
+  public class ListingFilterViewModel
+  {
+		public ListingFilterModel? Filter { get; set; } 
+		public List<ExperienceLevelItem> ExperienceLevels { get; set; } = new();
+  }
 }
