@@ -194,15 +194,17 @@ namespace GT.Core.Services.Impl
 						&& e.Location.Name != null
 						&& string.Equals(filter.Location, e.Location.Name)))
 
-				.Where(e =>
-					filter.SalaryMin == null
-					|| (e.SalaryMin != null
-						&& e.SalaryMin >= filter.SalaryMin))
+				// TODO: Refactor salary filter to include all listings where there is an overlap between the (filter.SalaryMin - filter.SalaryMax) and the (listing.SalaryMin - listing.SalaryMax) ranges.
+				
+				//.Where(e =>
+				//	filter.SalaryMin == null
+				//	|| (e.SalaryMin != null
+				//		&& e.SalaryMin >= filter.SalaryMin))
 
-				.Where(e =>
-					filter.SalaryMax == null
-					|| (e.SalaryMax != null
-						&& e.SalaryMax <= filter.SalaryMax))
+				//.Where(e =>
+				//	filter.SalaryMax == null
+				//	|| (e.SalaryMax != null
+				//		&& e.SalaryMax <= filter.SalaryMax))
 
 				.Where(e => filter.IncludeListingsFromDate == null
 					|| (e.CreatedDate != null
