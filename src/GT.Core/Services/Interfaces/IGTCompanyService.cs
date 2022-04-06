@@ -12,10 +12,12 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> ExistsByNameAsync(string name);
 
-		string AddCompanyLogo(byte[] file);
+		void AddCompanyLogo(CompanyLogoDTO file, string companyId);
 
 		void DeleteCompanyLogo(string companyLogoId);
 
 		Task DeleteAsync(string companyId);
 	}
 }
+
+

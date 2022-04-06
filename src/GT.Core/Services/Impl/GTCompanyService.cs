@@ -64,9 +64,15 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public string AddCompanyLogo(byte[] file)
+		public void AddCompanyLogo(CompanyLogoDTO file, string companyId)
 		{
-			throw new NotImplementedException();
+			string path = Path.Combine(Directory.GetCurrentDirectory(), "src/GT.UI/wwwroot/img");
+			var company = GetByIdAsync(companyId);
+
+			using (var stream = new FileStream(file.FileName + path, FileMode.Create))
+			{
+				file.File.CopyTo(stream);
+			}
 		}
 
 		public Task DeleteAsync(string companyId)
@@ -97,9 +103,38 @@ namespace GT.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		public Task<CompanyDTO> GetByIdAsync(string companyId)
+		public async Task<CompanyDTO> GetByIdAsync(string id)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				// Get entity
+				var entity = await _companyRepository
+					.GetAll()
+					.Include(c => c.Name)
+					.Include(c => c.CompanyLogoId)
+					.FirstOrDefaultAsync(c => c.Id == id);
+
+				if (entity == null)
+				{
+					_logger.LogInformation($"Entity with id {id} not found.");
+					return null;
+				}
+
+				// Map entity to DTO
+				var company = new CompanyDTO()
+				{
+					Id = entity.Id,
+					Name = entity.Name,
+					CompanyLogoId = entity.CompanyLogoId,
+				};
+
+				return company;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
 		}
 	}
 }
