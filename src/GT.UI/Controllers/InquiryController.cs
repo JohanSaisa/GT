@@ -11,15 +11,18 @@ namespace GT.UI.Controllers
 	public class InquiryController : Controller
 	{
 		private readonly IGTListingInquiryService _gtListingInquiryService;
+		private readonly IGTListingService _gtListingService;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public InquiryController(
 			IGTListingInquiryService gtListingInquiryService,
+			IGTListingService gtListingService,
 			SignInManager<ApplicationUser> signInManager,
 			UserManager<ApplicationUser> userManager)
 		{
 			_gtListingInquiryService = gtListingInquiryService;
+			_gtListingService = gtListingService;
 			_signInManager = signInManager;
 			_userManager = userManager;
 		}
@@ -53,9 +56,10 @@ namespace GT.UI.Controllers
 				result = "Application was not submitted.";
 			}
 
+			var listing = await _gtListingService.GetByIdAsync(inquiryDTO.ListingId);
 			ViewData["RequestResult"] = result;
 
-			return Redirect(inquiryDTO.ListingId.ToString());
+			return View("~/Views/Listing/Listing.cshtml", listing);
 		}
 	}
 }
