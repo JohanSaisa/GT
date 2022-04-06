@@ -89,6 +89,22 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public async Task DeleteInquiriesAssociatedWithUserAsync(string userId)
+		{
+			var associatedInquiryIds = await _listingInquiryRepository.GetAll()
+				.Where(e => e.ApplicantId == userId)
+				.Select(e => e.Id)
+				.ToListAsync();
+
+			if (associatedInquiryIds is not null)
+			{
+				foreach (var id in associatedInquiryIds)
+				{
+					await _listingInquiryRepository.DeleteAsync(id);
+				}
+			}
+		}
+
 		public async Task<bool> ExistsByIdAsync(string id)
 		{
 			try
@@ -121,7 +137,7 @@ namespace GT.Core.Services.Impl
 					var applicant = await _userManager.FindByIdAsync(entity.ApplicantId);
 
 					// TODO add automapper
-					
+
 					inquiryDTOs.Add(new ListingInquiryDTO
 					{
 						Id = entity.Id,
@@ -190,7 +206,7 @@ namespace GT.Core.Services.Impl
 
 		public async Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string listingId)
 		{
-			if(listingId is null)
+			if (listingId is null)
 			{
 				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByListingIdAsync)}");
 				return null;
@@ -201,7 +217,7 @@ namespace GT.Core.Services.Impl
 				.Where(e => e.ListingId == listingId)
 				.ToListAsync();
 
-			if(entities is null)
+			if (entities is null)
 			{
 				return null;
 			}
