@@ -35,6 +35,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public ExperienceLevel? ExperienceLevel { get; set; }
 
 		public DateTime? ApplicationDeadline { get; set; }
+
 		public string? CompanyLogoId { get; set; }
 	}
 }
