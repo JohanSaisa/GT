@@ -23,9 +23,13 @@
 	public string? ExperienceLevel { get; set; }*@
 @using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
 {
-  @await Html.PartialAsync("_ListingFilterPartial",
-    new GT.Core.FilterModels.Impl.ListingFilterModel());
+  @await Html.PartialAsync("_ListingFilterPartial", 
+    new GT.UI.Models.ListingFilterViewModel
+    {
+      ExperienceLevels = (List<ExperienceLevelItem>)ViewData["ExperienceLevels"]
+    })
 }
+
 <table>
 	<tr>
 		<th>
