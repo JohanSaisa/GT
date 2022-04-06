@@ -18,8 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Migrations\GTAppMigrations\" />
-	  <Folder Include="Migrations\GTIdentityMigrations\" />
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 	
 </Project>

@@ -13,5 +13,8 @@ namespace GT.Core.DTO.Impl
 
 		[StringLength(100)]
 		public string? Name { get; set; }
+
+		[StringLength(450)]
+		public string? CompanyLogoId { get; set; }
 	}
 }

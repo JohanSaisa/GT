@@ -6,7 +6,6 @@ using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace GT.Core.Services.Impl
 {
@@ -168,7 +167,8 @@ namespace GT.Core.Services.Impl
 
 		public async Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null)
 		{
-			// Get entities from database
+			// TODO - Refactor code and split up into multiple methods which modifys an IQueryable.
+			// Suggesting that the methods should be implemented in the FilterModel as static methods.
 
 			if (filter is null)
 			{
@@ -196,17 +196,15 @@ namespace GT.Core.Services.Impl
 						&& e.Location.Name != null
 						&& EF.Functions.Like(e.Location.Name, filter.Location)))
 
-				// TODO: Refactor salary filter to include all listings where there is an overlap between the (filter.SalaryMin - filter.SalaryMax) and the (listing.SalaryMin - listing.SalaryMax) ranges.
-				
-				//.Where(e =>
-				//	filter.SalaryMin == null
-				//	|| (e.SalaryMin != null
-				//		&& e.SalaryMin >= filter.SalaryMin))
+				.Where(e =>
+					filter.SalaryMin == null
+					|| (e.SalaryMin != null
+						&& filter.SalaryMin <= e.SalaryMax))
 
-				//.Where(e =>
-				//	filter.SalaryMax == null
-				//	|| (e.SalaryMax != null
-				//		&& e.SalaryMax <= filter.SalaryMax))
+				.Where(e =>
+					filter.SalaryMax == null
+					|| (e.SalaryMax != null
+						&& filter.SalaryMax >= e.SalaryMin))
 
 				.Where(e => filter.IncludeListingsFromDate == null
 					|| (e.CreatedDate != null
@@ -218,11 +216,11 @@ namespace GT.Core.Services.Impl
 				.Where(k => k != null)
 				.ToArray();
 
-			if (keywords is not null 
-				&& query is not null 
+			if (keywords is not null
+				&& query is not null
 				&& keywords.Any())
 			{
-				for(int i = 0; i < keywords.Length; i++)
+				for (int i = 0; i < keywords.Length; i++)
 				{
 					var keyword = keywords[i].Replace('_', ' ');
 
@@ -253,7 +251,7 @@ namespace GT.Core.Services.Impl
 					})
 					.ToListAsync()!;
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				_logger.LogError(e.Message);
 				return null!;

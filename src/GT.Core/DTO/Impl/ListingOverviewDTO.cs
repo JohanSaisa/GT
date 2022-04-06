@@ -20,5 +20,6 @@ namespace GT.Core.DTO.Impl
 		public bool? FTE { get; set; }
 		public DateTime? CreatedDate { get; set; }
 		public string? ExperienceLevel { get; set; }
+		public DateTime? ApplicationDeadline { get; set; }
 	}
 }
