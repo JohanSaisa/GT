@@ -36,6 +36,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 
 		public DateTime? ApplicationDeadline { get; set; }
 
+		[Column(TypeName = "nvarchar(450)")]
 		public string? CompanyLogoId { get; set; }
 	}
 }
