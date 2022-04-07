@@ -13,7 +13,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		[Column(TypeName = "nvarchar(500)")]
 		public string? MessageBody { get; set; }
 
-		[Column(TypeName = "nvarchar(100)")]
+		[Column(TypeName = "nvarchar(254)")]
 		public string? LinkedInLink { get; set; }
 
 		[Column(TypeName = "nvarchar(450)")]
