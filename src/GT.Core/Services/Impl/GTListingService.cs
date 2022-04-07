@@ -213,8 +213,7 @@ namespace GT.Core.Services.Impl
 						&& filter.IncludeListingsFromDate < e.CreatedDate))
 
 				.Where(e => 
-					(filter.ExcludeExpiredListings == null
-						|| filter.ExcludeExpiredListings == false)
+					(filter.ExcludeExpiredListings == null || filter.ExcludeExpiredListings == false)
 					|| (filter.ExcludeExpiredListings == true
 						&& e.ApplicationDeadline != null
 						&& e.ApplicationDeadline > DateTime.Now));
