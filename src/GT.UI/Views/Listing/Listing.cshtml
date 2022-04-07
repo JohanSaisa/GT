@@ -92,7 +92,6 @@
 	@*Verify that the user is Authenticated and that the user is in role admin*@
 	@if (SignInManager.IsSignedIn(User) && User.IsInRole(GTRole.GTadmin.ToString()))
 	{
-		<p class="card-text">@Model.ApplicationDeadline</p>
 		<a asp-action="Delete" asp-controller="Listing" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
 
 		@await Html.PartialAsync("~/Views/Inquiries/_InquiriesOverview.cshtml",	Model.Inquiries,

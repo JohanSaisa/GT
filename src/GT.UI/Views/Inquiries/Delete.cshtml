@@ -1,8 +1,8 @@
 ﻿@model GT.Core.DTO.Impl.ListingInquiryDTO
-
 @{
-	ViewData["Title"] = "Ansökningar";
+	ViewData["Title"] = "Delete Inquiry";
 }
+
 <p>Model ID: @Model.Id</p>
 <p>Listing ID: @Model.ListingId</p>
 <p>Applicant ID: @Model.ApplicantId</p>
@@ -13,3 +13,9 @@
 <p>Message Title: @Model.MessageTitle</p>
 <p>Message Body: @Model.MessageBody</p>
 <p>LinkedIn: @Model.LinkedInLink</p>
+
+<form asp-action="Delete">
+	<input type="hidden" asp-for="Id" />
+	<input type="submit" value="Confirm delete" class="btn btn-danger" />
+	<a asp-action="GetListing" asp-controller="Listing" asp-route-id="@Model.ListingId" class="btn btn-primary">Back to Listings</a>
+</form>
