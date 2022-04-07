@@ -5,6 +5,7 @@ using GT.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 namespace GT.Core.Services.Impl
 {
 	public class GTCompanyService : IGTCompanyService
@@ -64,22 +65,43 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async void AddCompanyLogo(CompanyLogoDTO companyLogoDTO)
+		public async Task AddCompanyLogo(CompanyLogoDTO companyLogoDTO)
 		{
-			string path = Path.Combine(Directory.GetCurrentDirectory(), "src/GT.UI/wwwroot/img");
+			//create folder if not exist
+			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
 
-			var company = await GetByIdAsync(companyLogoDTO.CompanyId);
-			if(company == null)
+			if (companyLogoDTO.File == null || companyLogoDTO.CompanyId == null)
 			{
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(AddCompanyLogo)}");
 				return;
 			}
 
-			if(company.CompanyLogoId == null || company.CompanyLogoId == String.Empty)
+			var company = await GetByIdAsync(companyLogoDTO.CompanyId);
+			if (company == null)
 			{
-				company.CompanyLogoId = Guid.NewGuid().ToString();
+				_logger.LogWarning($"Could not find a company in method: {nameof(AddCompanyLogo)}");
+				return;
 			}
 
+			// Check if company already have a stored logo
+			if (company.CompanyLogoId != null || company.CompanyLogoId != String.Empty)
+			{
+				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, company.CompanyLogoId));
+			}
+			else
+			{
+				// Create new ID for entity and image
+				string companyLogoId, fileName;
+				companyLogoId = fileName = Guid.NewGuid().ToString();
 
+				// Update DB entity with new LogoID
+				company.CompanyLogoId = companyLogoId;
+				await UpdateAsync(company, company.Name);
+
+				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, fileName));
+			}
 		}
 
 		public async Task DeleteAsync(string id)
@@ -96,7 +118,27 @@ namespace GT.Core.Services.Impl
 
 		public void DeleteCompanyLogo(string companyLogoId)
 		{
-			throw new NotImplementedException();
+			if (companyLogoId == null || companyLogoId.Length <= 0)
+			{
+				_logger.LogWarning($"Arguments cannot be null when using the method: { nameof(DeleteCompanyLogo)}.");
+				return;
+			}
+
+			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
+			string fileNameWithPath = Path.Combine(path, companyLogoId);
+
+			using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+			{
+				try
+				{
+					File.Delete(fileNameWithPath);
+				}
+				catch (Exception e)
+				{
+					_logger.LogError(e.Message);
+					return;
+				}
+			}
 		}
 
 		public async Task<bool> ExistsByNameAsync(string name)
@@ -174,6 +216,47 @@ namespace GT.Core.Services.Impl
 			{
 				_logger.LogError(e.Message);
 				return null;
+			}
+		}
+
+		public async Task UpdateAsync(CompanyDTO companyDTO, string name)
+		{
+			try
+			{
+				if (companyDTO.Id is not null && name is not null)
+				{
+					if (await ExistsByNameAsync(name))
+					{
+						var entityToUpdate = await _companyRepository.GetAll().Where(e => e.Id == companyDTO.Id).FirstOrDefaultAsync();
+
+						// TODO implement automapper
+						entityToUpdate.Id = companyDTO.Id;
+						entityToUpdate.Name = name;
+						entityToUpdate.CompanyLogoId = companyDTO.CompanyLogoId;
+
+						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+					}
+				}
+				else
+				{
+					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
+		}
+
+		/// <summary>
+		/// Creates a filestream and adds the file to the specified folder as a PNG.
+		/// Will overwrite if file with the same name including filetype already exists.
+		/// </summary>
+		private void AddFileToFolder(IFormFile file, string fileNameWithPath)
+		{
+			using (var stream = new FileStream(fileNameWithPath + ".png", FileMode.Create))
+			{
+				file.CopyTo(stream);
 			}
 		}
 	}
