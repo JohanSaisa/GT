@@ -2,7 +2,7 @@
 {
   public class ExperienceLevelItem
   {
-		public string Name { get; set; }
+		public string? Name { get; set; }
 		public bool IsSelected { get; set; }
   }
 }

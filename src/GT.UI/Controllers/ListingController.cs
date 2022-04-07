@@ -32,14 +32,18 @@ namespace GT.UI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(ListingFilterViewModel? filterModel)
 		{
-			if(filterModel is not null 
-				&& filterModel.ExperienceLevels.Any()
+			if (filterModel is not null
 				&& filterModel.Filter is not null)
 			{
-			filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
-				.Where(el => el != null && el.IsSelected)
-				.Select(el => el.Name)
-				.ToList();
+				filterModel.Filter.ExcludeExpiredListings = filterModel.ExcludeExpiredListings;
+
+				if (filterModel.ExperienceLevels.Any())
+				{
+					filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
+						.Where(el => el != null && el.IsSelected)
+						.Select(el => el.Name)
+						.ToList();
+				}
 			}
 
 			var listingDTOs = await _listingService

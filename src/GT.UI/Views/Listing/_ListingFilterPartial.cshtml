@@ -2,13 +2,14 @@
 
 	<p>
 		Keywords (Separate by space, use underscore for spaces inside keywords): 
-    @Html.TextBoxFor(fm => fm.Filter.KeywordsRawText, new { @id="keywordstextbox" })		
+    @Html.TextBoxFor(fm => fm.Filter!.KeywordsRawText, new { @id="keywordstextbox" })		
 	</p>
 
+  <div class="card">
     <p>
       Job type: 
       @Html.DropDownListFor(
-        fm => fm.Filter.FTE,
+        fm => fm.Filter!.FTE,
         new SelectList(new List<object>
         {
           new { Text = "Any", Value = (bool?)null },
@@ -16,37 +17,46 @@
           new { Text = "Part Time", Value = false }
         }, "Value", "Text"), new { @id="jobtypedropdown" })
     </p>
+  </div>
 
     <p>
       Earliest creation date: 
       @Html.TextBoxFor(
-        fm => fm.Filter.IncludeListingsFromDate, 
+        fm => fm.Filter!.IncludeListingsFromDate, 
         "{0:dd/MM/yyyy}", 
         new { @type="date", @id="creationdatetextbox" })
     </p>
-
+    
     <p>
-      Minimum expected salary: 
-      @Html.TextBoxFor(
-        fm => fm.Filter.SalaryMin, 
-        new { @type="number", @min=0 })
+      Exclude expired listings:
+      @Html.CheckBoxFor(fm => fm.ExcludeExpiredListings,
+      new { @id="excludeexpiredlistingscheckbox" })
     </p>
+
+    <div class="card container container-fluid">
+      <h6 class="card-header">Filter by salary:</h6>
+      <p class="card-body">
+        Minimum expected salary: 
+        @Html.TextBoxFor(
+          fm => fm.Filter!.SalaryMin, 
+          new { @type="number", @min=0, @id="salarymintextbox" })
+      </p>
+    </div>
 
     <p>
       Maximum expected salary: 
       @Html.TextBoxFor(
-        fm => fm.Filter.SalaryMax, 
-        new { @type="number", @min=0 })
+        fm => fm.Filter!.SalaryMax, 
+        new { @type="number", @min=0, @id="salarymaxtextbox" })
     </p>
 
     <p>
       @for(int i = 0; i < Model.ExperienceLevels.Count; i++)
       {
         <p>
-          <label>
-            @Model.ExperienceLevels[i].Name
-          </label>
-          @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected)
+          @Model.ExperienceLevels[i].Name
+          @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected,
+          new { @class="experiencelevelcheckbox" })
           @Html.HiddenFor(fm => Model.ExperienceLevels[i].Name)
         </p>
       }

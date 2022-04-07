@@ -43,5 +43,7 @@
 		/// Sets breakpoint at the given date.
 		/// </summary>
 		public DateTime? IncludeListingsFromDate { get; set; }
+
+		public bool? ExcludeExpiredListings { get; set; }
 	}
 }

@@ -7,5 +7,7 @@ namespace GT.UI.Models
   {
 		public ListingFilterModel? Filter { get; set; } 
 		public List<ExperienceLevelItem> ExperienceLevels { get; set; } = new();
-  }
+
+		public bool ExcludeExpiredListings { get; set; }
+	}
 }

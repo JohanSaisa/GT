@@ -181,7 +181,8 @@ namespace GT.Core.Services.Impl
 				.Include(e => e.Location)
 				.Include(e => e.Employer)
 
-				.Where(e => filter.ExperienceLevels == null
+				.Where(e => 
+				filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
 					|| (e.ExperienceLevel != null && e.ExperienceLevel.Name != null
 						&& filter.ExperienceLevels.Any(el => string.Equals(e.ExperienceLevel.Name, el))))
@@ -206,9 +207,17 @@ namespace GT.Core.Services.Impl
 					|| (e.SalaryMax != null
 						&& filter.SalaryMax >= e.SalaryMin))
 
-				.Where(e => filter.IncludeListingsFromDate == null
+				.Where(e => 
+					filter.IncludeListingsFromDate == null
 					|| (e.CreatedDate != null
-						&& filter.IncludeListingsFromDate < e.CreatedDate));
+						&& filter.IncludeListingsFromDate < e.CreatedDate))
+
+				.Where(e => 
+					(filter.ExcludeExpiredListings == null
+						|| filter.ExcludeExpiredListings == false)
+					|| (filter.ExcludeExpiredListings == true
+						&& e.ApplicationDeadline != null
+						&& e.ApplicationDeadline > DateTime.Now));
 
 			// TODO: Refactor to split at user defined character
 			var keywords = filter?.KeywordsRawText?
