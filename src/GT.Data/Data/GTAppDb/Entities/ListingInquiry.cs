@@ -9,10 +9,10 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public string Id { get; set; }
 
 		[Column(TypeName = "nvarchar(100)")]
-		public string MessageTitle { get; set; }
+		public string? MessageTitle { get; set; }
 
 		[Column(TypeName = "nvarchar(500)")]
-		public string MessageBody { get; set; }
+		public string? MessageBody { get; set; }
 
 		[Column(TypeName = "nvarchar(100)")]
 		public string? LinkedInLink { get; set; }
