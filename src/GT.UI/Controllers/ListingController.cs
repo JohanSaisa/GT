@@ -3,6 +3,7 @@ using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.UI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,7 +19,7 @@ namespace GT.UI.Controllers
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
-			IGTListingService listingService, 
+			IGTListingService listingService,
 			IGTExperienceLevelService experienceService,
 			IGTLocationService locationService,
 			IGTListingInquiryService listingInquiryService,
@@ -32,7 +33,6 @@ namespace GT.UI.Controllers
 		}
 
 		// GET: Listings
-		[Route("Annonser")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(ListingFilterViewModel? filterModel)
 		{
@@ -86,7 +86,6 @@ namespace GT.UI.Controllers
 					.OrderBy(l => l.Text),
 					"Value",
 					"Text");
-
 			}
 
 			return View(listingDTOs);
@@ -108,6 +107,36 @@ namespace GT.UI.Controllers
 				.GetByListingIdAsync(listing.Id!);
 
 			return View("Listing", listing);
+		}
+
+		// GET: Listing/DeleteListing/5
+		[Authorize(Policy = "AdminPolicy")]
+		public async Task<IActionResult> Delete(string? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
+
+			var listing = await _listingService
+					.GetByIdAsync(id);
+
+			if (listing == null)
+			{
+				return NotFound();
+			}
+
+			return View(listing);
+		}
+
+		// Delete:/DeleteListing/
+		[Authorize(Policy = "AdminPolicy")]
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(string id)
+		{
+			await _listingService.DeleteAsync(id);
+			return RedirectToAction("ListingOverview");
 		}
 	}
 }

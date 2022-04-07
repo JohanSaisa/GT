@@ -16,6 +16,8 @@ namespace GT.Core.Services.Interfaces
 
 		Task DeleteAsync(string id);
 
+		Task DeleteInquiriesAssociatedWithUserAsync(string userId);
+
 		Task<bool> ExistsByIdAsync(string id);
 	}
 }

@@ -18,6 +18,23 @@ namespace GT.Data.Data.GTAppDb
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
+			builder.Entity<Company>()
+				.HasIndex(e => e.Name)
+				.IsUnique();
+
+			builder.Entity<ExperienceLevel>()
+				.HasIndex(e => e.Name)
+				.IsUnique();
+
+			builder.Entity<Location>()
+				.HasIndex(e => e.Name)
+				.IsUnique();
+
+			builder.Entity<Location>()
+				.HasMany(e => e.Companies)
+				.WithMany(e => e.Locations)
+				.UsingEntity(join => join.ToTable("CompanyLocations"));
+
 			base.OnModelCreating(builder);
 		}
 	}

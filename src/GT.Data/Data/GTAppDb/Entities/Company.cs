@@ -8,7 +8,7 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public string Id { get; set; }
 
 		[Column(TypeName = "nvarchar(200)")]
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		public ICollection<Location>? Locations { get; set; }
 
