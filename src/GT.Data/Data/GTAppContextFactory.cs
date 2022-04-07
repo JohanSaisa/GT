@@ -11,6 +11,7 @@ namespace TestingNTier.DAL.Data
 		{
 			var basePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
 
+			// TODO use connection string from user secrets
 			var cfg = new ConfigurationBuilder()
 			.SetBasePath(basePath)
 			.AddJsonFile("appsettings.json")

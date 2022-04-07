@@ -30,6 +30,11 @@ namespace GT.Data.Data.GTAppDb
 				.HasIndex(e => e.Name)
 				.IsUnique();
 
+			builder.Entity<Location>()
+				.HasMany(e => e.Companies)
+				.WithMany(e => e.Locations)
+				.UsingEntity(join => join.ToTable("CompanyLocations"));
+
 			base.OnModelCreating(builder);
 		}
 	}

@@ -2,7 +2,6 @@
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
-	[Table("Locations")]
 	public class Location : IGTEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]

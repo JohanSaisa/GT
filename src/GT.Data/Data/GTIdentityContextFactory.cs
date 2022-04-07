@@ -9,9 +9,9 @@ namespace TestingNTier.DAL.Data
 	{
 		public GTIdentityContext CreateDbContext(string[] args)
 		{
-			//TODO - Check to see if ~ will find the root folder. .sln?
 			var basePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
 
+			// TODO use connection string from user secrets
 			var cfg = new ConfigurationBuilder()
 			.SetBasePath(basePath)
 			.AddJsonFile("appsettings.json")

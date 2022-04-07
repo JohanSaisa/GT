@@ -2,7 +2,6 @@
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
-	[Table("ExperienceLevels")]
 	public class ExperienceLevel : IGTEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]
