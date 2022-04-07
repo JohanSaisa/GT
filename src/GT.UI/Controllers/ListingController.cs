@@ -92,7 +92,6 @@ namespace GT.UI.Controllers
 
 		// GET: Listing/DeleteListing/5
 		[Authorize(Policy = "AdminPolicy")]
-		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(string? id)
 		{
 			if (id == null)
