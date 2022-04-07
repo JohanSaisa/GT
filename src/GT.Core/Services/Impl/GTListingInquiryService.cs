@@ -91,17 +91,24 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteInquiriesAssociatedWithUserAsync(string userId)
 		{
-			var associatedInquiryIds = await _listingInquiryRepository.GetAll()
-				.Where(e => e.ApplicantId == userId)
-				.Select(e => e.Id)
-				.ToListAsync();
-
-			if (associatedInquiryIds is not null)
+			try
 			{
-				foreach (var id in associatedInquiryIds)
+				var associatedInquiryIds = await _listingInquiryRepository.GetAll()
+					.Where(e => e.ApplicantId == userId)
+					.Select(e => e.Id)
+					.ToListAsync();
+
+				if (associatedInquiryIds is not null)
 				{
-					await _listingInquiryRepository.DeleteAsync(id);
+					foreach (var id in associatedInquiryIds)
+					{
+						await _listingInquiryRepository.DeleteAsync(id);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
 			}
 		}
 
