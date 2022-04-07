@@ -12,17 +12,17 @@ namespace GT.Data.Data.GTAppDb
 		// Magic numbers for Company names, 11 items.
 		private static readonly List<string> _companyNames = new List<string>()
 			{
-				"Fake Company delivering Chemicals",
-				"My News Site For Animals",
-				"Another Company in IT",
-				"We are looking for Employees",
-				"This is not a fake company",
-				"We love IT and so should you",
-				"Hard software for your 4th gen device",
-				"Take the blue pill",
+				"Fake Company AB",
+				"Animal News Inc.",
+				"IT 4 Solutions",
+				"Employee Central Inc.",
+				"Unfaked",
+				"Klarenea AB",
+				"Softwared",
+				"Blue Pill",
 				"The Binary Library",
-				"Food for thought that you bought",
-				"Flashy key rings for the Millenia",
+				"Foody Thoughty",
+				"Millenials Flash Resort",
 			};
 
 		// Magic numbers for Locations, 11 items.
@@ -31,14 +31,14 @@ namespace GT.Data.Data.GTAppDb
 				"Stockholm",
 				"Remote",
 				"Malmö",
-				"Stockholm",
-				"Södertälje",
-				"Stockholm",
-				"Åre",
 				"Göteborg",
-				"Göteborg",
-				"Stockholm",
-				"Stockholm",
+				"Umeå",
+				"Karlstad",
+				"Åbo",
+				"Gnesta",
+				"Karlskrona",
+				"Karlskoga",
+				"Örkelljunga",
 			};
 
 		// Magic numbers for Listing titles, 11 items.
@@ -112,13 +112,13 @@ namespace GT.Data.Data.GTAppDb
 				"Internship",
 				"Mid-Senior level",
 				"Director",
-				"Executive",
-				"Mid-Senior level",
-				"Mid-Senior level",
-				"Entry level",
-				"Internship",
-				"Associate",
-				"Director",
+				"Entryer level",
+				"Mid-late-Senior level",
+				"Mid-last-Senior level",
+				"Warlock",
+				"Manager",
+				"Assistant manager",
+				"Assistant to the manager",
 			};
 
 		/// <summary>
@@ -137,8 +137,7 @@ namespace GT.Data.Data.GTAppDb
 			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
 
 			using (var context = new GTAppContext(
-							serviceProvider.GetRequiredService<
-											DbContextOptions<GTAppContext>>()))
+							serviceProvider.GetRequiredService<DbContextOptions<GTAppContext>>()))
 			{
 				SeedDataToDatabase(context, companies, listingInquiries, listings, locations);
 			}
@@ -239,7 +238,7 @@ namespace GT.Data.Data.GTAppDb
 
 			return (updatedCompanies, updatedLocations);
 		}
-		
+
 		/// <summary>
 		/// Map the listings with companies and locations.
 		/// </summary>
