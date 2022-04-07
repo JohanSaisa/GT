@@ -1,8 +1,8 @@
 ﻿namespace GT.UI.Models
 {
-  public class ExperienceLevelItem
+  public class ExperienceLevelCheckbox
   {
-		public string Name { get; set; }
+		public string? Name { get; set; }
 		public bool IsSelected { get; set; }
   }
 }

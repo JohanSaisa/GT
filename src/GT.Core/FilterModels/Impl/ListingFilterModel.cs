@@ -17,5 +17,7 @@ namespace GT.Core.FilterModels.Impl
 		public int? SalaryMin { get; set; }
 
 		public DateTime? IncludeListingsFromDate { get; set; }
+
+		public bool? ExcludeExpiredListings { get; set; }
 	}
 }

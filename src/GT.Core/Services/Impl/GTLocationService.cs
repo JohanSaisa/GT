@@ -12,7 +12,8 @@ namespace GT.Core.Services.Impl
 		private readonly ILogger<GTLocationService> _logger;
 		private readonly IGTGenericRepository<Location> _locationRepository;
 
-		public GTLocationService(ILogger<GTLocationService> logger, IGTGenericRepository<Location> locationRepository)
+		public GTLocationService(ILogger<GTLocationService> logger, 
+			IGTGenericRepository<Location> locationRepository)
 		{
 			_logger = logger;
 			_locationRepository = locationRepository;
@@ -31,7 +32,9 @@ namespace GT.Core.Services.Impl
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-					var entity = await _locationRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _locationRepository
+						.GetAll()
+						.FirstOrDefaultAsync(e => e.Name == dto.Name);
 
 					// TODO - Use IMapper
 					if (entity is not null)
@@ -67,7 +70,9 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _locationRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _locationRepository
+					.GetAll()
+					.AnyAsync(e => e.Name == name);
 			}
 			catch (Exception e)
 			{
@@ -76,5 +81,26 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public async Task<List<LocationDTO>?> GetAllAsync()
+		{
+			try
+			{			
+				var query = _locationRepository
+					.GetAll();
+
+				return await query
+					.Select(e => new LocationDTO
+					{
+						Id = e.Id,
+						Name = e.Name
+					})
+					.ToListAsync();
+			}
+			catch(Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
+		}
 	}
 }

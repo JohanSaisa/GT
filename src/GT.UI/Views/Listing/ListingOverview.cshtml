@@ -26,7 +26,8 @@
 	@await Html.PartialAsync("_ListingFilterPartial",
     new GT.UI.Models.ListingFilterViewModel
     {
-      ExperienceLevels = (List<ExperienceLevelItem>)ViewData["ExperienceLevels"]
+      ExperienceLevels = (List<ExperienceLevelCheckbox>)ViewData["ExperienceLevels"],
+      Locations = (SelectList)ViewData["Locations"]
     })
 }
 

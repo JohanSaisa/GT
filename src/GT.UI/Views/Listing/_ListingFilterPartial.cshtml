@@ -1,58 +1,94 @@
 ﻿@model GT.UI.Models.ListingFilterViewModel
 
-	<p>
-		Keywords (Separate by space, use underscore for spaces inside keywords): 
-    @Html.TextBoxFor(fm => fm.Filter.KeywordsRawText, new { @id="keywordstextbox" })		
-	</p>
+<div class="container container-fluid flex-column flex-wrap w-50">
+  <div class="card m-2">
+    <h6 class="card-header">Keywords (Separate by space, use underscore for spaces inside keywords):</h6>
+	  <p class="card-body card-text"> 
+      @Html.TextBoxFor(fm => fm.Filter!.KeywordsRawText, new { @id="keywordstextbox" })		
+	  </p>
+  </div>
 
-    <p>
-      Job type: 
-      @Html.DropDownListFor(
-        fm => fm.Filter.FTE,
-        new SelectList(new List<object>
-        {
-          new { Text = "Any", Value = (bool?)null },
-          new { Text = "Full Time", Value = true },
-          new { Text = "Part Time", Value = false }
-        }, "Value", "Text"), new { @id="jobtypedropdown" })
+  <div class="card m-2">
+    <h6 class="card-header">Job type:</h6> 
+    <p class="card-body card-text">
+    @Html.DropDownListFor(
+      fm => fm.Filter!.FTE,
+      new SelectList(new List<object>
+      {
+        new { Text = "Any", Value = (bool?)null },
+        new { Text = "Full Time", Value = true },
+        new { Text = "Part Time", Value = false }
+      }, 
+      "Value",
+      "Text"), 
+      new { @id="jobtypedropdown" })
     </p>
+  </div>
 
-    <p>
-      Earliest creation date: 
+  <div class="card m-2">
+    <h6 class="card-header">Earliest listing creation date:</h6>
+    <p class="card-body card-text">
       @Html.TextBoxFor(
-        fm => fm.Filter.IncludeListingsFromDate, 
+        fm => fm.Filter!.IncludeListingsFromDate, 
         "{0:dd/MM/yyyy}", 
         new { @type="date", @id="creationdatetextbox" })
     </p>
-
-    <p>
-      Minimum expected salary: 
-      @Html.TextBoxFor(
-        fm => fm.Filter.SalaryMin, 
-        new { @type="number", @min=0 })
+  </div>
+    
+  <div class="card m-2">
+    <p class="card-body card-header">
+      Exclude expired listings:
+      @Html.CheckBoxFor(fm => fm.ExcludeExpiredListings,
+        new { @id="excludeexpiredlistingscheckbox" })
     </p>
+  </div>
 
-    <p>
-      Maximum expected salary: 
-      @Html.TextBoxFor(
-        fm => fm.Filter.SalaryMax, 
-        new { @type="number", @min=0 })
-    </p>
+  <div class="card m-2">
+    <h6 class="card-header">Salary:</h6>
+    <div class="card-body d-flex flex-row">
+      <p class="card-text w-50">
+        Minimum expected salary:
+        <br/>
+        @Html.TextBoxFor(
+          fm => fm.Filter!.SalaryMin, 
+          new { @type="number", @min=0, @id="salarymintextbox" })
+      </p>
+    
+      <p class="card-text w-50">
+        Maximum expected salary:
+        <br/>
+        @Html.TextBoxFor(
+          fm => fm.Filter!.SalaryMax, 
+          new { @type="number", @min=0, @id="salarymaxtextbox" })
+      </p>
+    </div>
+  </div>
 
-    <p>
+  <div class="card m-2">
+    <h6 class="card-header">Experience levels:</h6>
+    <div class="card-body container d-flex flex-row flex-wrap">
       @for(int i = 0; i < Model.ExperienceLevels.Count; i++)
       {
-        <p>
-          <label>
-            @Model.ExperienceLevels[i].Name
-          </label>
-          @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected)
+        <p class="card-text m-2">
+          @Model.ExperienceLevels[i].Name
+          @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected,
+          new { @class="experiencelevelcheckbox" })
           @Html.HiddenFor(fm => Model.ExperienceLevels[i].Name)
         </p>
       }
-    </p>
+    </div>
+  </div>
 
-    <p>
-      <input type="submit" value="Filter" />
-    </p>
-
+  <div class="card m-2">
+    <h6 class="card-header">Location:</h6>
+    <div class="card-body">
+      @Html.DropDownListFor(fm => Model.Filter!.Location,
+        Model.Locations,
+        "Any",
+        new { @id="locationdropdown" })
+    </div>
+  </div>
+  <p class="card m-2">
+    <input type="submit" value="Filter" class="btn btn-primary" />
+  </p>
+</div>
