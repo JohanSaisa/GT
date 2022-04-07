@@ -2,7 +2,7 @@
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
-	[Table("JobListing")]
+	[Table("JobListings")]
 	public class Listing : IGTEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]
