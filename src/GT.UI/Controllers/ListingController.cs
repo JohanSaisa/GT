@@ -29,7 +29,6 @@ namespace GT.UI.Controllers
 		}
 
 		// GET: Listings
-		[Route("Annonser")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(ListingFilterViewModel? filterModel)
 		{
@@ -91,24 +90,34 @@ namespace GT.UI.Controllers
 			return View("Listing", listing);
 		}
 
-		// GET:/GetListing/
+		// GET: Listing/DeleteListing/5
 		[Authorize(Policy = "AdminPolicy")]
-		[HttpPost("{id}")]
-		public async Task<ActionResult<ListingDTO>> DeleteListing(string id)
+		public async Task<IActionResult> Delete(string? id)
 		{
-			var listing = await _listingService
-				.GetByIdAsync(id);
-
-			if (listing != null)
+			if (id == null)
 			{
-				var deleteResult = _listingService.DeleteAsync(listing.Id);
-				if (deleteResult.IsCompletedSuccessfully)
-				{
-					return RedirectToAction("ListingOverview");
-				}
+				return NotFound();
 			}
 
-			return View("~/Views/Listing/Listing.cshtml", listing);
+			var listing = await _listingService
+					.GetByIdAsync(id);
+
+			if (listing == null)
+			{
+				return NotFound();
+			}
+
+			return View(listing);
+		}
+
+		// Delete:/DeleteListing/
+		[Authorize(Policy = "AdminPolicy")]
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(string id)
+		{
+			await _listingService.DeleteAsync(id);
+			return RedirectToAction("ListingOverview");
 		}
 	}
 }
