@@ -1,8 +1,8 @@
-﻿using GT.Data.Data.GTIdentityDb.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
+	[Table("JobListingInquiry")]
 	public class ListingInquiry : IGTEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]
