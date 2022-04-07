@@ -14,16 +14,17 @@ namespace GT.UI.Controllers
 		{
 			_companyService = companyService;
 		}
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			CompanyLogoDTO model = new CompanyLogoDTO();
+			var model = await _companyService.GetCompanyLogo("3d0bb741-0f74-43b8-a30f-20f8c2f3fa77");
+			var image = model.File;
 			return View(model);
 		}
 
 		[HttpPost]
-		public IActionResult Upload(CompanyLogoDTO model)
+		public async Task<IActionResult> UploadAsync(CompanyLogoDTO model)
 		{
-				_companyService.AddCompanyLogo(model);		
+			await	_companyService.AddCompanyLogo(model);		
 			return View("Index", model);
 		}
 	}

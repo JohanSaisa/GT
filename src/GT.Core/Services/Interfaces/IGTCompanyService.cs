@@ -1,5 +1,4 @@
 ﻿using GT.Core.DTO.Impl;
-using Microsoft.AspNetCore.Http;
 
 namespace GT.Core.Services.Interfaces
 {
@@ -13,15 +12,14 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> ExistsByNameAsync(string name);
 
-		Task AddCompanyLogo(CompanyLogoDTO companyLogoDTO);
+		Task<bool> AddCompanyLogo(CompanyLogoDTO companyLogoDTO);
 
-		void DeleteCompanyLogo(string companyLogoId);
+		Task<bool> DeleteCompanyLogo(string companyLogoId);
 
 		Task DeleteAsync(string companyId);
 
-		Task UpdateAsync(CompanyDTO companyDTO, string id);
+		Task<bool> UpdateAsync(CompanyDTO companyDTO, string id);
 
+		Task<CompanyLogoDTO> GetCompanyLogo(string companyId);
 	}
 }
-
-

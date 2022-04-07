@@ -65,9 +65,9 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task AddCompanyLogo(CompanyLogoDTO companyLogoDTO)
+		public async Task<bool> AddCompanyLogo(CompanyLogoDTO companyLogoDTO)
 		{
-			//create folder if not exist
+			// Create folder if it does not exist
 			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
@@ -75,20 +75,21 @@ namespace GT.Core.Services.Impl
 			if (companyLogoDTO.File == null || companyLogoDTO.CompanyId == null)
 			{
 				_logger.LogWarning($"Can not use null arguments in method: {nameof(AddCompanyLogo)}");
-				return;
+				return false;
 			}
 
 			var company = await GetByIdAsync(companyLogoDTO.CompanyId);
 			if (company == null)
 			{
 				_logger.LogWarning($"Could not find a company in method: {nameof(AddCompanyLogo)}");
-				return;
+				return false;
 			}
 
-			// Check if company already have a stored logo
+			// Check if company already has a stored logo
 			if (company.CompanyLogoId != null || company.CompanyLogoId != String.Empty)
 			{
 				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, company.CompanyLogoId));
+				return true;
 			}
 			else
 			{
@@ -101,6 +102,7 @@ namespace GT.Core.Services.Impl
 				await UpdateAsync(company, company.Name);
 
 				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, fileName));
+				return true;
 			}
 		}
 
@@ -116,12 +118,12 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public void DeleteCompanyLogo(string companyLogoId)
+		public async Task<bool> DeleteCompanyLogo(string companyLogoId)
 		{
 			if (companyLogoId == null || companyLogoId.Length <= 0)
 			{
 				_logger.LogWarning($"Arguments cannot be null when using the method: { nameof(DeleteCompanyLogo)}.");
-				return;
+				return false;
 			}
 
 			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
@@ -132,11 +134,12 @@ namespace GT.Core.Services.Impl
 				try
 				{
 					File.Delete(fileNameWithPath);
+					return true;
 				}
 				catch (Exception e)
 				{
 					_logger.LogError(e.Message);
-					return;
+					return false;
 				}
 			}
 		}
@@ -145,7 +148,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _companyRepository.GetAll().Where(c => c.Name == name).AnyAsync();
+				return await _companyRepository.GetAll().Where(e => e.Name == name).AnyAsync();
 			}
 			catch (Exception e)
 			{
@@ -219,7 +222,34 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task UpdateAsync(CompanyDTO companyDTO, string name)
+		public async Task<CompanyLogoDTO> GetCompanyLogo(string companyId)
+		{
+			if (companyId == null || companyId.Length == 0)
+			{
+				_logger.LogWarning($"Cant use null arguments in method: {nameof(GetCompanyLogo)}");
+				return null;
+			}
+
+			var company = await GetByIdAsync(companyId);
+			if (company == null)
+			{
+				_logger.LogWarning($"Could not find a company in method: {nameof(GetCompanyLogo)}");
+				return null;
+			}
+
+			using (var stream = System.IO.File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos", company.CompanyLogoId + ".png")))
+			{
+				var companyLogoDTO = new CompanyLogoDTO()
+				{
+					CompanyId = companyId,
+					File = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
+				};
+				return companyLogoDTO;
+			}
+			
+		}
+
+		public async Task<bool> UpdateAsync(CompanyDTO companyDTO, string name)
 		{
 			try
 			{
@@ -235,16 +265,20 @@ namespace GT.Core.Services.Impl
 						entityToUpdate.CompanyLogoId = companyDTO.CompanyLogoId;
 
 						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+						return true;
 					}
+					return false;
 				}
 				else
 				{
 					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+					return false;
 				}
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e.Message);
+				return false;
 			}
 		}
 
