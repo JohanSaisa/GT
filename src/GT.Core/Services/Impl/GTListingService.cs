@@ -182,7 +182,7 @@ namespace GT.Core.Services.Impl
 				.Include(e => e.Employer)
 
 				.Where(e => 
-				filter.ExperienceLevels == null
+					filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
 					|| (e.ExperienceLevel != null && e.ExperienceLevel.Name != null
 						&& filter.ExperienceLevels.Any(el => string.Equals(e.ExperienceLevel.Name, el))))

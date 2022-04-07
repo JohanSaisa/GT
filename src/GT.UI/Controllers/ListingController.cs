@@ -5,6 +5,7 @@ using GT.Data.Data.GTIdentityDb.Entities;
 using GT.UI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GT.UI.Controllers
 {
@@ -12,17 +13,20 @@ namespace GT.UI.Controllers
 	{
 		private readonly IGTListingService _listingService;
 		private readonly IGTExperienceLevelService _experienceService;
+		private readonly IGTLocationService _locationService;
 		private readonly IGTListingInquiryService _listingInquiryService;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
 			IGTListingService listingService, 
 			IGTExperienceLevelService experienceService,
+			IGTLocationService locationService,
 			IGTListingInquiryService listingInquiryService,
 			UserManager<ApplicationUser> userManager)
 		{
 			_listingService = listingService;
 			_experienceService = experienceService;
+			_locationService = locationService;
 			_listingInquiryService = listingInquiryService;
 			_userManager = userManager;
 		}
@@ -37,12 +41,13 @@ namespace GT.UI.Controllers
 			{
 				filterModel.Filter.ExcludeExpiredListings = filterModel.ExcludeExpiredListings;
 
-				if (filterModel.ExperienceLevels.Any())
+				if (filterModel.ExperienceLevels is not null 
+					&& filterModel.ExperienceLevels.Any())
 				{
 					filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
 						.Where(el => el != null && el.IsSelected)
 						.Select(el => el.Name)
-						.ToList();
+						.ToList()!;
 				}
 			}
 
@@ -59,18 +64,29 @@ namespace GT.UI.Controllers
 				var experienceLevels = await _experienceService
 					.GetAllAsync();
 
+				var locations = await _locationService
+					.GetAllAsync();
+
 				ViewData["ExperienceLevels"] = experienceLevels is not null
-					? experienceLevels.Select(el => new ExperienceLevelItem
+					? experienceLevels.Select(el => new ExperienceLevelCheckbox
 					{
 						Name = el.Name,
 						IsSelected = false
 					})
 					.ToList()
-					: new List<ExperienceLevelItem>();
-			}
-			else
-			{
-					ViewData["ExperienceLevels"] = filterModel?.ExperienceLevels;
+					: new List<ExperienceLevelCheckbox>();
+
+				ViewData["Locations"] = new SelectList(locations?
+					.Select(l => new SelectListItem 
+						{ 
+							Selected = false, 
+							Text = l.Name, 
+							Value = l.Name 
+						})
+					.OrderBy(l => l.Text),
+					"Value",
+					"Text");
+
 			}
 
 			return View(listingDTOs);
