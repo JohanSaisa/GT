@@ -1,13 +1,14 @@
 ﻿using GT.Core.DTO.Impl;
+using GT.Core.Services.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace GT.UI.Controllers
 {
-	[Route("")]
 	public class InquiryController : Controller
 	{
 		private readonly IGTListingInquiryService _gtListingInquiryService;
@@ -25,6 +26,25 @@ namespace GT.UI.Controllers
 			_gtListingService = gtListingService;
 			_signInManager = signInManager;
 			_userManager = userManager;
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetInquiry(string? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
+
+			var inquiry = await _gtListingInquiryService
+				.GetByIdAsync(id);
+
+			if (inquiry == null)
+			{
+				return NotFound();
+			}
+
+			return View("~/Views/Inquiries/Inquiry.cshtml", inquiry);
 		}
 
 		[HttpPost]
@@ -58,6 +78,48 @@ namespace GT.UI.Controllers
 
 			var listing = await _gtListingService.GetByIdAsync(inquiryDTO.ListingId);
 			ViewData["RequestResult"] = result;
+
+			return View("~/Views/Listing/Listing.cshtml", listing);
+		}
+
+		// GET: Listing/DeleteListing/5
+		[Authorize(Policy = "AdminPolicy")]
+		public async Task<IActionResult> Delete(string? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
+
+			var inquiry = await _gtListingInquiryService
+					.GetByIdAsync(id);
+
+			if (inquiry == null)
+			{
+				return NotFound();
+			}
+
+			return View("~/Views/Inquiries/Delete.cshtml", inquiry);
+		}
+
+		// Delete:/DeleteListing/
+		[Authorize(Policy = "AdminPolicy")]
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(string id)
+		{
+			var inquiry = await _gtListingInquiryService
+					.GetByIdAsync(id);
+
+			var listingId = inquiry.ListingId;
+
+			var listing = await _gtListingService.GetByIdAsync(listingId);
+			if (listing == null)
+			{
+				return NotFound();
+			}
+
+			await _gtListingInquiryService.DeleteAsync(id);
 
 			return View("~/Views/Listing/Listing.cshtml", listing);
 		}

@@ -12,17 +12,19 @@
 	<div>
 		<h2>Applications for @ViewData["JobTitle"]</h2>
 		<div>
-      @if (ViewData["Inquiries"] is not null)
-      {
-        @foreach (var item in (List<ListingInquiryDTO>)ViewData["Inquiries"])
-        {
-          <div class="card-body">
-            <h5>@Html.ActionLink(item.MessageTitle, "GetInquiry", new { id=item.Id }, new { @class="card-title stretched-link" })</h5>
-            <p class="card-text">@item.LinkedInLink</p>
-            @Html.ActionLink("Delete", "DeleteInquiry", new { id=item.Id }, new { @class="btn btn-danger"})
-          </div>
-        }
-      }
+			@if (ViewData["Inquiries"] is not null)
+			{
+				@foreach (var item in (List<ListingInquiryDTO>)ViewData["Inquiries"])
+				{
+					<div class="card-body">
+						<h5>
+							<a asp-action="GetInquiry" asp-controller="Inquiry" asp-route-id="@item.Id" class="card-title">@item.MessageTitle</a>
+						</h5>
+						<p class="card-text">@item.LinkedInLink</p>
+						<a asp-action="Delete" asp-controller="Inquiry" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+					</div>
+				}
+			}
 		</div>
 	</div>
 }
