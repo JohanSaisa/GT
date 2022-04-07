@@ -142,11 +142,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.MapControllerRoute(
-//		name: "OnlyAction", // Route name
-//		pattern: "/{action}", // URL with parameters
-//		defaults: new { controller = "Home", action = "Index" }); // Parameter defaults
-
 app.MapControllerRoute(
 			name: "default",
 			pattern: "{controller=Home}/{action=Index}/{id?}");
