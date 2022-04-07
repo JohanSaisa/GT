@@ -1,5 +1,4 @@
-﻿using GT.Data.Data.GTIdentityDb.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
@@ -9,12 +8,12 @@ namespace GT.Data.Data.GTAppDb.Entities
 		public string Id { get; set; }
 
 		[Column(TypeName = "nvarchar(100)")]
-		public string MessageTitle { get; set; }
+		public string? MessageTitle { get; set; }
 
 		[Column(TypeName = "nvarchar(500)")]
-		public string MessageBody { get; set; }
+		public string? MessageBody { get; set; }
 
-		[Column(TypeName = "nvarchar(100)")]
+		[Column(TypeName = "nvarchar(254)")]
 		public string? LinkedInLink { get; set; }
 
 		[Column(TypeName = "nvarchar(450)")]
