@@ -3,6 +3,7 @@ using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.UI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace GT.UI.Controllers
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
-			IGTListingService listingService, 
+			IGTListingService listingService,
 			IGTExperienceLevelService experienceService,
 			IGTListingInquiryService listingInquiryService,
 			UserManager<ApplicationUser> userManager)
@@ -28,18 +29,17 @@ namespace GT.UI.Controllers
 		}
 
 		// GET: Listings
-		[Route("Annonser")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(ListingFilterViewModel? filterModel)
 		{
-			if(filterModel is not null 
+			if (filterModel is not null
 				&& filterModel.ExperienceLevels.Any()
 				&& filterModel.Filter is not null)
 			{
-			filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
-				.Where(el => el != null && el.IsSelected)
-				.Select(el => el.Name)
-				.ToList();
+				filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
+					.Where(el => el != null && el.IsSelected)
+					.Select(el => el.Name)
+					.ToList();
 			}
 
 			var listingDTOs = await _listingService
@@ -66,7 +66,7 @@ namespace GT.UI.Controllers
 			}
 			else
 			{
-					ViewData["ExperienceLevels"] = filterModel?.ExperienceLevels;
+				ViewData["ExperienceLevels"] = filterModel?.ExperienceLevels;
 			}
 
 			return View(listingDTOs);
@@ -88,6 +88,37 @@ namespace GT.UI.Controllers
 				.GetByListingIdAsync(listing.Id!);
 
 			return View("Listing", listing);
+		}
+
+		// GET: Listing/DeleteListing/5
+		[Authorize(Policy = "AdminPolicy")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Delete(string? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
+
+			var listing = await _listingService
+					.GetByIdAsync(id);
+
+			if (listing == null)
+			{
+				return NotFound();
+			}
+
+			return View(listing);
+		}
+
+		// Delete:/DeleteListing/
+		[Authorize(Policy = "AdminPolicy")]
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(string id)
+		{
+			await _listingService.DeleteAsync(id);
+			return RedirectToAction("ListingOverview");
 		}
 	}
 }

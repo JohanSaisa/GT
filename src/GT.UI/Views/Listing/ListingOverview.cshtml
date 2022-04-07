@@ -23,7 +23,7 @@
 	public string? ExperienceLevel { get; set; }*@
 @using (Html.BeginForm("ListingOverview", "Listing", FormMethod.Get))
 {
-  @await Html.PartialAsync("_ListingFilterPartial", 
+	@await Html.PartialAsync("_ListingFilterPartial",
     new GT.UI.Models.ListingFilterViewModel
     {
       ExperienceLevels = (List<ExperienceLevelItem>)ViewData["ExperienceLevels"]
@@ -35,25 +35,21 @@
 		<th>
 			<h3>Våra aktuella jobbannonser</h3>
 		</th>
-		
 	</tr>
 
 	@foreach (var item in Model)
 	{
 		<tr>
-		  <td>
-			<div class="card border-1">
-				<h5 class="card-title">@Html.ActionLink(item.JobTitle, "GetListing", new { id=item.Id }, new { @class="stretched-link" })</h5>
-				<p class="card-text">@Html.DisplayFor(modelItem => item.ListingTitle)</p>
-			</div>
+			<td>
+				<div class="card border-1">
+					<h5><a asp-action="GetListing" asp-controller="Listing" asp-route-id="@item.Id" class="card-title stretched-link">@item.JobTitle</a></h5>
+					<p class="card-text">@Html.DisplayFor(modelItem => item.ListingTitle)</p>
+				</div>
 			</td>
 			@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
 			{
 				<td>
-					@Html.ActionLink("Edit", "Edit", new { id=item.Id }, new { @class="btn btn-warning" })
-				</td>
-				<td>
-					@Html.ActionLink("Delete", "Delete", new { id=item.Id }, new { @class="btn btn-danger" })
+					<a asp-action="Delete" asp-controller="Listing" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
 				</td>
 			}
 		</tr>
