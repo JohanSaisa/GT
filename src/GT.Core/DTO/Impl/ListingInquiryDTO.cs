@@ -17,6 +17,7 @@ namespace GT.Core.DTO.Impl
 		[StringLength(450)]
 		public string? ApplicantId { get; set; }
 
+		[StringLength(254)]
 		public string? ApplicantEmail { get; set; }
 
 		[StringLength(100)]
@@ -25,7 +26,7 @@ namespace GT.Core.DTO.Impl
 		[StringLength(500)]
 		public string? MessageBody { get; set; }
 
-		[StringLength(100)]
+		[StringLength(254)]
 		public string? LinkedInLink { get; set; }
 	}
 }
