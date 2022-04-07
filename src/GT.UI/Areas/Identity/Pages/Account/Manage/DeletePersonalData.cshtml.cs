@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +14,18 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 	public class DeletePersonalDataModel : PageModel
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly IGTListingInquiryService _listingInquiryService;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly ILogger<DeletePersonalDataModel> _logger;
 
 		public DeletePersonalDataModel(
 				UserManager<ApplicationUser> userManager,
+				IGTListingInquiryService listingInquiryService,
 				SignInManager<ApplicationUser> signInManager,
 				ILogger<DeletePersonalDataModel> logger)
 		{
 			_userManager = userManager;
+			_listingInquiryService = listingInquiryService;
 			_signInManager = signInManager;
 			_logger = logger;
 		}
@@ -83,6 +87,9 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 					return Page();
 				}
 			}
+
+
+			await _listingInquiryService.DeleteInquiriesAssociatedWithUserAsync(user.Id);
 
 			var result = await _userManager.DeleteAsync(user);
 			var userId = await _userManager.GetUserIdAsync(user);
