@@ -247,7 +247,8 @@ namespace GT.Core.Services.Impl
 						JobTitle = entity.JobTitle,
 						EmployerName = entity.Employer == null ? null : entity.Employer.Name,
 						Location = entity.Location == null ? null : entity.Location.Name,
-						ExperienceLevel = entity.ExperienceLevel == null ? null : entity.ExperienceLevel.Name
+						ExperienceLevel = entity.ExperienceLevel == null ? null : entity.ExperienceLevel.Name,
+						ApplicationDeadline = entity.ApplicationDeadline == null ? null : entity.ApplicationDeadline
 					})
 					.ToListAsync()!;
 			}
@@ -289,7 +290,8 @@ namespace GT.Core.Services.Impl
 					Location = entity.Location?.Name,
 					FTE = entity.FTE,
 					CreatedDate = entity.CreatedDate,
-					ExperienceLevel = entity.ExperienceLevel?.Name
+					ExperienceLevel = entity.ExperienceLevel?.Name,
+					ApplicationDeadline = entity.ApplicationDeadline
 				};
 
 				return listing;

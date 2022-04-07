@@ -30,29 +30,39 @@
     })
 }
 
-<table>
-	<tr>
-		<th>
-			<h3>Våra aktuella jobbannonser</h3>
-		</th>
-	</tr>
-
-	@foreach (var item in Model)
-	{
-		<tr>
-			<td>
-				<div class="card border-1">
-					<h5><a asp-action="GetListing" asp-controller="Listing" asp-route-id="@item.Id" class="card-title stretched-link">@item.JobTitle</a></h5>
-					<p class="card-text">@Html.DisplayFor(modelItem => item.ListingTitle)</p>
+<h3>Våra aktuella jobbannonser</h3>
+@foreach (var item in Model)
+{
+	<br />
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="card">
+				<div class="card-header">
+					<div class="row">
+						<div class="col-sm-2">
+							<a asp-action="GetListing" asp-controller="Listing" asp-route-id="@item.Id" class="stretched-link"><img src=~/img/GT.png alt="GT logo" height="30px" /></a>
+						</div>
+						<div class="col-sm-10">
+							<h5 class="card-title">@item.JobTitle</h5>
+						</div>
+					</div>
 				</div>
-			</td>
+				<div class="card-body">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">@item.ListingTitle</li>
+						<li class="list-group-item">Location: @item.Location</li>
+					</ul>
+				</div>
+				<div class="card-footer">
+					<h6 class="card-subtitle mb-2 text-muted">Application deadline: @item.ApplicationDeadline</h6>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
 			@if (SignInManager.IsSignedIn(User) && User.IsInRole("GTadmin"))
 			{
-				<td>
-					<a asp-action="Delete" asp-controller="Listing" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-				</td>
+				<a asp-action="Delete" asp-controller="Listing" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
 			}
-		</tr>
-	}
-</table>
-<br />
+		</div>
+	</div>
+}
