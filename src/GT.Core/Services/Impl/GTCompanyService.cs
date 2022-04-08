@@ -93,15 +93,11 @@ namespace GT.Core.Services.Impl
 			}
 			else
 			{
-				// Create new ID for entity and image
-				string companyLogoId, fileName;
-				companyLogoId = fileName = Guid.NewGuid().ToString();
-
 				// Update DB entity with new LogoID
-				company.CompanyLogoId = companyLogoId;
+				company.CompanyLogoId = company.Id;
 				await UpdateAsync(company, company.Name);
 
-				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, fileName));
+				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, company.CompanyLogoId));
 				return true;
 			}
 		}

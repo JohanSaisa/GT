@@ -19,7 +19,5 @@ namespace GT.Core.Services.Interfaces
 		Task DeleteAsync(string companyId);
 
 		Task<bool> UpdateAsync(CompanyDTO companyDTO, string id);
-
-		Task<CompanyLogoDTO> GetCompanyLogo(string companyId);
 	}
 }
