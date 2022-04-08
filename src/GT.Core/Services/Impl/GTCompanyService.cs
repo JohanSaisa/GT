@@ -218,19 +218,24 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<bool> UpdateAsync(CompanyDTO companyDTO, string name)
+		public async Task<bool> UpdateAsync(CompanyDTO companyDTO, string id)
 		{
 			try
 			{
-				if (companyDTO.Id is not null && name is not null)
+				if (companyDTO.Id != id)
 				{
-					if (await ExistsByNameAsync(name))
+					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
+					return false;
+				}
+				if (companyDTO.Id is not null && id is not null)
+				{
+					if (await ExistsByNameAsync(companyDTO.Name))
 					{
 						var entityToUpdate = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Id == companyDTO.Id);
 
 						// TODO implement automapper
 						entityToUpdate.Id = companyDTO.Id;
-						entityToUpdate.Name = name;
+						entityToUpdate.Name = companyDTO.Name;
 						entityToUpdate.CompanyLogoId = companyDTO.CompanyLogoId;
 
 						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
