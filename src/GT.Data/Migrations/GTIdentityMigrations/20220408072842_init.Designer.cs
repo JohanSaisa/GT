@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GT.Data.Migrations.GTIdentityMigrations
 {
     [DbContext(typeof(GTIdentityContext))]
-    [Migration("20220407110524_init")]
+    [Migration("20220408072842_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,9 @@ namespace GT.Data.Migrations.GTIdentityMigrations
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("LinkedInURL")
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -97,33 +100,33 @@ namespace GT.Data.Migrations.GTIdentityMigrations
                     b.HasData(
                         new
                         {
-                            Id = "06fc8716-a11f-44ac-81b1-37e1ac9f59bb",
+                            Id = "883ee5a7-5b0c-49d4-90ed-ac12a0e0e3d7",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fbe7798f-c802-4ccf-8d36-653df33e44aa",
+                            ConcurrencyStamp = "cb4a22b9-8bca-4b7a-b8f9-261227e12f14",
                             Email = "GTuser@user.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GTUSER@USER.COM",
                             NormalizedUserName = "GTUSER@USER.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEElE564YxvPq/1ZBkNJBCMFtQ+5CBNvNn/r3I2m1evhngKLmFY4CuiH9XhewSmsIVA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAhYC8w0P1aW9qP3GmnqhQMS+p209b4P2k+v6U2mE9AOwaONiFMPoNNvXptbG5kAIw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3b73d436-57b5-4252-b91b-c3a53416aede",
+                            SecurityStamp = "55b8db30-c350-4d63-b8c2-7f1223c41be4",
                             TwoFactorEnabled = false,
                             UserName = "GTuser@user.com"
                         },
                         new
                         {
-                            Id = "c1cee980-b7dd-4882-93f6-2f54874c70ad",
+                            Id = "0f308e83-754f-43d0-a733-85229eb1212c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8507f0ab-788b-4fc0-a518-07d1340df47b",
+                            ConcurrencyStamp = "394f1056-076d-43f2-b94e-df4c5c111fd3",
                             Email = "GTadmin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "GTADMIN@ADMIN.COM",
                             NormalizedUserName = "GTADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMZ/7sstyyu9cTbv15iWPNjNQ0HAcdj8/PpQNxzVxKsJPltDwoHInzLUs+LMbZCu1Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIk2ue6LSrWJRnL5nlQD5HlXfEWcKV10XmNzRc95op0E/gszMjD/M+Dzz5x5wfgQRQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "92a38802-47a8-448c-89ed-6cfe84330122",
+                            SecurityStamp = "4147e775-ea6c-4ba1-ac48-7bc84b63ebe8",
                             TwoFactorEnabled = false,
                             UserName = "GTadmin@admin.com"
                         });
@@ -158,14 +161,14 @@ namespace GT.Data.Migrations.GTIdentityMigrations
                     b.HasData(
                         new
                         {
-                            Id = "a7c3a4e5-aa0e-49d0-a7fb-c97298ef3e97",
+                            Id = "e4ff9719-3d53-4ceb-aafd-211c0cca4ac9",
                             ConcurrencyStamp = "2",
                             Name = "GTuser",
                             NormalizedName = "GTUSER"
                         },
                         new
                         {
-                            Id = "55d38109-8609-40a3-a65d-84f199ae7de7",
+                            Id = "3e844bed-0b49-4795-bfda-bfbaeed4254c",
                             ConcurrencyStamp = "1",
                             Name = "GTadmin",
                             NormalizedName = "GTADMIN"
@@ -261,13 +264,13 @@ namespace GT.Data.Migrations.GTIdentityMigrations
                     b.HasData(
                         new
                         {
-                            UserId = "06fc8716-a11f-44ac-81b1-37e1ac9f59bb",
-                            RoleId = "a7c3a4e5-aa0e-49d0-a7fb-c97298ef3e97"
+                            UserId = "883ee5a7-5b0c-49d4-90ed-ac12a0e0e3d7",
+                            RoleId = "e4ff9719-3d53-4ceb-aafd-211c0cca4ac9"
                         },
                         new
                         {
-                            UserId = "c1cee980-b7dd-4882-93f6-2f54874c70ad",
-                            RoleId = "55d38109-8609-40a3-a65d-84f199ae7de7"
+                            UserId = "0f308e83-754f-43d0-a733-85229eb1212c",
+                            RoleId = "3e844bed-0b49-4795-bfda-bfbaeed4254c"
                         });
                 });
 

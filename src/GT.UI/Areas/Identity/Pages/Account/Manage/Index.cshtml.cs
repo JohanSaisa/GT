@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+//For future reference: https://docs.microsoft.com/en-us/aspnet/core/security/authentication/add-user-data?view=aspnetcore-6.0&tabs=visual-studio
+
 using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -49,17 +51,30 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 		/// </summary>
 		public class InputModel
 		{
-			/// <summary>
-			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-			///     directly from your code. This API may change or be removed in future releases.
-			/// </summary>
+			[StringLength(70)]
+			[DataType(DataType.Text)]
+			[Display(Name = "First name")]
+			public string FirstName { get; set; }
+
+			[StringLength(70)]
+			[DataType(DataType.Text)]
+			[Display(Name = "Last name")]
+			public string LastName { get; set; }
+			
+			[Url]
+			[StringLength(254)]
+			[Display(Name = "LinkedInURL")]
+			public string LinkedInURL { get; set; }
+
 			[Phone]
 			[Display(Name = "Phone number")]
 			public string PhoneNumber { get; set; }
+
 		}
 
 		private async Task LoadAsync(ApplicationUser user)
 		{
+			//TODO - Temp fix uses 
 			var userName = await _userManager.GetUserNameAsync(user);
 			var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
@@ -67,6 +82,9 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 
 			Input = new InputModel
 			{
+				FirstName = user.FirstName,
+				LastName = user.LastName,
+				LinkedInURL = user.LinkedInURL,
 				PhoneNumber = phoneNumber
 			};
 		}
@@ -108,6 +126,22 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 				}
 			}
 
+			if (Input.FirstName != user.FirstName)
+			{
+				user.FirstName = Input.FirstName;
+			}
+
+			if (Input.LastName != user.LastName)
+			{
+				user.LastName = Input.LastName;
+			}
+
+			if (Input.LinkedInURL != user.LinkedInURL)
+			{
+				user.LinkedInURL = Input.LinkedInURL;
+			}
+
+			await _userManager.UpdateAsync(user);
 			await _signInManager.RefreshSignInAsync(user);
 			StatusMessage = "Your profile has been updated";
 			return RedirectToPage();

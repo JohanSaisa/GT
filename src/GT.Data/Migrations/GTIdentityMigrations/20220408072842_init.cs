@@ -30,6 +30,7 @@ namespace GT.Data.Migrations.GTIdentityMigrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(70)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(70)", nullable: true),
+                    LinkedInURL = table.Column<string>(type: "nvarchar(254)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -161,28 +162,28 @@ namespace GT.Data.Migrations.GTIdentityMigrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "55d38109-8609-40a3-a65d-84f199ae7de7", "1", "GTadmin", "GTADMIN" },
-                    { "a7c3a4e5-aa0e-49d0-a7fb-c97298ef3e97", "2", "GTuser", "GTUSER" }
+                    { "3e844bed-0b49-4795-bfda-bfbaeed4254c", "1", "GTadmin", "GTADMIN" },
+                    { "e4ff9719-3d53-4ceb-aafd-211c0cca4ac9", "2", "GTuser", "GTUSER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LinkedInURL", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "06fc8716-a11f-44ac-81b1-37e1ac9f59bb", 0, "fbe7798f-c802-4ccf-8d36-653df33e44aa", "GTuser@user.com", true, null, null, false, null, "GTUSER@USER.COM", "GTUSER@USER.COM", "AQAAAAEAACcQAAAAEElE564YxvPq/1ZBkNJBCMFtQ+5CBNvNn/r3I2m1evhngKLmFY4CuiH9XhewSmsIVA==", null, false, "3b73d436-57b5-4252-b91b-c3a53416aede", false, "GTuser@user.com" },
-                    { "c1cee980-b7dd-4882-93f6-2f54874c70ad", 0, "8507f0ab-788b-4fc0-a518-07d1340df47b", "GTadmin@admin.com", true, null, null, false, null, "GTADMIN@ADMIN.COM", "GTADMIN@ADMIN.COM", "AQAAAAEAACcQAAAAEMZ/7sstyyu9cTbv15iWPNjNQ0HAcdj8/PpQNxzVxKsJPltDwoHInzLUs+LMbZCu1Q==", null, false, "92a38802-47a8-448c-89ed-6cfe84330122", false, "GTadmin@admin.com" }
+                    { "0f308e83-754f-43d0-a733-85229eb1212c", 0, "394f1056-076d-43f2-b94e-df4c5c111fd3", "GTadmin@admin.com", true, null, null, null, false, null, "GTADMIN@ADMIN.COM", "GTADMIN@ADMIN.COM", "AQAAAAEAACcQAAAAEIk2ue6LSrWJRnL5nlQD5HlXfEWcKV10XmNzRc95op0E/gszMjD/M+Dzz5x5wfgQRQ==", null, false, "4147e775-ea6c-4ba1-ac48-7bc84b63ebe8", false, "GTadmin@admin.com" },
+                    { "883ee5a7-5b0c-49d4-90ed-ac12a0e0e3d7", 0, "cb4a22b9-8bca-4b7a-b8f9-261227e12f14", "GTuser@user.com", true, null, null, null, false, null, "GTUSER@USER.COM", "GTUSER@USER.COM", "AQAAAAEAACcQAAAAEAhYC8w0P1aW9qP3GmnqhQMS+p209b4P2k+v6U2mE9AOwaONiFMPoNNvXptbG5kAIw==", null, false, "55b8db30-c350-4d63-b8c2-7f1223c41be4", false, "GTuser@user.com" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "a7c3a4e5-aa0e-49d0-a7fb-c97298ef3e97", "06fc8716-a11f-44ac-81b1-37e1ac9f59bb" });
+                values: new object[] { "3e844bed-0b49-4795-bfda-bfbaeed4254c", "0f308e83-754f-43d0-a733-85229eb1212c" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "55d38109-8609-40a3-a65d-84f199ae7de7", "c1cee980-b7dd-4882-93f6-2f54874c70ad" });
+                values: new object[] { "e4ff9719-3d53-4ceb-aafd-211c0cca4ac9", "883ee5a7-5b0c-49d4-90ed-ac12a0e0e3d7" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
