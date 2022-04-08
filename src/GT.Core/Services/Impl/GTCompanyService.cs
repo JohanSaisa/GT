@@ -222,33 +222,6 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<CompanyLogoDTO> GetCompanyLogo(string companyId)
-		{
-			if (companyId == null || companyId.Length == 0)
-			{
-				_logger.LogWarning($"Cant use null arguments in method: {nameof(GetCompanyLogo)}");
-				return null;
-			}
-
-			var company = await GetByIdAsync(companyId);
-			if (company == null)
-			{
-				_logger.LogWarning($"Could not find a company in method: {nameof(GetCompanyLogo)}");
-				return null;
-			}
-
-			using (var stream = System.IO.File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos", company.CompanyLogoId + ".png")))
-			{
-				var companyLogoDTO = new CompanyLogoDTO()
-				{
-					CompanyId = companyId,
-					File = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
-				};
-				return companyLogoDTO;
-			}
-			
-		}
-
 		public async Task<bool> UpdateAsync(CompanyDTO companyDTO, string name)
 		{
 			try
