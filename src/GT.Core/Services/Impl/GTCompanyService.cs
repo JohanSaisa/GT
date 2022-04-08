@@ -226,7 +226,7 @@ namespace GT.Core.Services.Impl
 				{
 					if (await ExistsByNameAsync(name))
 					{
-						var entityToUpdate = await _companyRepository.GetAll().Where(e => e.Id == companyDTO.Id).FirstOrDefaultAsync();
+						var entityToUpdate = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Id == companyDTO.Id);
 
 						// TODO implement automapper
 						entityToUpdate.Id = companyDTO.Id;
