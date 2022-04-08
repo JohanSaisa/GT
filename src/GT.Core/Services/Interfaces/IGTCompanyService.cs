@@ -6,16 +6,18 @@ namespace GT.Core.Services.Interfaces
 	{
 		Task<CompanyDTO> AddAsync(CompanyDTO dto);
 
-		Task<CompanyDTO> GetAsync();
+		Task<List<CompanyDTO>> GetAsync();
 
 		Task<CompanyDTO> GetByIdAsync(string companyId);
 
 		Task<bool> ExistsByNameAsync(string name);
 
-		string AddCompanyLogo(byte[] file);
+		Task<bool> AddCompanyLogo(CompanyLogoDTO companyLogoDTO);
 
-		void DeleteCompanyLogo(string companyLogoId);
+		Task<bool> DeleteCompanyLogo(string companyLogoId);
 
 		Task DeleteAsync(string companyId);
+
+		Task<bool> UpdateAsync(CompanyDTO companyDTO, string id);
 	}
 }

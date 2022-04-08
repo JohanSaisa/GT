@@ -2,6 +2,7 @@
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -64,19 +65,79 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public string AddCompanyLogo(byte[] file)
+		public async Task<bool> AddCompanyLogo(CompanyLogoDTO companyLogoDTO)
 		{
-			throw new NotImplementedException();
+			// Create folder if it does not exist
+			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+
+			if (companyLogoDTO.File == null || companyLogoDTO.CompanyId == null)
+			{
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(AddCompanyLogo)}");
+				return false;
+			}
+
+			var company = await GetByIdAsync(companyLogoDTO.CompanyId);
+			if (company == null)
+			{
+				_logger.LogWarning($"Could not find a company in method: {nameof(AddCompanyLogo)}");
+				return false;
+			}
+
+			// Check if company already has a stored logo
+			if (company.CompanyLogoId != null || company.CompanyLogoId != String.Empty)
+			{
+				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, company.CompanyLogoId));
+				return true;
+			}
+			else
+			{
+				// Update DB entity with new LogoID
+				company.CompanyLogoId = company.Id;
+				await UpdateAsync(company, company.Name);
+
+				AddFileToFolder(companyLogoDTO.File, Path.Combine(path, company.CompanyLogoId));
+				return true;
+			}
 		}
 
-		public Task DeleteAsync(string companyId)
+		public async Task DeleteAsync(string id)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				await _companyRepository.DeleteAsync(id);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 
-		public void DeleteCompanyLogo(string companyLogoId)
+		public async Task<bool> DeleteCompanyLogo(string companyLogoId)
 		{
-			throw new NotImplementedException();
+			if (companyLogoId == null || companyLogoId.Length <= 0)
+			{
+				_logger.LogWarning($"Arguments cannot be null when using the method: { nameof(DeleteCompanyLogo)}.");
+				return false;
+			}
+
+			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
+			string fileNameWithPath = Path.Combine(path, companyLogoId);
+
+			using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+			{
+				try
+				{
+					File.Delete(fileNameWithPath);
+					return true;
+				}
+				catch (Exception e)
+				{
+					_logger.LogError(e.Message);
+					return false;
+				}
+			}
 		}
 
 		public async Task<bool> ExistsByNameAsync(string name)
@@ -92,14 +153,114 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public Task<CompanyDTO> GetAsync()
+		public async Task<List<CompanyDTO>> GetAsync()
 		{
-			throw new NotImplementedException();
+			try
+			{
+				var entities = await _companyRepository.GetAll().ToListAsync();
+				var companyDTOs = new List<CompanyDTO>();
+
+				foreach (var entity in entities)
+				{
+					// TODO add automapper
+					companyDTOs.Add(new CompanyDTO
+					{
+						Id = entity.Id,
+						Name = entity.Name,
+						CompanyLogoId = entity.CompanyLogoId,
+					});
+				}
+
+				return companyDTOs;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
 		}
 
-		public Task<CompanyDTO> GetByIdAsync(string companyId)
+		public async Task<CompanyDTO> GetByIdAsync(string id)
 		{
-			throw new NotImplementedException();
+			if (id is null)
+			{
+				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByIdAsync)}");
+				return null;
+			}
+
+			try
+			{
+				// Get entity
+				var entity = await _companyRepository
+					.GetAll()
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (entity == null)
+				{
+					_logger.LogInformation($"Entity with id {id} not found.");
+					return null;
+				}
+
+				// Map entity to DTO
+				var company = new CompanyDTO()
+				{
+					Id = entity.Id,
+					Name = entity.Name,
+					CompanyLogoId = entity.CompanyLogoId,
+				};
+
+				return company;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
+		}
+
+		public async Task<bool> UpdateAsync(CompanyDTO companyDTO, string name)
+		{
+			try
+			{
+				if (companyDTO.Id is not null && name is not null)
+				{
+					if (await ExistsByNameAsync(name))
+					{
+						var entityToUpdate = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Id == companyDTO.Id);
+
+						// TODO implement automapper
+						entityToUpdate.Id = companyDTO.Id;
+						entityToUpdate.Name = name;
+						entityToUpdate.CompanyLogoId = companyDTO.CompanyLogoId;
+
+						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+						return true;
+					}
+					return false;
+				}
+				else
+				{
+					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+					return false;
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Creates a filestream and adds the file to the specified folder as a PNG.
+		/// Will overwrite if file with the same name including filetype already exists.
+		/// </summary>
+		private void AddFileToFolder(IFormFile file, string fileNameWithPath)
+		{
+			using (var stream = new FileStream(fileNameWithPath + ".png", FileMode.Create))
+			{
+				file.CopyTo(stream);
+			}
 		}
 	}
 }
