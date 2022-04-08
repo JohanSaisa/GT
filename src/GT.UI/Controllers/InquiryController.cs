@@ -121,7 +121,7 @@ namespace GT.UI.Controllers
 
 			await _gtListingInquiryService.DeleteAsync(id);
 
-			return View("~/Views/Listing/Listing.cshtml", listing);
+			return RedirectToAction("GetListing", "Listing", new {id = listingId});
 		}
 	}
 }
