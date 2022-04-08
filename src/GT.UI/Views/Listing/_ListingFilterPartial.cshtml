@@ -1,100 +1,97 @@
 ﻿@model GT.UI.Models.ListingFilterViewModel
 
 <div class="container container-fluid flex-column flex-wrap w-50">
-  <div class="card m-2">
+  <div class="card">
     <h6 class="card-header">Keywords (Separate by space, use underscore for spaces inside keywords):</h6>
-	  <p class="card-body card-text"> 
-      @Html.TextBoxFor(fm => fm.Filter!.KeywordsRawText, new { @id="keywordstextbox" })		
-	  </p>
-  </div>
+	  <div class="d-flex justify-content-between card-body card-text"> 
+        @Html.TextBoxFor(fm => fm.Filter!.KeywordsRawText, new { @id="keywordstextbox", @class="flex-fill ms-1 me-2"})
+      
+        <input type="submit" value="Filter" class="btn btn-primary me-1" />
+	  </div>
 
-  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtercollapse" aria-expanded="false" aria-controls="filtercollapse">
-    Show advanced filters   
-  </button>
+      <div class="collapse container container-fluid flex-column justify-content-center" id="filtercollapse">
+      <div class="card m-2">
+        <div class="card-header d-flex flex-row justify-content-between">
+          <div class="ms-1 me-4">
+            Job type: 
+            @Html.DropDownListFor(
+              fm => fm.Filter!.FTE,
+              new SelectList(new List<object>
+              {
+                new { Text = "Any", Value = (bool?)null },
+                new { Text = "Full Time", Value = true },
+                new { Text = "Part Time", Value = false }
+              }, 
+              "Value",
+              "Text"), 
+              new { @id="jobtypedropdown" })
+          </div>
+          <div class="me-1">
+          Location: 
+          @Html.DropDownListFor(fm => Model.Filter!.Location,
+            Model.Locations,
+            "Any",
+            new { @id="locationdropdown" })
+          </div>
+        </div> 
+      </div>
 
-  <div class="collapse" id="filtercollapse">
-    <div class="card m-2">
-      <h6 class="card-header">Job type:</h6> 
-      <p class="card-body card-text">
-      @Html.DropDownListFor(
-        fm => fm.Filter!.FTE,
-        new SelectList(new List<object>
-        {
-          new { Text = "Any", Value = (bool?)null },
-          new { Text = "Full Time", Value = true },
-          new { Text = "Part Time", Value = false }
-        }, 
-        "Value",
-        "Text"), 
-        new { @id="jobtypedropdown" })
-      </p>
-    </div>
+      <div class="card m-2">
+        <div class="card-header d-flex flex-row justify-content-between align-items-center">
+          <div class="me-1">Earliest listing creation date: 
+            @Html.TextBoxFor(
+              fm => fm.Filter!.IncludeListingsFromDate, 
+              "{0:dd/MM/yyyy}", 
+              new { @type="date", @id="creationdatetextbox" })
+          </div>
 
-    <div class="card m-2">
-      <h6 class="card-header">Earliest listing creation date:</h6>
-      <p class="card-body card-text">
-        @Html.TextBoxFor(
-          fm => fm.Filter!.IncludeListingsFromDate, 
-          "{0:dd/MM/yyyy}", 
-          new { @type="date", @id="creationdatetextbox" })
-      </p>
-    </div>
+          <div class="ms-1">
+            Exclude expired listings: 
+            @Html.CheckBoxFor(fm => fm.ExcludeExpiredListings,
+              new { @id="excludeexpiredlistingscheckbox" })
+          </div>
+        </div>
+      </div>
+
+      <div class="card m-2">
+        <h6 class="card-header">Salary:</h6>
+        <div class="card-body d-flex flex-row">
+          <div class="card-text w-50 flex-fill me-1">
+            Minimum expected salary: 
+            <br/>
+            @Html.TextBoxFor(
+              fm => fm.Filter!.SalaryMin, 
+              new { @type="number", @min=0, @id="salarymintextbox", @class="w-100" })
+          </div>
     
-    <div class="card m-2">
-      <p class="card-body card-header">
-        Exclude expired listings:
-        @Html.CheckBoxFor(fm => fm.ExcludeExpiredListings,
-          new { @id="excludeexpiredlistingscheckbox" })
-      </p>
-    </div>
+          <div class="card-text w-50 flex-fill ms-1">
+            Maximum expected salary: 
+            <br/>
+            @Html.TextBoxFor(
+              fm => fm.Filter!.SalaryMax, 
+              new { @type="number", @min=0, @id="salarymaxtextbox", @class="w-100" })
+          </div>
+        </div>
+      </div>
 
-    <div class="card m-2">
-      <h6 class="card-header">Salary:</h6>
-      <div class="card-body d-flex flex-row">
-        <p class="card-text w-50">
-          Minimum expected salary:
-          <br/>
-          @Html.TextBoxFor(
-            fm => fm.Filter!.SalaryMin, 
-            new { @type="number", @min=0, @id="salarymintextbox" })
-        </p>
-    
-        <p class="card-text w-50">
-          Maximum expected salary:
-          <br/>
-          @Html.TextBoxFor(
-            fm => fm.Filter!.SalaryMax, 
-            new { @type="number", @min=0, @id="salarymaxtextbox" })
-        </p>
+      <div class="card m-2">
+        <h6 class="card-header">Experience levels:</h6>
+        <div class="card-body container d-flex flex-row flex-wrap">
+          @for(int i = 0; i < Model.ExperienceLevels.Count; i++)
+          {
+            <p class="card-text m-2">
+              @Model.ExperienceLevels[i].Name
+              @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected,
+              new { @class="experiencelevelcheckbox" })
+              @Html.HiddenFor(fm => Model.ExperienceLevels[i].Name)
+            </p>
+          }
+        </div>
       </div>
     </div>
 
-    <div class="card m-2">
-      <h6 class="card-header">Experience levels:</h6>
-      <div class="card-body container d-flex flex-row flex-wrap">
-        @for(int i = 0; i < Model.ExperienceLevels.Count; i++)
-        {
-          <p class="card-text m-2">
-            @Model.ExperienceLevels[i].Name
-            @Html.CheckBoxFor(fm => Model.ExperienceLevels[i].IsSelected,
-            new { @class="experiencelevelcheckbox" })
-            @Html.HiddenFor(fm => Model.ExperienceLevels[i].Name)
-          </p>
-        }
-      </div>
-    </div>
-
-    <div class="card m-2">
-      <h6 class="card-header">Location:</h6>
-      <div class="card-body">
-        @Html.DropDownListFor(fm => Model.Filter!.Location,
-          Model.Locations,
-          "Any",
-          new { @id="locationdropdown" })
-      </div>
-    </div>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtercollapse" aria-expanded="false" aria-controls="filtercollapse">
+      Show advanced filters   
+    </button>
   </div>
-  <p class="card m-2">
-    <input type="submit" value="Filter" class="btn btn-primary" />
-  </p>
 </div>
