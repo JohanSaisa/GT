@@ -42,8 +42,6 @@ namespace GT.Core.Tests
 			result.Id.Should().MatchRegex(@"(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$");
 			result.Id.Should().NotBe(inputLocationTempId);
 			result.Name.Should().Be(inputLocationName);
-			result.Name.Should().Be(locationAsInputArgument.Name);
-
 			mockRepository.Verify(m => m.AddAsync(It.IsAny<Location>()), Times.Once);
 		}
 	}
