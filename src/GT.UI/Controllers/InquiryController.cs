@@ -22,10 +22,10 @@ namespace GT.UI.Controllers
 			SignInManager<ApplicationUser> signInManager,
 			UserManager<ApplicationUser> userManager)
 		{
-			_gtListingInquiryService = gtListingInquiryService;
-			_gtListingService = gtListingService;
-			_signInManager = signInManager;
-			_userManager = userManager;
+			_gtListingInquiryService = gtListingInquiryService ?? throw new ArgumentNullException(nameof(gtListingInquiryService));
+			_gtListingService = gtListingService ?? throw new ArgumentNullException(nameof(gtListingService));
+			_signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 		}
 
 		[HttpGet]
@@ -121,7 +121,7 @@ namespace GT.UI.Controllers
 
 			await _gtListingInquiryService.DeleteAsync(id);
 
-			return RedirectToAction("GetListing", "Listing", new {id = listingId});
+			return RedirectToAction("GetListing", "Listing", new { id = listingId });
 		}
 	}
 }

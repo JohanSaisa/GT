@@ -12,11 +12,11 @@ namespace GT.Core.Services.Impl
 		private readonly ILogger<GTLocationService> _logger;
 		private readonly IGTGenericRepository<Location> _locationRepository;
 
-		public GTLocationService(ILogger<GTLocationService> logger, 
+		public GTLocationService(ILogger<GTLocationService> logger,
 			IGTGenericRepository<Location> locationRepository)
 		{
-			_logger = logger;
-			_locationRepository = locationRepository;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
 		}
 
 		public async Task<LocationDTO> AddAsync(LocationDTO dto)
@@ -84,7 +84,7 @@ namespace GT.Core.Services.Impl
 		public async Task<List<LocationDTO>?> GetAllAsync()
 		{
 			try
-			{			
+			{
 				var query = _locationRepository
 					.GetAll();
 
@@ -96,7 +96,7 @@ namespace GT.Core.Services.Impl
 					})
 					.ToListAsync();
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				_logger.LogError(e.Message);
 				return null;

@@ -1,16 +1,19 @@
 ﻿using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace GT.Data.Repositories.Impl
 {
 	public class GTIdentityRepository : IGTIdentityRepository
 	{
 		private readonly GTIdentityContext _context;
+		private readonly ILogger<GTIdentityRepository> _logger;
 
-		public GTIdentityRepository(GTIdentityContext context)
+		public GTIdentityRepository(GTIdentityContext context, ILogger<GTIdentityRepository> logger)
 		{
-			_context = context;
+			_context = context ?? throw new ArgumentNullException(nameof(context));
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		public async Task<ApplicationUser> FindAsync(string id)
@@ -29,6 +32,7 @@ namespace GT.Data.Repositories.Impl
 			await _context.SaveChangesAsync();
 			return applicationUser;
 		}
+
 		public async Task<ApplicationUser> AddAsync(ApplicationUser applicationUser)
 		{
 			applicationUser.Id = applicationUser.Id == "" ? Guid.NewGuid().ToString() : applicationUser.Id;
@@ -53,4 +57,3 @@ namespace GT.Data.Repositories.Impl
 		}
 	}
 }
-

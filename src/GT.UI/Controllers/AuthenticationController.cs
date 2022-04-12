@@ -25,10 +25,10 @@ namespace GT.UI.Controllers
 			RoleManager<IdentityRole> roleManager,
 			IConfiguration configuration)
 		{
-			_signInManager = signInManager;
-			_userManager = userManager;
-			_roleManager = roleManager;
-			_configuration = configuration;
+			_signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+			_roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
 
 		[HttpPost]
