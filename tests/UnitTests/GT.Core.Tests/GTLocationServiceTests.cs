@@ -26,7 +26,7 @@ namespace GT.Core.Tests
 			};
 
 			var guidRegex = @"(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$";
-			var mockServiceLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<GTLocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 			var locationSentToRepository = new Location();
 
@@ -35,18 +35,22 @@ namespace GT.Core.Tests
 				.Callback<Location>(location => locationSentToRepository = location)
 				.Returns(Task.FromResult(locationSentToRepository));
 
-			var sut = new GTLocationService(mockServiceLogger.Object, mockRepository.Object);
+			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(input);
 
 			// Assert
-			result.Id.Should().MatchRegex(guidRegex);
-			result.Id.Should().Be(locationSentToRepository.Id);
-			result.Id.Should().NotBe(inputLocationTempId);
-			result.Name.Should().Be(inputLocationName);
-			result.Name.Should().Be(locationSentToRepository.Name);
 			mockRepository.Verify(m => m.AddAsync(It.IsAny<Location>()), Times.Once);
+
+			result.Id.Should()
+				.MatchRegex(guidRegex).And
+				.Be(locationSentToRepository.Id).And
+				.NotBe(inputLocationTempId);
+
+			result.Name.Should()
+				.Be(inputLocationName).And
+				.Be(locationSentToRepository.Name);
 		}
 	}
 }
