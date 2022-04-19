@@ -36,15 +36,15 @@ namespace GT.Core.Services.Impl
 			IGTGenericRepository<ExperienceLevel> experienceLevelRepository,
 			IGTGenericRepository<ListingInquiry> inquiryRepository)
 		{
-			_logger = logger;
-			_companyService = companyService;
-			_experienceLevelService = experienceLevelService;
-			_locationService = locationService;
-			_listingRepository = listingRepository;
-			_companyRepository = companyRepository;
-			_locationRepository = locationRepository;
-			_experienceLevelRepository = experienceLevelRepository;
-			_inquiryRepository = inquiryRepository;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_companyService = companyService ?? throw new ArgumentNullException(nameof(companyService));
+			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
+			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
+			_listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));
+			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
+			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
+			_experienceLevelRepository = experienceLevelRepository ?? throw new ArgumentNullException(nameof(experienceLevelRepository));
+			_inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
 		}
 
 		/// <summary>
@@ -181,7 +181,7 @@ namespace GT.Core.Services.Impl
 				.Include(e => e.Location)
 				.Include(e => e.Employer)
 
-				.Where(e => 
+				.Where(e =>
 					filter.ExperienceLevels == null
 					|| filter.ExperienceLevels.Count <= 0
 					|| (e.ExperienceLevel != null && e.ExperienceLevel.Name != null
@@ -207,12 +207,12 @@ namespace GT.Core.Services.Impl
 					|| (e.SalaryMax != null
 						&& filter.SalaryMax >= e.SalaryMin))
 
-				.Where(e => 
+				.Where(e =>
 					filter.IncludeListingsFromDate == null
 					|| (e.CreatedDate != null
 						&& filter.IncludeListingsFromDate < e.CreatedDate))
 
-				.Where(e => 
+				.Where(e =>
 					(filter.ExcludeExpiredListings == null || filter.ExcludeExpiredListings == false)
 					|| (filter.ExcludeExpiredListings == true
 						&& e.ApplicationDeadline != null
@@ -315,7 +315,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if(listingDTO.Id != id)
+				if (listingDTO.Id != id)
 				{
 					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
 					return;

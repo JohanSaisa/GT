@@ -20,8 +20,8 @@ namespace GT.UI.Controllers
 
 		public ListingAPIController(IGTListingService listingService, UserManager<ApplicationUser> userManager)
 		{
-			_listingService = listingService;
-			_userManager = userManager;
+			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 		}
 
 		// GET: api/Listings

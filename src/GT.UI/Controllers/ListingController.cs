@@ -25,11 +25,11 @@ namespace GT.UI.Controllers
 			IGTListingInquiryService listingInquiryService,
 			UserManager<ApplicationUser> userManager)
 		{
-			_listingService = listingService;
-			_experienceService = experienceService;
-			_locationService = locationService;
-			_listingInquiryService = listingInquiryService;
-			_userManager = userManager;
+			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
+			_experienceService = experienceService ?? throw new ArgumentNullException(nameof(experienceService));
+			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
+			_listingInquiryService = listingInquiryService ?? throw new ArgumentNullException(nameof(listingInquiryService));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 		}
 
 		// GET: Listings
@@ -41,7 +41,7 @@ namespace GT.UI.Controllers
 			{
 				filterModel.Filter.ExcludeExpiredListings = filterModel.ExcludeExpiredListings;
 
-				if (filterModel.ExperienceLevels is not null 
+				if (filterModel.ExperienceLevels is not null
 					&& filterModel.ExperienceLevels.Any())
 				{
 					filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
@@ -77,12 +77,12 @@ namespace GT.UI.Controllers
 					: new List<ExperienceLevelCheckbox>();
 
 				ViewData["Locations"] = new SelectList(locations?
-					.Select(l => new SelectListItem 
-						{ 
-							Selected = false, 
-							Text = l.Name, 
-							Value = l.Name 
-						})
+					.Select(l => new SelectListItem
+					{
+						Selected = false,
+						Text = l.Name,
+						Value = l.Name
+					})
 					.OrderBy(l => l.Text),
 					"Value",
 					"Text");

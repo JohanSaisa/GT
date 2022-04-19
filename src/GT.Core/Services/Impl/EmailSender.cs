@@ -19,7 +19,7 @@ namespace GT.Core.Services.Impl
 
 		public EmailSender(IConfiguration configuration)
 		{
-			_configuration = configuration;
+			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
 
 		public async Task SendEmailAsync(string email, string subject, string htmlMessage)

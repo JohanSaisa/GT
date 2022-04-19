@@ -16,8 +16,8 @@ namespace GT.Core.Services.Impl
 		public GTCompanyService(ILogger<GTCompanyService> logger,
 			IGTGenericRepository<Company> companyRepository)
 		{
-			_logger = logger;
-			_companyRepository = companyRepository;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
 		}
 
 		public async Task<CompanyDTO> AddAsync(CompanyDTO dto)

@@ -19,8 +19,8 @@ namespace GT.Data.Repositories.Impl
 
 		public GTGenericRepository(GTAppContext context, ILogger<GTGenericRepository<TEntity>> logger)
 		{
-			_context = context;
-			_logger = logger;
+			_context = context ?? throw new ArgumentNullException(nameof(context));
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		public virtual IQueryable<TEntity>? GetAll()

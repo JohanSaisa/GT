@@ -15,8 +15,9 @@ namespace GT.Core.Services.Impl
 		public GTExperienceLevelService(ILogger<GTExperienceLevelService> logger,
 			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
-			_logger = logger;
-			_experienceLevelRepository = experienceLevelRepository;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_experienceLevelRepository = experienceLevelRepository
+				?? throw new ArgumentNullException(nameof(experienceLevelRepository));
 		}
 
 		public async Task<ExperienceLevelDTO> AddAsync(ExperienceLevelDTO dto)
@@ -106,7 +107,6 @@ namespace GT.Core.Services.Impl
 				_logger.LogError(e.Message);
 				return null;
 			}
-
 		}
 	}
 }

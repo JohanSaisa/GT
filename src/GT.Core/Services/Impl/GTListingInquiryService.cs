@@ -21,10 +21,11 @@ namespace GT.Core.Services.Impl
 			UserManager<ApplicationUser> userManager,
 			IGTListingService listingService)
 		{
-			_logger = logger;
-			_listingInquiryRepository = listingInquiryRepository;
-			_userManager = userManager;
-			_listingService = listingService;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_listingInquiryRepository = listingInquiryRepository
+				?? throw new ArgumentNullException(nameof(listingInquiryRepository));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 		}
 
 		public async Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null)
@@ -140,7 +141,6 @@ namespace GT.Core.Services.Impl
 
 				foreach (var entity in entities)
 				{
-
 					var applicant = await _userManager.FindByIdAsync(entity.ApplicantId);
 
 					// TODO add automapper
