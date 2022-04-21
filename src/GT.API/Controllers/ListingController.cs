@@ -29,8 +29,8 @@ namespace GT.API.Controllers
 			_listingInquiryService = listingInquiryService ?? throw new ArgumentNullException(nameof(listingInquiryService));
 		}
 
-		// GET: Listing/ListingsWithFilter
-		[Route("Overview")]
+		// GET: /overview
+		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetListingsWithFilter()
 		{
@@ -48,8 +48,7 @@ namespace GT.API.Controllers
 			return Ok(result);
 		}
 
-		// GET:/Listing/
-		[Route("Listing")]
+		// GET:/5
 		[HttpGet("{id}")]
 		public async Task<ActionResult<string>> GetListing(string id)
 		{
@@ -71,8 +70,8 @@ namespace GT.API.Controllers
 			return Ok(result);
 		}
 
-		// GET: Listing/DeleteListing/5
-		[Route("DeleteListing")]
+		// GET: delete/5
+		[Route("delete")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string? id)
 		{
@@ -93,8 +92,8 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// PUT: Listing/UpdateListing
-		[Route("UpdateListing")]
+		// PUT: update/5
+		[Route("update")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutListing(string id, ListingDTO listing)
 		{
@@ -115,9 +114,8 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// POST: api/Listings
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[Route("CreateListing")]
+		// POST: /create
+		[Route("create")]
 		[HttpPost]
 		public async Task<ActionResult<string?>> PostListing(ListingDTO listing)
 		{

@@ -65,6 +65,12 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	GTAppDataSeeder.Initialize(services);
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
