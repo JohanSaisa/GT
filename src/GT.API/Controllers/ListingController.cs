@@ -1,97 +1,50 @@
 ﻿using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTIdentityDb.Entities;
-using GT.UI.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GT.API.Controllers
 {
-	public class ListingController : Controller
+	[Route("api/v1/listings")]
+	[ApiController]
+	public class ListingController : ControllerBase
 	{
 		private readonly IGTListingService _listingService;
 		private readonly IGTExperienceLevelService _experienceService;
 		private readonly IGTLocationService _locationService;
 		private readonly IGTListingInquiryService _listingInquiryService;
-		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
 			IGTListingService listingService,
 			IGTExperienceLevelService experienceService,
 			IGTLocationService locationService,
-			IGTListingInquiryService listingInquiryService,
-			UserManager<ApplicationUser> userManager)
+			IGTListingInquiryService listingInquiryService)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 			_experienceService = experienceService ?? throw new ArgumentNullException(nameof(experienceService));
 			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
 			_listingInquiryService = listingInquiryService ?? throw new ArgumentNullException(nameof(listingInquiryService));
-			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 		}
 
-		// GET: Listings
+		// GET: Listing/GetListingsWithFilter
+		[Route("GetListingsOverview")]
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> ListingOverview(ListingFilterModel? filterModel)
+		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListingsWithFilter(ListingFilterModel? filterModel)
 		{
-			if (filterModel is not null
-				&& filterModel.Filter is not null)
-			{
-				filterModel.Filter.ExcludeExpiredListings = filterModel.ExcludeExpiredListings;
-
-				if (filterModel.ExperienceLevels is not null
-					&& filterModel.ExperienceLevels.Any())
-				{
-					filterModel.Filter.ExperienceLevels = filterModel.ExperienceLevels
-						.Where(el => el != null && el.IsSelected)
-						.Select(el => el.Name)
-						.ToList()!;
-				}
-			}
-
 			var listingDTOs = await _listingService
-				.GetAsync(filterModel?.Filter);
+				.GetAsync(filterModel);
 
 			if (listingDTOs == null)
 			{
 				return NotFound();
 			}
 
-			if (filterModel is not null)
-			{
-				var experienceLevels = await _experienceService
-					.GetAllAsync();
-
-				var locations = await _locationService
-					.GetAllAsync();
-
-				ViewData["ExperienceLevels"] = experienceLevels is not null
-					? experienceLevels.Select(el => new ExperienceLevelCheckbox
-					{
-						Name = el.Name,
-						IsSelected = false
-					})
-					.ToList()
-					: new List<ExperienceLevelCheckbox>();
-
-				ViewData["Locations"] = new SelectList(locations?
-					.Select(l => new SelectListItem
-					{
-						Selected = false,
-						Text = l.Name,
-						Value = l.Name
-					})
-					.OrderBy(l => l.Text),
-					"Value",
-					"Text");
-			}
-
-			return View(listingDTOs);
+			return Ok(listingDTOs);
 		}
 
 		// GET:/GetListing/
+		[Route("GetListingsOverview")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
@@ -103,40 +56,29 @@ namespace GT.API.Controllers
 				return NotFound();
 			}
 
-			listing.Inquiries = await _listingInquiryService
-				.GetByListingIdAsync(listing.Id!);
-
-			return View("Listing", listing);
+			return Ok(listing);
 		}
 
 		// GET: Listing/DeleteListing/5
-		[Authorize(Policy = "AdminPolicy")]
-		public async Task<IActionResult> Delete(string? id)
+		[Route("DeleteListing")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteListing(string? id)
 		{
 			if (id == null)
 			{
-				return NotFound();
+				return BadRequest();
 			}
 
-			var listing = await _listingService
-					.GetByIdAsync(id);
-
-			if (listing == null)
+			try
+			{
+				await _listingService.DeleteAsync(id);
+			}
+			catch (Exception)
 			{
 				return NotFound();
 			}
 
-			return View(listing);
-		}
-
-		// Delete:/DeleteListing/
-		[Authorize(Policy = "AdminPolicy")]
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(string id)
-		{
-			await _listingService.DeleteAsync(id);
-			return RedirectToAction("ListingOverview");
+			return Ok();
 		}
 	}
 }
