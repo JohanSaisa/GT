@@ -2,6 +2,7 @@
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GT.API.Controllers
@@ -27,8 +28,8 @@ namespace GT.API.Controllers
 			_listingInquiryService = listingInquiryService ?? throw new ArgumentNullException(nameof(listingInquiryService));
 		}
 
-		// GET: Listing/GetListingsWithFilter
-		[Route("GetListingsOverview")]
+		// GET: Listing/ListingsWithFilter
+		[Route("ListingsOverview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListingsWithFilter(ListingFilterModel? filterModel)
 		{
@@ -43,11 +44,16 @@ namespace GT.API.Controllers
 			return Ok(listingDTOs);
 		}
 
-		// GET:/GetListing/
-		[Route("GetListingsOverview")]
+		// GET:/Listing/
+		[Route("Listing")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
+			if (id == null)
+			{
+				return BadRequest();
+			}
+
 			var listing = await _listingService
 				.GetByIdAsync(id);
 
@@ -79,6 +85,37 @@ namespace GT.API.Controllers
 			}
 
 			return Ok();
+		}
+
+		// PUT: Listing/UpdateListing
+		[Route("UpdateListing")]
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutListing(string id, ListingDTO listing)
+		{
+			if (id != listing.Id)
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				await _listingService.UpdateAsync(listing, id);
+			}
+			catch
+			{
+				return StatusCode(500);
+			}
+
+			return Ok();
+		}
+
+		// POST: api/Listings
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[Route("CreateListing")]
+		[HttpPost]
+		public async Task<ActionResult<ListingDTO>> PostListing(ListingDTO listing)
+{
+			// TODO Need to learn how to 
 		}
 	}
 }
