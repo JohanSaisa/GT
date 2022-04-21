@@ -19,7 +19,7 @@ namespace GT.Core.Tests
 		[InlineData("NameInDb", true)]
 		[InlineData("NameNotInDb1", false)]
 		[InlineData(null, false)]
-		public async Task ExistsByNameAsync_ExpectedBehaviour_Succeeds(string inputName, bool expected)
+		public async Task ExistsByNameAsync_ReturnsExpectedValue_Succeeds(string inputName, bool expected)
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
