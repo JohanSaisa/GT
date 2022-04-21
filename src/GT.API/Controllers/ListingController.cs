@@ -4,6 +4,7 @@ using GT.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GT.API.Controllers
 {
@@ -29,10 +30,12 @@ namespace GT.API.Controllers
 		}
 
 		// GET: Listing/ListingsWithFilter
-		[Route("ListingsOverview")]
+		[Route("Overview")]
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListingsWithFilter(ListingFilterModel? filterModel)
+		public async Task<ActionResult<IEnumerable<string>>> GetListingsWithFilter()
 		{
+			ListingFilterModel filterModel = new ListingFilterModel();
+
 			var listingDTOs = await _listingService
 				.GetAsync(filterModel);
 
@@ -40,14 +43,15 @@ namespace GT.API.Controllers
 			{
 				return NotFound();
 			}
+			var result = JsonConvert.SerializeObject(listingDTOs);
 
-			return Ok(listingDTOs);
+			return Ok(result);
 		}
 
 		// GET:/Listing/
 		[Route("Listing")]
 		[HttpGet("{id}")]
-		public async Task<ActionResult<ListingDTO>> GetListing(string id)
+		public async Task<ActionResult<string>> GetListing(string id)
 		{
 			if (string.IsNullOrEmpty(id))
 			{
@@ -62,7 +66,9 @@ namespace GT.API.Controllers
 				return NotFound();
 			}
 
-			return Ok(listing);
+			var result = JsonConvert.SerializeObject(listing);
+
+			return Ok(result);
 		}
 
 		// GET: Listing/DeleteListing/5
@@ -113,7 +119,7 @@ namespace GT.API.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[Route("CreateListing")]
 		[HttpPost]
-		public async Task<ActionResult<ListingDTO?>> PostListing(ListingDTO listing)
+		public async Task<ActionResult<string?>> PostListing(ListingDTO listing)
 		{
 			// TODO Need to learn how to get user id from jwt
 
@@ -124,14 +130,16 @@ namespace GT.API.Controllers
 
 			try
 			{
-				return await _listingService.AddAsync(listing, GetUserId());
+				var objToReturn = await _listingService.AddAsync(listing, GetUserId());
+				var result = JsonConvert.SerializeObject(objToReturn);
+				return Ok(result);
 			}
 			catch (Exception)
 			{
 				return StatusCode(500);
 			}
 		}
-		
+
 		private string GetUserId()
 		{
 			return User.Claims
