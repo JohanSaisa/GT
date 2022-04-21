@@ -49,7 +49,7 @@ namespace GT.API.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
-			if (id == null)
+			if (string.IsNullOrEmpty(id))
 			{
 				return BadRequest();
 			}
@@ -70,7 +70,7 @@ namespace GT.API.Controllers
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string? id)
 		{
-			if (id == null)
+			if (string.IsNullOrEmpty(id))
 			{
 				return BadRequest();
 			}
@@ -92,7 +92,7 @@ namespace GT.API.Controllers
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutListing(string id, ListingDTO listing)
 		{
-			if (id != listing.Id)
+			if (string.IsNullOrEmpty(id) || id != listing.Id)
 			{
 				return BadRequest();
 			}
@@ -113,9 +113,29 @@ namespace GT.API.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[Route("CreateListing")]
 		[HttpPost]
-		public async Task<ActionResult<ListingDTO>> PostListing(ListingDTO listing)
-{
-			// TODO Need to learn how to 
+		public async Task<ActionResult<ListingDTO?>> PostListing(ListingDTO listing)
+		{
+			// TODO Need to learn how to get user id from jwt
+
+			if (listing is null)
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				return await _listingService.AddAsync(listing, GetUserId());
+			}
+			catch (Exception)
+			{
+				return StatusCode(500);
+			}
+		}
+		
+		private string GetUserId()
+		{
+			return User.Claims
+				.First(i => i.Type == "UserId").Value;
 		}
 	}
 }
