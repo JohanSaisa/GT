@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\GT.Core\GT.Core.csproj" />
     <ProjectReference Include="..\..\..\src\GT.Data\GT.Data.csproj" />
+    <ProjectReference Include="..\..\..\TestHelpers\TestHelpers.csproj" />
   </ItemGroup>
 
 </Project>
