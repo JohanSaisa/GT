@@ -5,9 +5,12 @@ using GT.Data.Data.GTIdentityDb;
 using GT.Data.Data.GTIdentityDb.Entities;
 using GT.Data.Repositories.Impl;
 using GT.Data.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 Microsoft.Extensions.Configuration.ConfigurationManager configuration = builder.Configuration;
@@ -56,6 +59,27 @@ builder.Services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Adding Authentication.
+builder.Services.AddAuthentication()
+	.AddCookie(cfg => cfg.SlidingExpiration = true)
+	.AddJwtBearer(cfg =>
+	{
+		cfg.SaveToken = true;
+		if (builder.Environment.IsDevelopment())
+		{
+			cfg.RequireHttpsMetadata = false;
+		}
+		cfg.TokenValidationParameters = new TokenValidationParameters()
+		{
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			AuthenticationType = JwtBearerDefaults.AuthenticationScheme,
+			ValidIssuer = configuration["Authentication:Jwt:Issuer"],
+			ValidAudience = configuration["Authentication:Jwt:Audience"],
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Jwt:Key"])),
+		};
+	});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -72,6 +96,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -4,7 +4,11 @@ using GT.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace GT.API.Controllers
 {
@@ -16,17 +20,20 @@ namespace GT.API.Controllers
 		private readonly IGTExperienceLevelService _experienceService;
 		private readonly IGTLocationService _locationService;
 		private readonly IGTListingInquiryService _listingInquiryService;
+		private readonly IConfiguration _configuration;
 
 		public ListingController(
 			IGTListingService listingService,
 			IGTExperienceLevelService experienceService,
 			IGTLocationService locationService,
-			IGTListingInquiryService listingInquiryService)
+			IGTListingInquiryService listingInquiryService,
+			IConfiguration configuration)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 			_experienceService = experienceService ?? throw new ArgumentNullException(nameof(experienceService));
 			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
 			_listingInquiryService = listingInquiryService ?? throw new ArgumentNullException(nameof(listingInquiryService));
+			_configuration = configuration;
 		}
 
 		// GET: /overview
@@ -128,6 +135,12 @@ namespace GT.API.Controllers
 
 			try
 			{
+				string authHeaderValue = Request.Headers["Authorization"];
+
+				var tokenClaims = GetClaims(authHeaderValue.Substring("Bearer ".Length).Trim());
+
+				var userId = tokenClaims.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
+
 				var objToReturn = await _listingService.AddAsync(listing, GetUserId());
 				var result = JsonConvert.SerializeObject(objToReturn);
 				return Ok(result);
@@ -141,7 +154,22 @@ namespace GT.API.Controllers
 		private string GetUserId()
 		{
 			return User.Claims
-				.First(i => i.Type == "UserId").Value;
+				.First(i => i.Type == "Id").Value;
+		}
+
+		public ClaimsPrincipal GetClaims(string token)
+		{
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"]));
+			var handler = new JwtSecurityTokenHandler();
+			var validations = new TokenValidationParameters
+			{
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = key,
+				ValidateIssuer = false,
+				ValidateAudience = false
+			};
+
+			return handler.ValidateToken(token, validations, out var tokenSecure);
 		}
 	}
 }

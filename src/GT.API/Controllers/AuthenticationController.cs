@@ -31,6 +31,7 @@ namespace GT.API.Controllers
 			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
 
+		[Route("RequestToken")]
 		[HttpPost]
 		public async Task<IActionResult> CreateToken([FromBody] JwtTokenDTO loginModel)
 		{
@@ -43,7 +44,7 @@ namespace GT.API.Controllers
 					var userRoles = await _userManager.GetRolesAsync(user);
 					var claims = new List<Claim>()
 					{
-						new Claim(JwtRegisteredClaimNames.Sub, loginModel.Username),
+						new Claim(JwtRegisteredClaimNames.Sub, user.Id),
 						new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 						new Claim(JwtRegisteredClaimNames.UniqueName, loginModel.Username),
 					};
