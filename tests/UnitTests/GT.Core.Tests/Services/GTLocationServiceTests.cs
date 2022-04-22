@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using GT.Core.DTO.Impl;
 using GT.Core.Services.Impl;
 using GT.Data.Data.GTAppDb.Entities;
@@ -6,6 +8,8 @@ using GT.Data.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.RenderTree;
+using MockQueryable.Moq;
 using TestHelpers;
 using Xunit;
 
@@ -100,6 +104,38 @@ namespace GT.Core.Tests.Services
 
 			result.Should()
 				.BeNull();
+		}
+
+		[Theory]
+		[InlineData("NameInDb", true)]
+		[InlineData("NameNotInDb1", false)]
+		[InlineData(null, false)]
+		public async Task ExistsByNameAsync_CheckMultipleInputs_ReturnsExpectedValue(
+			string inputName, 
+			bool expected)
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+
+			mockLocationRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Location>
+				{
+					new Location { Name = "NameInDb" }
+				}
+					.AsQueryable()
+					.BuildMock()
+				);
+			
+			var sut = new GTLocationService(mockLogger.Object, mockLocationRepository.Object);
+
+			// Act
+			var result = await sut.ExistsByNameAsync(inputName);
+
+			// Assert
+			result.Should()
+				.Be(expected);
 		}
 	}
 }
