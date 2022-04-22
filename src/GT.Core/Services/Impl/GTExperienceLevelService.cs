@@ -24,11 +24,19 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (dto is null || dto.Name == null)
+				if (dto is null)
 				{
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
 				}
+
+				if (String.IsNullOrWhiteSpace(dto.Name))
+				{
+					_logger.LogWarning($"Attempted to add an ExperienceLevel without a name to the database.");
+					return null;
+				}
+
+				dto.Name = dto.Name.Trim();
 
 				if (await ExistsByNameAsync(dto.Name))
 				{
