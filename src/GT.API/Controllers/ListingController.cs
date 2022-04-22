@@ -126,8 +126,6 @@ namespace GT.API.Controllers
 		[HttpPost]
 		public async Task<ActionResult<string?>> PostListing(ListingDTO listing)
 		{
-			// TODO Need to learn how to get user id from jwt
-
 			if (listing is null)
 			{
 				return BadRequest();
@@ -135,12 +133,6 @@ namespace GT.API.Controllers
 
 			try
 			{
-				string authHeaderValue = Request.Headers["Authorization"];
-
-				var tokenClaims = GetClaims(authHeaderValue.Substring("Bearer ".Length).Trim());
-
-				var userId = tokenClaims.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
-
 				var objToReturn = await _listingService.AddAsync(listing, GetUserId());
 				var result = JsonConvert.SerializeObject(objToReturn);
 				return Ok(result);
@@ -153,8 +145,14 @@ namespace GT.API.Controllers
 
 		private string GetUserId()
 		{
-			return User.Claims
-				.First(i => i.Type == "Id").Value;
+			string authHeaderValue = Request.Headers["Authorization"];
+
+			var tokenClaims = GetClaims(authHeaderValue.Substring("Bearer ".Length).Trim());
+
+			var userId = tokenClaims.Claims
+				.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+			return userId;
 		}
 
 		public ClaimsPrincipal GetClaims(string token)
@@ -168,8 +166,8 @@ namespace GT.API.Controllers
 				ValidateIssuer = false,
 				ValidateAudience = false
 			};
-
-			return handler.ValidateToken(token, validations, out var tokenSecure);
+			
+			return handler.ValidateToken(token, validations, out _);
 		}
 	}
 }

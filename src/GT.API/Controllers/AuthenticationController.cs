@@ -35,42 +35,47 @@ namespace GT.API.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateToken([FromBody] JwtTokenDTO loginModel)
 		{
-			if (ModelState.IsValid)
+			if (!ModelState.IsValid)
 			{
-				var user = await _userManager.FindByNameAsync(loginModel.Username);
-				var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginModel.Password, false);
-				if (signInResult.Succeeded)
+				return BadRequest();
+			}
+			
+			var user = await _userManager.FindByNameAsync(loginModel.Username);
+			
+			var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginModel.Password, false);
+			
+			if (signInResult.Succeeded)
+			{
+				var userRoles = await _userManager.GetRolesAsync(user);
+				
+				var claims = new List<Claim>()
 				{
-					var userRoles = await _userManager.GetRolesAsync(user);
-					var claims = new List<Claim>()
-					{
-						new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-						new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-						new Claim(JwtRegisteredClaimNames.UniqueName, loginModel.Username),
-					};
+					new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+					new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+					new Claim(JwtRegisteredClaimNames.UniqueName, loginModel.Username),
+					new Claim(ClaimTypes.NameIdentifier, user.Id)
+				};
 
-					foreach (var userRole in userRoles)
-					{
-						claims.Add(new Claim(ClaimTypes.Role, userRole));
-					}
-
-					var token = GetToken(claims);
-
-					var results = new
-					{
-						token = new JwtSecurityTokenHandler().WriteToken(token),
-						expiration = token.ValidTo
-					};
-
-					return Created("", results);
-				}
-				else
+				foreach (var userRole in userRoles)
 				{
-					return Unauthorized();
+					claims.Add(new Claim(ClaimTypes.Role, userRole));
 				}
+
+				var token = GetToken(claims);
+
+				var results = new
+				{
+					token = new JwtSecurityTokenHandler().WriteToken(token),
+					expiration = token.ValidTo
+				};
+
+				return Created("", results);
+			}
+			else
+			{
+				return Unauthorized();
 			}
 
-			return BadRequest();
 		}
 
 		private JwtSecurityToken GetToken(List<Claim> authClaims)

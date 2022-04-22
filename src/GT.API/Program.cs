@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-Microsoft.Extensions.Configuration.ConfigurationManager configuration = builder.Configuration;
+var configuration = builder.Configuration;
 var identityConnectionString = configuration["GTIdentityContextConnection"];
 var appConnectionString = configuration["GTApplicationContextConnection"];
 
