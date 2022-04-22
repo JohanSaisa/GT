@@ -59,7 +59,7 @@ namespace GT.Core.Tests.Services
 		[InlineData(null, null)]
 		[InlineData("", null)]
 		[InlineData(null, "")]
-		public async Task AddAsync_AddInValidExperienceLevel_ReturnsNull(string inputExperienceLevelName, string inputTempId)
+		public async Task AddAsync_AddInValidExperienceLevel_FailsAndReturnsNull(string inputExperienceLevelName, string inputTempId)
 		{
 			// Arrange
 			var dto = new ExperienceLevelDTO()
@@ -86,7 +86,7 @@ namespace GT.Core.Tests.Services
 		[Theory]
 		[InlineData("    Intermediate    ", "Intermediate")]
 		[InlineData("    Entry level    ", "Entry level")]
-		public async Task AddAsync_TrimInputName_TrimsLeadingAndTrailingWhitespaces(string inputNameWithWhitespaces, string expected)
+		public async Task AddAsync_CheckIfMethodTrimInputName_TrimsLeadingAndTrailingWhitespaces(string inputNameWithWhitespaces, string expected)
 		{
 			// Arrange
 			var dto = new ExperienceLevelDTO()
@@ -138,6 +138,56 @@ namespace GT.Core.Tests.Services
 			// Assert
 			result.Should()
 				.Be(expected);
+		}
+
+		[Fact]
+		public async Task GetAllAsync_ThreeEntitiesExistInDB_SucceedsAndReturnsThreeEntities()
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+
+			mockRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<ExperienceLevel>()
+				 {
+						new ExperienceLevel {},
+						new ExperienceLevel {},
+						new ExperienceLevel {}
+				 }.AsQueryable().BuildMock()
+				);
+
+			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.GetAllAsync();
+
+			// Assert
+			result.Count.Should()
+				.Be(3);
+		}
+
+		[Fact]
+		public async Task GetAllAsync_NoEntitiesExistInDB_SucceedsAndReturnsEmptyListOfDTO()
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+
+			mockRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<ExperienceLevel>()
+				{ }.AsQueryable().BuildMock()
+				);
+
+			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.GetAllAsync();
+
+			// Assert
+			result.Count.Should()
+				.Be(0);
 		}
 	}
 }
