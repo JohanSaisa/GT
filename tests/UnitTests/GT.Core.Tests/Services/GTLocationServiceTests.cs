@@ -8,7 +8,7 @@ using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GT.Core.Tests
+namespace GT.Core.Tests.Services
 {
 	public class GTLocationServiceTests
 	{

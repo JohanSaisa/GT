@@ -10,11 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GT.Core.Tests
+namespace GT.Core.Tests.Services
 {
 	public class GTExperienceLevelServiceTests
 	{
-
 		[Theory]
 		[InlineData("NameInDb", true)]
 		[InlineData("NameNotInDb1", false)]
