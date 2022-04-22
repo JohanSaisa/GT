@@ -74,12 +74,12 @@ namespace GT.API.Controllers
 
 		private JwtSecurityToken GetToken(List<Claim> authClaims)
 		{
-			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration[GTJwtConstants.Key]));
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"]));
 			var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 			var token = new JwtSecurityToken(
-						issuer: _configuration[GTJwtConstants.Issuer],
-						audience: _configuration[GTJwtConstants.Audience],
+						issuer: _configuration["Authentication:Jwt:Issuer"],
+						audience: _configuration["Authentication:Jwt:Audience"],
 						claims: authClaims,
 						expires: DateTime.UtcNow.AddMinutes(60),
 						signingCredentials: credentials
