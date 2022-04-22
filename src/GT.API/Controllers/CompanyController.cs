@@ -62,7 +62,7 @@ namespace GT.API.Controllers
 			{
 				return NotFound();
 			}
-			
+
 			var result = JsonConvert.SerializeObject(company);
 
 			return Ok(result);
@@ -81,9 +81,9 @@ namespace GT.API.Controllers
 			try
 			{
 				var objToReturn = await _companyService.AddAsync(company);
-				
+
 				var result = JsonConvert.SerializeObject(objToReturn);
-				
+
 				return Created("", result);
 			}
 			catch
@@ -114,12 +114,27 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// TODO: Create controller for handling company images.
-		
 		// DELETE: api/Company/5
 		[HttpDelete("{id}")]
-		public void Delete(int id)
+		public async Task<IActionResult> Delete(string id)
 		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				await _companyService.DeleteAsync(id);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500);
+			}
+
+			return Ok();
 		}
+
+		// TODO: Create controller for handling company images.
 	}
 }
