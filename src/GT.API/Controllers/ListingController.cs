@@ -50,6 +50,7 @@ namespace GT.API.Controllers
 			{
 				return NotFound();
 			}
+			
 			var result = JsonConvert.SerializeObject(listingDTOs);
 
 			return Ok(result);
@@ -91,7 +92,7 @@ namespace GT.API.Controllers
 			{
 				await _listingService.DeleteAsync(id);
 			}
-			catch (Exception)
+			catch
 			{
 				return NotFound();
 			}
