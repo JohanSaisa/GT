@@ -19,7 +19,7 @@ namespace GT.Core.Tests.Services
 		[Theory]
 		[InlineData("Senior", "id which should be replaced by service")]
 		[InlineData("Junior", null)]
-		[InlineData("東京", null)]
+		[InlineData("東京", "")]
 		public async Task AddAsync_AddValidExperienceLevel_Succeeds(string inputExperienceLevelName, string inputTempId)
 		{
 			// Arrange
@@ -53,6 +53,63 @@ namespace GT.Core.Tests.Services
 				.Be(inputExperienceLevelName).And
 				.Be(callbackResult.Name).And
 				.Be(dto.Name);
+		}
+
+		[Theory]
+		[InlineData(null, null)]
+		[InlineData("", null)]
+		[InlineData(null, "")]
+		public async Task AddAsync_AddInValidExperienceLevel_ReturnsNull(string inputExperienceLevelName, string inputTempId)
+		{
+			// Arrange
+			var dto = new ExperienceLevelDTO()
+			{
+				Id = inputTempId,
+				Name = inputExperienceLevelName
+			};
+
+			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+
+			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.AddAsync(dto);
+
+			// Assert
+			mockRepository.Verify(m => m.AddAsync(It.IsAny<ExperienceLevel>()), Times.Never);
+
+			result.Should()
+				.BeNull();
+		}
+
+		[Theory]
+		[InlineData("    Intermediate    ", "Intermediate")]
+		[InlineData("    Entry level    ", "Entry level")]
+		public async Task AddAsync_TrimInputName_TrimsLeadingAndTrailingWhitespaces(string inputNameWithWhitespaces, string expected)
+		{
+			// Arrange
+			var dto = new ExperienceLevelDTO()
+			{
+				Name = inputNameWithWhitespaces
+			};
+
+			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var callbackResult = new ExperienceLevel();
+
+			mockRepository
+				.Setup(m => m.AddAsync(It.IsAny<ExperienceLevel>()))
+				.Callback<ExperienceLevel>(inputArgs => callbackResult = inputArgs);
+
+			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.AddAsync(dto);
+
+			// Assert
+			result.Name.Should()
+				.Be(expected);
 		}
 
 		[Theory]

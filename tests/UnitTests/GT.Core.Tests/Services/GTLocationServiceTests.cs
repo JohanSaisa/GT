@@ -16,7 +16,7 @@ namespace GT.Core.Tests.Services
 		[Theory]
 		[InlineData("Stockholm", "id which should be replaced by service")]
 		[InlineData("Örkelljunga", null)]
-		[InlineData("東京", null)]
+		[InlineData("東京", "")]
 		public async Task AddAsync_AddValidNewLocation_Succeeds(string? inputLocationName, string? inputTempId)
 		{
 			// Arrange
