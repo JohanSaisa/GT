@@ -53,5 +53,53 @@ namespace GT.Core.Tests.Services
 				.Be(callbackResult.Name).And
 				.Be(dto.Name);
 		}
+
+		[Theory]
+		[InlineData(null, "id which should be replaced by service")]
+		[InlineData("", null)]
+		public async Task AddAsync_AddInValidNewLocation_FailsAndReturnsNull(string? inputLocationName, string? inputTempId)
+		{
+			// Arrange
+			var dto = new LocationDTO()
+			{
+				Id = inputTempId,
+				Name = inputLocationName
+			};
+
+			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+
+			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.AddAsync(dto);
+
+			// Assert
+			mockRepository.Verify(m => m.AddAsync(It.IsAny<Location>()), Times.Never);
+
+			result.Should()
+				.BeNull();
+		}
+
+		[Fact]
+		public async Task AddAsync_NullReferenceArgument_FailsAndReturnsNull()
+		{
+			// Arrange
+			LocationDTO dto = null;
+
+			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+
+			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.AddAsync(dto);
+
+			// Assert
+			mockRepository.Verify(m => m.AddAsync(It.IsAny<Location>()), Times.Never);
+
+			result.Should()
+				.BeNull();
+		}
 	}
 }
