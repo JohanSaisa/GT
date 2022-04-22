@@ -7,5 +7,20 @@ namespace GT.API.Controllers
 	[ApiController]
 	public class InquiryController : ControllerBase
 	{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	}
 }

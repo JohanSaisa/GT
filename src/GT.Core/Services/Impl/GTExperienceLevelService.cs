@@ -108,5 +108,39 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 		}
+
+		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name)
+		{
+			try
+			{
+				if (experienceLevelDTO.Name != name)
+				{
+					_logger.LogWarning($"Names are not matching in method: {nameof(UpdateAsync)}.");
+					return;
+				}
+				if (experienceLevelDTO.Id is not null && name is not null)
+				{
+					if (await ExistsByNameAsync(name))
+					{
+						var entityToUpdate = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
+
+						// TODO implement automapper
+						
+
+						await _experienceLevelRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+					}
+				}
+				else
+				{
+					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
+		}
+
+		
 	}
 }
