@@ -111,14 +111,14 @@ namespace GT.Core.Tests.Services
 		[InlineData("NameNotInDb1", false)]
 		[InlineData(null, false)]
 		public async Task ExistsByNameAsync_CheckMultipleInputs_ReturnsExpectedValue(
-			string inputName, 
+			string inputName,
 			bool expected)
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTLocationService>>();
-			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
-			mockLocationRepository
+			mockRepository
 				.Setup(m => m.GetAll())
 				.Returns(new List<Location>
 				{
@@ -127,8 +127,8 @@ namespace GT.Core.Tests.Services
 					.AsQueryable()
 					.BuildMock()
 				);
-			
-			var sut = new GTLocationService(mockLogger.Object, mockLocationRepository.Object);
+
+			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.ExistsByNameAsync(inputName);
@@ -136,6 +136,56 @@ namespace GT.Core.Tests.Services
 			// Assert
 			result.Should()
 				.Be(expected);
+		}
+
+		[Fact]
+		public async Task GetAllAsync_ThreeEntitiesExistInDB_SucceedsAndReturnsThreeEntities()
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+
+			mockRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Location>()
+				 {
+						new Location {},
+						new Location {},
+						new Location {}
+				 }.AsQueryable().BuildMock()
+				);
+
+			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.GetAllAsync();
+
+			// Assert
+			result.Count.Should()
+				.Be(3);
+		}
+
+		[Fact]
+		public async Task GetAllAsync_NoEntitiesExistInDB_SucceedsAndReturnsEmptyListOfDTO()
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+
+			mockRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Location>()
+				{ }.AsQueryable().BuildMock()
+				);
+
+			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.GetAllAsync();
+
+			// Assert
+			result.Count.Should()
+				.Be(0);
 		}
 	}
 }
