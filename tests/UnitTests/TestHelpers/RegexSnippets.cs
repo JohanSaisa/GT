@@ -1,4 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace TestHelpers
 {
@@ -15,7 +20,7 @@ namespace TestHelpers
 			}
 			else
 			{
-				throw new Exception("Variable 'regexString' is not providing a valid regex pattern. " +
+				throw new Exception($"{nameof(regexString)} is not providing a valid regex pattern. " +
 					"Re Review method RegexSnippets.GetGuidRegex().");
 			}
 		}
