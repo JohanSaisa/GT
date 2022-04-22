@@ -16,14 +16,35 @@ namespace GT.API.Controllers
 			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
 		}
 
-		// GET:/overview
+		// GET: /overview
 		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<string>> GetExperienceLevels()
 		{
-			var experienceLevel = await _experienceLevelService.GetAllAsync();
+			var experienceLevels = await _experienceLevelService.GetAllAsync();
 
-			if(experienceLevel == null)
+			if (experienceLevels == null)
+			{
+				return NotFound();
+			}
+
+			var result = JsonConvert.SerializeObject(experienceLevels);
+
+			return result;
+		}
+
+		//  GET: /5
+		[HttpGet("{id}")]
+		public async Task<ActionResult<string>> GetExperienceLevel(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest();
+			}
+
+			var experienceLevel = await _experienceLevelService.GetByIdAsync(id);
+
+			if (experienceLevel == null)
 			{
 				return NotFound();
 			}
@@ -77,5 +98,23 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
+		// GET: delete/5
+		[Route("delete")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteExperienceLevel(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				await _experienceLevelService.DeleteAsync(id);
+			}
+			catch (Exception e)
+			{
+			}
+		}
 	}
 }

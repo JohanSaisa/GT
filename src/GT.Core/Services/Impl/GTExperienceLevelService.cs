@@ -67,6 +67,21 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public async Task DeleteAsync(string id)
+		{
+			try
+			{
+				if (_experienceLevelRepository.GetAll().Any(e => e.Id == id))
+				{
+					await _experienceLevelRepository.DeleteAsync(id);
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
+		}
+
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
 			try
@@ -109,6 +124,11 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public Task<ExperienceLevelDTO?> GetByIdAsync(string experienceLevelId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name)
 		{
 			try
@@ -125,7 +145,7 @@ namespace GT.Core.Services.Impl
 						var entityToUpdate = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
 
 						// TODO implement automapper
-						
+						entityToUpdate.Name = name;
 
 						await _experienceLevelRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
 					}
@@ -140,7 +160,5 @@ namespace GT.Core.Services.Impl
 				_logger.LogError(e.Message);
 			}
 		}
-
-		
 	}
 }
