@@ -88,7 +88,7 @@ namespace GT.API.Controllers
 
 			try
 			{
-				await _experienceLevelService.
+				await _experienceLevelService.UpdateAsync(experienceLevel, experienceLevel.Name);
 			}
 			catch
 			{
@@ -111,9 +111,11 @@ namespace GT.API.Controllers
 			try
 			{
 				await _experienceLevelService.DeleteAsync(id);
+				return Ok();
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
+				return StatusCode(500);
 			}
 		}
 	}

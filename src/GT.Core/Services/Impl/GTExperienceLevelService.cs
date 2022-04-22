@@ -124,9 +124,35 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public Task<ExperienceLevelDTO?> GetByIdAsync(string experienceLevelId)
+		public async Task<ExperienceLevelDTO?> GetByIdAsync(string id)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				// Get entity
+				var entity = await _experienceLevelRepository
+					.GetAll()
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (entity == null)
+				{
+					_logger.LogInformation($"Entity with id {id} not found.");
+					return null;
+				}
+
+				// Map entity to DTO
+				var experienceLevelDTO = new ExperienceLevelDTO()
+				{
+					Id = entity.Id,
+					Name = entity.Name,
+				};
+
+				return experienceLevelDTO;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
 		}
 
 		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name)
