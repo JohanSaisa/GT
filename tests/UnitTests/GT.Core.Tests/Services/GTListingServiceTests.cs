@@ -125,7 +125,7 @@ namespace GT.Core.Tests.Services
 			var result = await sut.GetByIdAsync(inputId);
 
 			// Assert
-			result.Id.Should()
+			result.Should()
 				.BeNull();
 		}
 
