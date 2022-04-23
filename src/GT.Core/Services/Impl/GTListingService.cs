@@ -78,11 +78,12 @@ namespace GT.Core.Services.Impl
 					Id = Guid.NewGuid().ToString(),
 					CreatedById = signedInUserId,
 					CreatedDate = DateTime.Now,
+					ApplicationDeadline = listingDTO.ApplicationDeadline,
 					ListingTitle = listingDTO.ListingTitle == null ? null : listingDTO.ListingTitle.Trim(),
 					Description = listingDTO.Description == null ? null : listingDTO.Description.Trim(),
+					JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim(),
 					SalaryMin = listingDTO.SalaryMin,
 					SalaryMax = listingDTO.SalaryMax,
-					JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim(),
 					FTE = listingDTO.FTE,
 					Employer = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Name == listingDTO.Employer),
 					Location = await _locationRepository.GetAll().FirstOrDefaultAsync(e => e.Name == listingDTO.Location),
@@ -308,6 +309,7 @@ namespace GT.Core.Services.Impl
 					entity.SalaryMax = listingDTO.SalaryMax;
 					entity.JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim();
 					entity.FTE = listingDTO.FTE;
+					entity.ApplicationDeadline = listingDTO.ApplicationDeadline;
 
 					if (entity.Employer?.Name != listingDTO.Employer)
 					{

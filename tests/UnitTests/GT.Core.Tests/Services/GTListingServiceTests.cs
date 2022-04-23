@@ -157,81 +157,135 @@ namespace GT.Core.Tests.Services
 		}
 
 		// Needs to check if it triggers creation of new objects
-		//[Fact]
-		//public async Task UpdateAsync_ValidInput_ReturnsUpdatedDto()
-		//{
-		//	// Arrange
-		//	var entityInDb = new Listing()
-		//	{
-		//		Id = "92f44091-1f99-400c-b18d-b2789eac5c81",
-		//		CreatedById = "12a33023-1f13-456a-a20c-a1111abc4a52",
-		//		Description = "Old Description",
-		//		ListingTitle = "ExampleListingTitle",
-		//		JobTitle = "Old JobTitle",
-		//		FTE = true,
-		//		SalaryMax = 10,
-		//		SalaryMin = 1,
-		//		ApplicationDeadline = DateTime.Now,
-		//		CreatedDate = DateTime.Now,
-		//		Location = new Location { Name = "Old Location" },
-		//		Employer = new Company { Name = "Old Employer" },
-		//		ExperienceLevel = new ExperienceLevel() { Name = "Old ExperienceLevel" },
-		//	};
+		[Fact]
+		public async Task UpdateAsync_ValidInputAndAllNewEntities_ReturnsUpdatedDto()
+		{
+			// Arrange
+			var entityInDb = new Listing()
+			{
+				Id = "92f44091-1f99-400c-b18d-b2789eac5c81",
+				CreatedById = "12a33023-1f13-456a-a20c-a1111abc4a52",
+				Description = "Old Description",
+				ListingTitle = "Old ExampleListingTitle",
+				JobTitle = "Old JobTitle",
+				FTE = true,
+				SalaryMax = 10,
+				SalaryMin = 1,
+				ApplicationDeadline = DateTime.Now,
+				CreatedDate = DateTime.Now,
+				Location = new Location { Name = "Old Location" },
+				Employer = new Company { Name = "Old Company" },
+				ExperienceLevel = new ExperienceLevel() { Name = "Old ExperienceLevel" }
+			};
 
-		//	var inputUpdatedDTO = new ListingDTO()
-		//	{
-		//		Id = "92f44091-1f99-400c-b18d-b2789eac5c81",
-		//		Description = "Old Description",
-		//		ListingTitle = "ExampleListingTitle",
-		//		JobTitle = "Old JobTitle",
-		//		FTE = true,
-		//		SalaryMax = 10,
-		//		SalaryMin = 1,
-		//		ApplicationDeadline = DateTime.Now,
-		//		CreatedDate = DateTime.Now,
-		//		Location = "New Location",
-		//		Employer = "New Employer",
-		//		ExperienceLevel = "New ExperienceLevel"
-		//	};
+			var inputUpdatedDTO = new ListingDTO()
+			{
+				Id = "92f44091-1f99-400c-b18d-b2789eac5c81",
+				Description = "New Description",
+				ListingTitle = "New ExampleListingTitle",
+				JobTitle = "New JobTitle",
+				FTE = false,
+				SalaryMax = 20,
+				SalaryMin = 2,
+				ApplicationDeadline = DateTime.Now,
+				CreatedDate = DateTime.Now,
+				Location = "New Location",
+				Employer = "New Company",
+				ExperienceLevel = "New ExperienceLevel"
+			};
 
-		//	var mockLogger = new Mock<ILogger<GTListingService>>();
-		//	var mockCompanyService = new Mock<IGTCompanyService>();
-		//	var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-		//	var mockLocationService = new Mock<IGTLocationService>();
-		//	var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
-		//	var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
-		//	var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
-		//	var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
-		//	var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
-		//	mockListingRepository
-		//		.Setup(m => m.GetAll())
-		//		.Returns(new List<Listing>() { entityInDb }
-		//		.AsQueryable()
-		//		.BuildMock()
-		//		);
+			mockListingRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Listing>() { entityInDb }.AsQueryable().BuildMock());
 
-		//	var callback // FIX
+			mockCompanyRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Company>() { new Company { Name = "New Company" } }
+				.AsQueryable().BuildMock());
 
-		//	var sut = new GTListingService(
-		//		mockLogger.Object,
-		//		mockCompanyService.Object,
-		//		mockExperienceLevelService.Object,
-		//		mockLocationService.Object,
-		//		mockListingRepository.Object,
-		//		mockCompanyRepository.Object,
-		//		mockLocationRepository.Object,
-		//		mockExperienceLevelRepository.Object,
-		//		mockInquiryRepository.Object
-		//		);
+			mockLocationRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Location>() { new Location { Name = "New Location" } }
+				.AsQueryable().BuildMock());
 
-		//	// Act
-		//	await sut.UpdateAsync(inputUpdatedDTO, inputUpdatedDTO.Id);
+			mockExperienceLevelRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<ExperienceLevel>() { new ExperienceLevel { Name = "New ExperienceLevel" } }
+				.AsQueryable().BuildMock());
 
-		//	// Assert
+			var callbackListingResult = new Listing();
+			var callbackListingId = string.Empty;
+			mockListingRepository
+				.Setup(m => m.UpdateAsync(It.IsAny<Listing>(), It.IsAny<string>()))
+					.Callback<Listing, string>((listingInputArg, idInputArg) =>
+					{
+						callbackListingResult = listingInputArg;
+						callbackListingId = idInputArg;
+					});
 
-		//	result.Id.Should().Be(inputUpdatedDTO.Id);
-		//}
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
+
+			// Act
+			await sut.UpdateAsync(inputUpdatedDTO, inputUpdatedDTO.Id);
+
+			// Assert
+			mockCompanyService.Verify(m => m.AddAsync(It.IsAny<CompanyDTO>()), Times.Once);
+			mockLocationService.Verify(m => m.AddAsync(It.IsAny<LocationDTO>()), Times.Once);
+			mockExperienceLevelService.Verify(m => m.AddAsync(It.IsAny<ExperienceLevelDTO>()), Times.Once);
+
+			mockListingRepository.Verify(m => m.UpdateAsync(It.IsAny<Listing>(), It.IsAny<string>()), Times.Once);
+
+			callbackListingResult.Id.Should()
+				.Be(entityInDb.Id).And
+				.Be(callbackListingId);
+
+			callbackListingResult.CreatedById.Should()
+				.Be(entityInDb.CreatedById);
+
+			callbackListingResult.FTE.Should()
+				.Be(inputUpdatedDTO.FTE);
+
+			callbackListingResult.SalaryMin.Should()
+				.Be(inputUpdatedDTO.SalaryMin);
+
+			callbackListingResult.SalaryMax.Should()
+				.Be(inputUpdatedDTO.SalaryMax);
+
+			callbackListingResult.ApplicationDeadline.Should()
+				.Be(inputUpdatedDTO.ApplicationDeadline);
+
+			callbackListingResult.Description.Should()
+				.Be(inputUpdatedDTO.Description);
+
+			callbackListingResult.Location?.Name.Should()
+				.Be(inputUpdatedDTO.Location);
+
+			callbackListingResult.Employer?.Name.Should()
+				.Be(inputUpdatedDTO.Employer);
+
+			callbackListingResult.ExperienceLevel?.Name.Should()
+				.Be(inputUpdatedDTO.ExperienceLevel);
+		}
 
 		[Fact]
 		public async Task UpdateAsync_NullReferenceArgument_Fails()
