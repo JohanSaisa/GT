@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using GT.Core.DTO.Impl;
 using GT.Core.Services.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
@@ -10,7 +9,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -94,17 +92,92 @@ namespace GT.Core.Tests.Services
 			throw new NotImplementedException();
 		}
 
-		//private Task DeleteAsync(string listingId);
 		[Fact]
-		public async Task DeleteAsync_s_Succeeds()
+		public async Task DeleteAsync_ValidIdInput_Succeeds()
 		{
 			// Arrange
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
+
+			var exampleIdInDB = "92f44091-1f99-400c-b18d-b2789eac5c81";
+
+			mockListingRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Listing>() {
+				new Listing() { Id = exampleIdInDB }
+				}
+				.AsQueryable()
+				.BuildMock()
+				);
+
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
 
 			// Act
+			await sut.DeleteAsync(exampleIdInDB);
 
 			// Assert
+			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<string>()), Times.Once);
+		}
 
-			throw new NotImplementedException();
+		[Theory]
+		[InlineData("ex id which is not in the database")]
+		[InlineData(null)]
+		public async Task DeleteAsync_MultipleInvalidIdInputs_Fails(string inputIdNotInDB)
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
+
+			mockListingRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Listing>() {
+				new Listing() { Id = "92f44091-1f99-400c-b18d-b2789eac5c81" }
+				}
+				.AsQueryable()
+				.BuildMock()
+				);
+
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
+
+			// Act
+			await sut.DeleteAsync(inputIdNotInDB);
+
+			// Assert
+			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<string>()), Times.Never);
 		}
 
 		//private Task<bool> ExistsByIdAsync(string listingId);
