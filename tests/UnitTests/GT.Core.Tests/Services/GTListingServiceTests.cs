@@ -18,8 +18,24 @@ namespace GT.Core.Tests.Services
 {
 	public class GTListingServiceTests
 	{
+		/// <summary>
+		/// Tests the filter functionality of the following properties:.<br/>
+		/// - FTE <br/>
+		/// - SalaryMax<br/>
+		/// - SalaryMin<br/>
+		///	- IncludeListingsFromDate<br/>
+		///	- ExcludeExpiredListings<br/>
+		///	- ExperienceLevels<br/>
+		/// <br/>
+		/// Unable to unit test all filter functionality due to the usage of EF.Functions,<br/>
+		/// which only works with Entity Framework and thus are incompatible with Mocks. <br/>
+		/// <br/>
+		/// The current test does not test the filter finctionality of the following filter model property:<br/>
+		/// - KeywordsRawText<br/>
+		/// - Location
+		/// </summary>
 		[Fact]
-		public async Task GetAllAsync_AllFilterOptions_SucceedsAndReturnsMatch()
+		public async Task GetAllAsync_TestPartialFilterFunctionality_SucceedsAndReturnsMatch()
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
@@ -47,11 +63,11 @@ namespace GT.Core.Tests.Services
 				ExperienceLevel = new ExperienceLevel() { Name = "ExampleExperienceLevelName" }
 			};
 
-			var fullFilterModel = new ListingFilterModel
+			var partiallyFilledFilterModel = new ListingFilterModel
 			{
 				//KeywordsRawText = "eXaMpLeDescription eXampleListingTitle ExampleJobTitle ExampleCompanyName ExampleLocationName",
-				FTE = true,
 				//Location = "ExampleLocationName",
+				FTE = true,
 				SalaryMax = 20,
 				SalaryMin = 8,
 				IncludeListingsFromDate = DateTime.Today.AddMonths(-1),
@@ -61,7 +77,11 @@ namespace GT.Core.Tests.Services
 
 			mockListingRepository
 				.Setup(x => x.GetAll())
-				.Returns(new List<Listing> { listingInDatabase }.AsQueryable().BuildMock());
+				.Returns(new List<Listing> {
+					listingInDatabase,
+					new Listing(),
+					new Listing()
+				}.AsQueryable().BuildMock());
 
 			var sut = new GTListingService(
 				mockLogger.Object,
@@ -76,20 +96,41 @@ namespace GT.Core.Tests.Services
 				);
 
 			// Act
-			var result = await sut.GetAsync(fullFilterModel);
+			var result = await sut.GetAsync(partiallyFilledFilterModel);
 
 			// Assert
-
-			throw new NotImplementedException();
-			//System.InvalidOperationException: 'The 'Like' method is not supported because
-			//the query has switched to client-evaluation. This usually happens when the
-			//arguments to the method cannot be translated to server. Rewrite the query to
-			//avoid client evaluation of arguments so that method can be translated to server.'
 			result.Count.Should().Be(1);
+
+			result[0].ApplicationDeadline.Should()
+				.Be(listingInDatabase.ApplicationDeadline);
+
+			result[0].CreatedDate.Should()
+				.Be(listingInDatabase.CreatedDate);
+
+			result[0].EmployerName.Should()
+				.Be(listingInDatabase.Employer.Name);
+
+			result[0].ExperienceLevel.Should()
+				.Be(listingInDatabase.ExperienceLevel.Name);
+
+			result[0].FTE.Should()
+				.Be(listingInDatabase.FTE);
+
+			result[0].Id.Should()
+				.Be(listingInDatabase.Id);
+
+			result[0].JobTitle.Should()
+				.Be(listingInDatabase.JobTitle);
+
+			result[0].SalaryMax.Should()
+				.Be(listingInDatabase.SalaryMax);
+
+			result[0].SalaryMin.Should()
+				.Be(listingInDatabase.SalaryMin);
 		}
 
 		[Fact]
-		public async Task GetAllAsync_EmptyFilterModel_SucceedsAndReturnsAllThreeEntities()
+		public async Task GetAllAsync_EmptyFilterModel_SucceedsAndReturnsAllEntitiesInDatabase()
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
@@ -102,12 +143,15 @@ namespace GT.Core.Tests.Services
 			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
+			var emptyFilterModel = new ListingFilterModel();
+
 			mockListingRepository
-				.Setup(m => m.GetAll())
-				.Returns(new List<Listing>() { new Listing { Id = "" } }
-				.AsQueryable()
-				.BuildMock()
-				);
+				.Setup(x => x.GetAll())
+				.Returns(new List<Listing> {
+					new Listing(),
+					new Listing(),
+					new Listing()
+				}.AsQueryable().BuildMock());
 
 			var sut = new GTListingService(
 				mockLogger.Object,
@@ -121,16 +165,11 @@ namespace GT.Core.Tests.Services
 				mockInquiryRepository.Object
 				);
 
-
 			// Act
+			var result = await sut.GetAsync(emptyFilterModel);
 
 			// Assert
-
-			throw new NotImplementedException();
-			//System.InvalidOperationException: 'The 'Like' method is not supported because
-			//the query has switched to client-evaluation. This usually happens when the
-			//arguments to the method cannot be translated to server. Rewrite the query to
-			//avoid client evaluation of arguments so that method can be translated to server.'
+			result.Count.Should().Be(3);
 		}
 
 		[Fact]
@@ -388,7 +427,6 @@ namespace GT.Core.Tests.Services
 			result.Should().BeNull();
 		}
 
-		// Needs to check if it triggers creation of new objects
 		[Fact]
 		public async Task UpdateAsync_ValidInputAndAllNewEntities_ReturnsUpdatedDto()
 		{
@@ -675,7 +713,6 @@ namespace GT.Core.Tests.Services
 			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<string>()), Times.Never);
 		}
 
-		//private Task<bool> ExistsByIdAsync(string listingId);
 		[Theory]
 		[InlineData("92f44091-1f99-400c-b18d-b2789eac5c81", true)]
 		[InlineData("IdNotInDb", false)]
