@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GT.Core.DTO.Impl;
+using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
@@ -17,29 +18,119 @@ namespace GT.Core.Tests.Services
 {
 	public class GTListingServiceTests
 	{
-		//private Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null);
-		[Fact]
-		public async Task GetAllAsync_EmptyFilterModel_SucceedsAndReturnsAllThreeEntities()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-
-			throw new NotImplementedException();
-		}
-
 		[Fact]
 		public async Task GetAllAsync_AllFilterOptions_SucceedsAndReturnsMatch()
 		{
 			// Arrange
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
+
+			var listingInDatabase = new Listing()
+			{
+				Description = "ExampleDescription",
+				ListingTitle = "ExampleListingTitle",
+				JobTitle = "ExampleJobTitle",
+				FTE = true,
+				SalaryMax = 10,
+				SalaryMin = 1,
+				ApplicationDeadline = DateTime.Today.AddMonths(1),
+				CreatedDate = DateTime.Now,
+				Location = new Location { Name = "ExampleLocationName" },
+				Employer = new Company { Name = "ExampleCompanyName" },
+				ExperienceLevel = new ExperienceLevel() { Name = "ExampleExperienceLevelName" }
+			};
+
+			var fullFilterModel = new ListingFilterModel
+			{
+				//KeywordsRawText = "eXaMpLeDescription eXampleListingTitle ExampleJobTitle ExampleCompanyName ExampleLocationName",
+				FTE = true,
+				//Location = "ExampleLocationName",
+				SalaryMax = 20,
+				SalaryMin = 8,
+				IncludeListingsFromDate = DateTime.Today.AddMonths(-1),
+				ExcludeExpiredListings = true,
+				ExperienceLevels = new List<string>() { "ExampleExperienceLevelName", "ExampleShouldNotMatter" },
+			};
+
+			mockListingRepository
+				.Setup(x => x.GetAll())
+				.Returns(new List<Listing> { listingInDatabase }.AsQueryable().BuildMock());
+
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
+
+			// Act
+			var result = await sut.GetAsync(fullFilterModel);
+
+			// Assert
+
+			throw new NotImplementedException();
+			//System.InvalidOperationException: 'The 'Like' method is not supported because
+			//the query has switched to client-evaluation. This usually happens when the
+			//arguments to the method cannot be translated to server. Rewrite the query to
+			//avoid client evaluation of arguments so that method can be translated to server.'
+			result.Count.Should().Be(1);
+		}
+
+		[Fact]
+		public async Task GetAllAsync_EmptyFilterModel_SucceedsAndReturnsAllThreeEntities()
+		{
+			// Arrange
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
+
+			mockListingRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Listing>() { new Listing { Id = "" } }
+				.AsQueryable()
+				.BuildMock()
+				);
+
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
+
 
 			// Act
 
 			// Assert
 
 			throw new NotImplementedException();
+			//System.InvalidOperationException: 'The 'Like' method is not supported because
+			//the query has switched to client-evaluation. This usually happens when the
+			//arguments to the method cannot be translated to server. Rewrite the query to
+			//avoid client evaluation of arguments so that method can be translated to server.'
 		}
 
 		[Fact]
@@ -92,6 +183,23 @@ namespace GT.Core.Tests.Services
 		public async Task GetByIdAsync_MultipleInvalidIdInputs_FailsAndReturnsNull(string inputId)
 		{
 			// Arrange
+			var listingInDatabase = new Listing()
+			{
+				Id = "92f44091-1f99-400c-b18d-b2789eac5c81",
+				CreatedById = "12a33023-1f13-456a-a20c-a1111abc4a52",
+				Description = "ExampleDescription",
+				ListingTitle = "ExampleListingTitle",
+				JobTitle = "ExampleJobTitle",
+				FTE = true,
+				SalaryMax = 10,
+				SalaryMin = 1,
+				ApplicationDeadline = DateTime.Now,
+				CreatedDate = DateTime.Now,
+				Location = new Location { Name = "ExampleLocationName" },
+				Employer = new Company { Name = "ExampleCompanyName" },
+				ExperienceLevel = new ExperienceLevel() { Name = "ExampleExperienceLevelName" }
+			};
+
 			var mockLogger = new Mock<ILogger<GTListingService>>();
 			var mockCompanyService = new Mock<IGTCompanyService>();
 			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
@@ -104,10 +212,7 @@ namespace GT.Core.Tests.Services
 
 			mockListingRepository
 				.Setup(m => m.GetAll())
-				.Returns(new List<Listing>() { new Listing { Id = "92f44091-1f99-400c-b18d-b2789eac5c81" } }
-				.AsQueryable()
-				.BuildMock()
-				);
+				.Returns(new List<Listing>() { listingInDatabase }.AsQueryable().BuildMock());
 
 			var sut = new GTListingService(
 				mockLogger.Object,
@@ -129,31 +234,158 @@ namespace GT.Core.Tests.Services
 				.BeNull();
 		}
 
-		//private Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId);
 		[Fact]
 		public async Task AddAsync_AddValidNewListing_Succeeds()
 		{
 			// Arrange
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
+			var inputDTO = new ListingDTO()
+			{
+				Description = "ExampleDescription",
+				ListingTitle = "ExampleListingTitle",
+				JobTitle = "ExampleJobTitle",
+				FTE = true,
+				SalaryMax = 10,
+				SalaryMin = 1,
+				ApplicationDeadline = new DateTime(2022, 12, 30),
+				CreatedDate = null,
+				Location = "ExampleLocationName",
+				Employer = "ExampleCompanyName",
+				ExperienceLevel = "ExampleExperienceLevelName"
+			};
 
+			var expectedEntity = new Listing()
+			{
+				Description = "ExampleDescription",
+				ListingTitle = "ExampleListingTitle",
+				JobTitle = "ExampleJobTitle",
+				FTE = true,
+				SalaryMax = 10,
+				SalaryMin = 1,
+				ApplicationDeadline = DateTime.Today.AddMonths(1),
+				Location = new Location { Name = "ExampleLocationName" },
+				Employer = new Company { Name = "ExampleCompanyName" },
+				ExperienceLevel = new ExperienceLevel() { Name = "ExampleExperienceLevelName" }
+			};
+
+			mockListingRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Listing>() { }.AsQueryable().BuildMock());
+
+			mockCompanyRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Company>() { new Company { Name = "ExampleCompanyName" } }
+				.AsQueryable().BuildMock());
+
+			mockLocationRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<Location>() { new Location { Name = "ExampleLocationName" } }
+				.AsQueryable().BuildMock());
+
+			mockExperienceLevelRepository
+				.Setup(m => m.GetAll())
+				.Returns(new List<ExperienceLevel>() { new ExperienceLevel { Name = "ExampleExperienceLevelName" } }
+				.AsQueryable().BuildMock());
+
+			var callbackListingResult = new Listing();
+			mockListingRepository
+				.Setup(m => m.AddAsync(It.IsAny<Listing>()))
+				.Callback<Listing>(listingInputArg => callbackListingResult = listingInputArg)
+				.ReturnsAsync(callbackListingResult);
+
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
 
 			// Act
 
+			var result = await sut.AddAsync(inputDTO, Guid.NewGuid().ToString());
+
 			// Assert
 
-			throw new NotImplementedException();
+			result.Should().NotBeNull();
+
+			result.CreatedDate.Should()
+				.Be(callbackListingResult.CreatedDate).And
+				.NotBeNull();
+
+			callbackListingResult.CreatedDate.Should()
+				.NotBeNull();
+
+			result.ApplicationDeadline.Should()
+				.Be(inputDTO.ApplicationDeadline).And
+				.Be(callbackListingResult.ApplicationDeadline);
+
+			result.Description.Should()
+				.Be(inputDTO.Description).And
+				.Be(callbackListingResult.Description);
+
+			result.Employer.Should()
+				.Be(inputDTO.Employer).And
+				.Be(callbackListingResult.Employer?.Name);
+
+			result.ExperienceLevel.Should()
+				.Be(inputDTO.ExperienceLevel).And
+				.Be(callbackListingResult.ExperienceLevel?.Name);
+
+			result.FTE.Should()
+				.Be(inputDTO.FTE).And
+				.Be(callbackListingResult.FTE);
 		}
 
 		[Fact]
-		public async Task AddAsync_AddInvalidNewListing_FailsAndReturnsNull()
+		public async Task AddAsync_NullArguments_FailsAndReturnsNull()
 		{
 			// Arrange
+			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockCompanyService = new Mock<IGTCompanyService>();
+			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
+			var mockLocationService = new Mock<IGTLocationService>();
+			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
+			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
+			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
+
+			var sut = new GTListingService(
+				mockLogger.Object,
+				mockCompanyService.Object,
+				mockExperienceLevelService.Object,
+				mockLocationService.Object,
+				mockListingRepository.Object,
+				mockCompanyRepository.Object,
+				mockLocationRepository.Object,
+				mockExperienceLevelRepository.Object,
+				mockInquiryRepository.Object
+				);
 
 			// Act
+			var result = await sut.AddAsync(null, null);
 
 			// Assert
+			mockCompanyService.Verify(m => m.AddAsync(It.IsAny<CompanyDTO>()), Times.Never);
+			mockLocationService.Verify(m => m.AddAsync(It.IsAny<LocationDTO>()), Times.Never);
+			mockExperienceLevelService.Verify(m => m.AddAsync(It.IsAny<ExperienceLevelDTO>()), Times.Never);
+			mockListingRepository.Verify(m => m.AddAsync(It.IsAny<Listing>()), Times.Never);
 
-			throw new NotImplementedException();
+			result.Should().BeNull();
 		}
 
 		// Needs to check if it triggers creation of new objects

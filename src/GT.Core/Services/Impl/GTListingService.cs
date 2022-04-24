@@ -94,6 +94,7 @@ namespace GT.Core.Services.Impl
 
 				// Assigning the updated id to the DTO as it is the only property with a new value.
 				listingDTO.Id = newListing.Id;
+				listingDTO.CreatedDate = newListing.CreatedDate;
 				return listingDTO;
 			}
 			catch (Exception e)
