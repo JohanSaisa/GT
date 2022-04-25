@@ -98,8 +98,7 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// GET: delete/5
-		[Route("delete")]
+		// DELETE: /5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteExperienceLevel(string id)
 		{
@@ -110,13 +109,14 @@ namespace GT.API.Controllers
 
 			try
 			{
-				await _experienceLevelService.DeleteAsync(id);
-				return Ok();
+				await _experienceLevelService.DeleteAsync(id);				
 			}
 			catch (Exception)
 			{
 				return StatusCode(500);
 			}
+
+			return Ok();
 		}
 	}
 }

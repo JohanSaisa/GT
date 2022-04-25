@@ -13,7 +13,8 @@ namespace GT.Core.Services.Impl
 		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
 		public GTExperienceLevelService(ILogger<GTExperienceLevelService> logger,
-			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
+			IGTGenericRepository<ExperienceLevel> experienceLevelRepository,
+			IGTGenericRepository<Listing> listingRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_experienceLevelRepository = experienceLevelRepository
@@ -73,6 +74,7 @@ namespace GT.Core.Services.Impl
 			{
 				if (_experienceLevelRepository.GetAll().Any(e => e.Id == id))
 				{
+
 					await _experienceLevelRepository.DeleteAsync(id);
 				}
 			}
