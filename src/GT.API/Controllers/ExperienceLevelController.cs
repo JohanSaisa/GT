@@ -30,7 +30,7 @@ namespace GT.API.Controllers
 
 			var result = JsonConvert.SerializeObject(experienceLevels);
 
-			return result;
+			return Ok(result);
 		}
 
 		//  GET: /5
@@ -51,7 +51,7 @@ namespace GT.API.Controllers
 
 			var result = JsonConvert.SerializeObject(experienceLevel);
 
-			return result;
+			return Ok(result);
 		}
 
 		// POST: /create

@@ -8,19 +8,5 @@ namespace GT.API.Controllers
 	public class InquiryController : ControllerBase
 	{
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	}
 }
