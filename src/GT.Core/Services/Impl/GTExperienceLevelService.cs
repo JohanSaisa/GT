@@ -13,8 +13,7 @@ namespace GT.Core.Services.Impl
 		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
 		public GTExperienceLevelService(ILogger<GTExperienceLevelService> logger,
-			IGTGenericRepository<ExperienceLevel> experienceLevelRepository,
-			IGTGenericRepository<Listing> listingRepository)
+			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_experienceLevelRepository = experienceLevelRepository
