@@ -89,7 +89,7 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 			}
 
 
-			await _listingInquiryService.DeleteInquiriesAssociatedWithUserAsync(user.Id);
+			await _listingInquiryService.DeleteInquiriesAssociatedWithUserIdAsync(user.Id);
 
 			var result = await _userManager.DeleteAsync(user);
 			var userId = await _userManager.GetUserIdAsync(user);

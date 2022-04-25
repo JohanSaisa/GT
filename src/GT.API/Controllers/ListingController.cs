@@ -44,7 +44,7 @@ namespace GT.API.Controllers
 			ListingFilterModel filterModel = new ListingFilterModel();
 
 			var listingDTOs = await _listingService
-				.GetAsync(filterModel);
+				.GetAllByFilterAsync(filterModel);
 
 			if (listingDTOs == null)
 			{
@@ -166,7 +166,7 @@ namespace GT.API.Controllers
 				ValidateIssuer = false,
 				ValidateAudience = false
 			};
-			
+
 			return handler.ValidateToken(token, validations, out _);
 		}
 	}
