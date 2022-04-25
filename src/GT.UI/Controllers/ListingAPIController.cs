@@ -28,7 +28,7 @@ namespace GT.UI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ListingOverviewDTO>>> GetListings(ListingFilterModel filterModel)
 		{
-			var listingDTOs = await _listingService.GetAsync(filterModel);
+			var listingDTOs = await _listingService.GetAllByFilterAsync(filterModel);
 
 			if (listingDTOs == null || listingDTOs.Count <= 0)
 			{

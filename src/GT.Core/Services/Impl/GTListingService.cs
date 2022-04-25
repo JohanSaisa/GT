@@ -51,13 +51,13 @@ namespace GT.Core.Services.Impl
 		/// Converts a DTO to entities and updates the database.
 		/// Requires the signed in users Id for assignment of CreatedBy property.
 		/// </summary>
-		/// <param name="listingDTO"></param>
+		/// <param name="dto"></param>
 		/// <returns>The input DTO with an updated Id.</returns>
-		public async Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId)
+		public async Task<ListingDTO?> AddAsync(ListingDTO dto, string signedInUserId)
 		{
 			try
 			{
-				if (listingDTO is null)
+				if (dto is null)
 				{
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
@@ -68,13 +68,13 @@ namespace GT.Core.Services.Impl
 					return null;
 				}
 
-				var newListing = await GetNewListingEntityWithSubEntities(listingDTO, signedInUserId);
+				var newListing = await GetNewListingEntityWithSubEntities(dto, signedInUserId);
 
 				await _listingRepository.AddAsync(newListing);
 
 				// Assigning the updated id to the DTO as it is the only property with a new value.
-				listingDTO.Id = newListing.Id;
-				return listingDTO;
+				dto.Id = newListing.Id;
+				return dto;
 			}
 			catch (Exception e)
 			{
@@ -83,13 +83,13 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		private async Task<Listing?> AddSubEntitiesToListing(ListingDTO listingDTO, Listing entity)
+		private async Task<Listing?> AddSubEntitiesToListing(ListingDTO dto, Listing entity)
 		{
 			try
 			{
-				if (listingDTO.Employer is not null)
+				if (dto.Employer is not null)
 				{
-					var employerName = listingDTO.Employer.Trim();
+					var employerName = dto.Employer.Trim();
 					if (!await _companyService.ExistsByNameAsync(employerName))
 					{
 						await _companyService
@@ -102,9 +102,9 @@ namespace GT.Core.Services.Impl
 				}
 
 				// Add sub entity Location
-				if (listingDTO.Location is not null)
+				if (dto.Location is not null)
 				{
-					var locationName = listingDTO.Location.Trim();
+					var locationName = dto.Location.Trim();
 					if (!await _locationService.ExistsByNameAsync(locationName))
 					{
 						await _locationService
@@ -117,9 +117,9 @@ namespace GT.Core.Services.Impl
 				}
 
 				// Add sub entity ExperienceLevel
-				if (listingDTO.ExperienceLevel is not null)
+				if (dto.ExperienceLevel is not null)
 				{
-					var experienceLevelName = listingDTO.ExperienceLevel.Trim();
+					var experienceLevelName = dto.ExperienceLevel.Trim();
 					if (!await _experienceLevelService.ExistsByNameAsync(experienceLevelName))
 					{
 						await _experienceLevelService
@@ -165,7 +165,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null)
+		public async Task<List<ListingOverviewDTO>> GetAllByFilterAsync(IListingFilterModel? filter = null)
 		{
 			// TODO - Refactor code and split up into multiple methods which modifys an IQueryable.
 			// Suggesting that the methods should be implemented in the FilterModel as static methods.
@@ -311,20 +311,20 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task UpdateAsync(ListingDTO listingDTO, string id)
+		public async Task UpdateAsync(ListingDTO dto, string id)
 		{
 			try
 			{
-				if (listingDTO.Id != id)
+				if (dto.Id != id)
 				{
 					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
 					return;
 				}
-				if (listingDTO.Id is not null && id is not null)
+				if (dto.Id is not null && id is not null)
 				{
 					if (await ExistsByIdAsync(id))
 					{
-						var updatedEntity = await GetUpdatedListingEntityWithSubEntities(listingDTO);
+						var updatedEntity = await GetUpdatedListingEntityWithSubEntities(dto);
 						await _listingRepository.UpdateAsync(updatedEntity, id);
 					}
 				}
@@ -358,13 +358,13 @@ namespace GT.Core.Services.Impl
 		/// Maps a DTO to an existing entity entity and sends a request to the repository to add the entity to the database.
 		/// If the listing entitys sub-entities do not exist the method creates new entitites and populates the database.
 		/// </summary>
-		private async Task<Listing?> GetUpdatedListingEntityWithSubEntities(ListingDTO listingDTO)
+		private async Task<Listing?> GetUpdatedListingEntityWithSubEntities(ListingDTO dto)
 		{
-			if (listingDTO is null)
+			if (dto is null)
 			{
 				var message = $"Attempted to pass a null object to {nameof(GetUpdatedListingEntityWithSubEntities)}.";
 				_logger.LogError(message);
-				throw new ArgumentNullException(nameof(listingDTO), message);
+				throw new ArgumentNullException(nameof(dto), message);
 			}
 
 			var oldEntity = await _listingRepository
@@ -372,7 +372,7 @@ namespace GT.Core.Services.Impl
 				.Include(e => e.Location)
 				.Include(e => e.Employer)
 				.Include(e => e.ExperienceLevel)
-				.FirstOrDefaultAsync(e => e.Id == listingDTO.Id);
+				.FirstOrDefaultAsync(e => e.Id == dto.Id);
 
 			if (oldEntity is null)
 			{
@@ -380,44 +380,44 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 
-			oldEntity.ListingTitle = listingDTO.ListingTitle == null ? null : listingDTO.ListingTitle.Trim();
-			oldEntity.Description = listingDTO.Description == null ? null : listingDTO.Description.Trim();
-			oldEntity.SalaryMin = listingDTO.SalaryMin;
-			oldEntity.SalaryMax = listingDTO.SalaryMax;
-			oldEntity.JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim();
-			oldEntity.FTE = listingDTO.FTE;
+			oldEntity.ListingTitle = dto.ListingTitle == null ? null : dto.ListingTitle.Trim();
+			oldEntity.Description = dto.Description == null ? null : dto.Description.Trim();
+			oldEntity.SalaryMin = dto.SalaryMin;
+			oldEntity.SalaryMax = dto.SalaryMax;
+			oldEntity.JobTitle = dto.JobTitle == null ? null : dto.JobTitle.Trim();
+			oldEntity.FTE = dto.FTE;
 
-			return await AddSubEntitiesToListing(listingDTO, oldEntity);
+			return await AddSubEntitiesToListing(dto, oldEntity);
 		}
 
 		/// <summary>
 		/// Maps a DTO to a new instance of an entity and sends a request to the repository to add the entity.
 		/// If the listings entitys sub-entities do not exist the method creates new entitites and populates the database.
 		/// </summary>
-		private async Task<Listing?> GetNewListingEntityWithSubEntities(ListingDTO listingDTO, string? signedInUserId = null)
+		private async Task<Listing?> GetNewListingEntityWithSubEntities(ListingDTO dto, string? signedInUserId = null)
 		{
-			if (listingDTO is null)
+			if (dto is null)
 			{
 				var message = $"Attempted to pass a null object to {nameof(GetNewListingEntityWithSubEntities)}.";
 
 				_logger.LogError(message);
 
-				throw new ArgumentNullException(nameof(listingDTO), message);
+				throw new ArgumentNullException(nameof(dto), message);
 			}
 
 			var newListingEntity = new Listing();
 
 			newListingEntity.Id = Guid.NewGuid().ToString();
-			newListingEntity.ListingTitle = listingDTO.ListingTitle! == null ? null : listingDTO.ListingTitle.Trim();
-			newListingEntity.Description = listingDTO.Description == null ? null : listingDTO.Description.Trim();
-			newListingEntity.SalaryMin = listingDTO.SalaryMin;
-			newListingEntity.SalaryMax = listingDTO.SalaryMax;
-			newListingEntity.JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim();
-			newListingEntity.FTE = listingDTO.FTE;
+			newListingEntity.ListingTitle = dto.ListingTitle! == null ? null : dto.ListingTitle.Trim();
+			newListingEntity.Description = dto.Description == null ? null : dto.Description.Trim();
+			newListingEntity.SalaryMin = dto.SalaryMin;
+			newListingEntity.SalaryMax = dto.SalaryMax;
+			newListingEntity.JobTitle = dto.JobTitle == null ? null : dto.JobTitle.Trim();
+			newListingEntity.FTE = dto.FTE;
 			newListingEntity.CreatedDate = DateTime.Now;
 			newListingEntity.CreatedById = signedInUserId;
 
-			newListingEntity = await AddSubEntitiesToListing(listingDTO, newListingEntity);
+			newListingEntity = await AddSubEntitiesToListing(dto, newListingEntity);
 
 			return newListingEntity;
 		}
