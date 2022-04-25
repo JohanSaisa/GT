@@ -28,24 +28,24 @@ namespace GT.Core.Services.Impl
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 		}
 
-		public async Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null)
+		public async Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO dto, string? signedInUserId = null)
 		{
 			try
 			{
-				if (inquiryDTO is null)
+				if (dto is null)
 				{
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
 				}
-				if (inquiryDTO.ListingId is null || !(await _listingService.ExistsByIdAsync(inquiryDTO.ListingId)))
+				if (dto.ListingId is null || !(await _listingService.ExistsByIdAsync(dto.ListingId)))
 				{
 					_logger.LogWarning($"Attempted to add a listing inquiry without a listing id.");
 					return null;
 				}
 
-				if (inquiryDTO.ApplicantId != null)
+				if (dto.ApplicantId != null)
 				{
-					if (_listingInquiryRepository.GetAll().Any(e => e.ApplicantId == inquiryDTO.ApplicantId && e.ListingId == inquiryDTO.ListingId))
+					if (_listingInquiryRepository.GetAll().Any(e => e.ApplicantId == dto.ApplicantId && e.ListingId == dto.ListingId))
 					{
 						_logger.LogWarning($"Attempted to add another listing inquiry by same user id.");
 						return null;
@@ -57,16 +57,16 @@ namespace GT.Core.Services.Impl
 				//TODO Implement automapper
 				newInquiry.Id = Guid.NewGuid().ToString();
 				newInquiry.ApplicantId = signedInUserId;
-				newInquiry.ListingId = inquiryDTO.ListingId;
-				newInquiry.MessageTitle = inquiryDTO.MessageTitle;
-				newInquiry.MessageBody = inquiryDTO.MessageBody;
-				newInquiry.LinkedInLink = inquiryDTO.LinkedInLink;
+				newInquiry.ListingId = dto.ListingId;
+				newInquiry.MessageTitle = dto.MessageTitle;
+				newInquiry.MessageBody = dto.MessageBody;
+				newInquiry.LinkedInLink = dto.LinkedInLink;
 
 				await _listingInquiryRepository.AddAsync(newInquiry);
 
 				// Assigning the updated id to the DTO as it is the only property with a new value.
-				inquiryDTO.Id = newInquiry.Id;
-				return inquiryDTO;
+				dto.Id = newInquiry.Id;
+				return dto;
 			}
 			catch (Exception e)
 			{
@@ -90,7 +90,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task DeleteInquiriesAssociatedWithUserAsync(string userId)
+		public async Task DeleteInquiriesAssociatedWithUserIdAsync(string userId)
 		{
 			try
 			{
@@ -128,7 +128,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<List<ListingInquiryDTO?>> GetAsync()
+		public async Task<List<ListingInquiryDTO?>> GetAllAsync()
 		{
 			// Get entities from database
 			try
@@ -211,9 +211,9 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string listingId)
+		public async Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string id)
 		{
-			if (listingId is null)
+			if (id is null)
 			{
 				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByListingIdAsync)}");
 				return null;
@@ -221,7 +221,7 @@ namespace GT.Core.Services.Impl
 
 			var entities = await _listingInquiryRepository
 				.GetAll()
-				.Where(e => e.ListingId == listingId)
+				.Where(e => e.ListingId == id)
 				.ToListAsync();
 
 			if (entities is null)
@@ -251,16 +251,16 @@ namespace GT.Core.Services.Impl
 			return listingInquiryDTOs;
 		}
 
-		public async Task UpdateAsync(ListingInquiryDTO inquiryDTO, string id)
+		public async Task UpdateAsync(ListingInquiryDTO dto, string id)
 		{
 			try
 			{
-				if (inquiryDTO.Id != id)
+				if (dto.Id != id)
 				{
 					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
 					return;
 				}
-				if (inquiryDTO.Id is not null && id is not null)
+				if (dto.Id is not null && id is not null)
 				{
 					if (await ExistsByIdAsync(id))
 					{
@@ -269,12 +269,12 @@ namespace GT.Core.Services.Impl
 							.FirstOrDefaultAsync(e => e.Id == id);
 
 						// TODO implement automapper
-						entityToUpdate.Id = inquiryDTO.Id;
-						entityToUpdate.ApplicantId = inquiryDTO.ApplicantId;
-						entityToUpdate.ListingId = inquiryDTO.ListingId;
-						entityToUpdate.LinkedInLink = inquiryDTO.LinkedInLink;
-						entityToUpdate.MessageBody = inquiryDTO.MessageBody;
-						entityToUpdate.MessageTitle = inquiryDTO.MessageTitle;
+						entityToUpdate.Id = dto.Id;
+						entityToUpdate.ApplicantId = dto.ApplicantId;
+						entityToUpdate.ListingId = dto.ListingId;
+						entityToUpdate.LinkedInLink = dto.LinkedInLink;
+						entityToUpdate.MessageBody = dto.MessageBody;
+						entityToUpdate.MessageTitle = dto.MessageTitle;
 
 						await _listingInquiryRepository.UpdateAsync(entityToUpdate, id);
 					}

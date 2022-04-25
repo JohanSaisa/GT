@@ -22,14 +22,14 @@ namespace GT.Core.Services.Impl
 			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
 
-		public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+		public async Task SendEmailAsync(string recipientEmailAddress, string subject, string htmlMessageBody)
 		{
 			var gtEmail = _configuration["Authentication:Gmail:ClientId"];
 			var gtPassword = _configuration["Authentication:Gmail:Secret"];
 
-			MailMessage Msg = new MailMessage(gtEmail, email);
+			MailMessage Msg = new MailMessage(gtEmail, recipientEmailAddress);
 			Msg.Subject = subject;
-			Msg.Body = htmlMessage;
+			Msg.Body = htmlMessageBody;
 			Msg.IsBodyHtml = true;
 
 			SmtpClient smtp = new SmtpClient();
