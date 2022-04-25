@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace GT.API.Controllers
 {
-	[Route("api/v1/experienceLevel")]
+	[Route("api/v1/experienceLevels")]
 	[ApiController]
 	public class ExperienceLevelController : Controller
 	{
