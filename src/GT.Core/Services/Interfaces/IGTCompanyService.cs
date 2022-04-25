@@ -2,22 +2,14 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTCompanyService : IGTService
+	public interface IGTCompanyService : 
+		IGTService<CompanyDTO>,
+		IHasGetAllAsyncWithoutParameters<CompanyDTO>,
+		IHasAddAsyncWithoutUserId<CompanyDTO>,
+		IHasExistsByNameAsync
 	{
-		Task<CompanyDTO> AddAsync(CompanyDTO dto);
-
-		Task<List<CompanyDTO>> GetAllAsync();
-
-		Task<CompanyDTO> GetByIdAsync(string id);
-
-		Task<bool> ExistsByNameAsync(string name);
-
 		Task<bool> AddCompanyLogoAsync(CompanyLogoDTO dto);
 
 		Task<bool> DeleteCompanyLogoAsync(string id);
-
-		Task DeleteAsync(string id);
-
-		Task<bool> UpdateAsync(CompanyDTO dto, string id);
 	}
 }

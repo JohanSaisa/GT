@@ -1,13 +1,13 @@
 ﻿using GT.Core.DTO.Impl;
+using Microsoft.CodeAnalysis;
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTLocationService : IGTService
+	public interface IGTLocationService : 
+		IGTService<LocationDTO>, 
+		IHasGetAllAsyncWithoutParameters<LocationDTO>,
+		IHasAddAsyncWithoutUserId<LocationDTO>, 
+		IHasExistsByNameAsync
 	{
-		Task<List<LocationDTO>?> GetAllAsync();
-
-		Task<LocationDTO> AddAsync(LocationDTO dto);
-
-		Task<bool> ExistsByNameAsync(string name);
 	}
 }

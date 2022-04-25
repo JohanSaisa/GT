@@ -33,7 +33,7 @@ namespace GT.Core.Services.Impl
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-					var entity = await _companyRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.Name);
 
 					// TODO - Use IMapper
 					if (entity is not null)
@@ -144,7 +144,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _companyRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _companyRepository.GetAll().AnyAsync(e => e.Name == name);
 			}
 			catch (Exception e)
 			{
@@ -218,14 +218,15 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<bool> UpdateAsync(CompanyDTO dto, string id)
+		
+		// TODO: Re-implement bool return after IGTService refactoring
+		public async Task UpdateAsync(CompanyDTO dto, string id)
 		{
 			try
 			{
 				if (dto.Id != id)
 				{
 					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
-					return false;
 				}
 				if (dto.Id is not null && id is not null)
 				{
@@ -239,20 +240,16 @@ namespace GT.Core.Services.Impl
 						entityToUpdate.CompanyLogoId = dto.CompanyLogoId;
 
 						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
-						return true;
 					}
-					return false;
 				}
 				else
 				{
 					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
-					return false;
 				}
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e.Message);
-				return false;
 			}
 		}
 

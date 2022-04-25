@@ -310,7 +310,6 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 		}
-
 		public async Task UpdateAsync(ListingDTO dto, string id)
 		{
 			try

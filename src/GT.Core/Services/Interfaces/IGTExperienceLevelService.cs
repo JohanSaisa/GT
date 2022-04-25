@@ -2,12 +2,11 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTExperienceLevelService : IGTService
+	public interface IGTExperienceLevelService : 
+		IGTService<ExperienceLevelDTO>,
+		IHasGetAllAsyncWithoutParameters<ExperienceLevelDTO>,
+		IHasAddAsyncWithoutUserId<ExperienceLevelDTO>,
+		IHasExistsByNameAsync
 	{
-		Task<List<ExperienceLevelDTO>> GetAllAsync();
-
-		Task<ExperienceLevelDTO> AddAsync(ExperienceLevelDTO dto);
-
-		Task<bool> ExistsByNameAsync(string name);
 	}
 }

@@ -116,5 +116,20 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 		}
+
+		public Task<ExperienceLevelDTO?> GetByIdAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task UpdateAsync(ExperienceLevelDTO dto, string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task DeleteAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

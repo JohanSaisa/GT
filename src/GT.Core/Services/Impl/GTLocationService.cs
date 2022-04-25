@@ -18,7 +18,7 @@ namespace GT.Core.Services.Impl
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
 		}
-
+		
 		public async Task<LocationDTO> AddAsync(LocationDTO dto)
 		{
 			try
@@ -66,6 +66,16 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public Task UpdateAsync(LocationDTO dto, string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task DeleteAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
 			try
@@ -102,5 +112,11 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 		}
+		
+		public Task<LocationDTO?> GetByIdAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
 	}
 }
