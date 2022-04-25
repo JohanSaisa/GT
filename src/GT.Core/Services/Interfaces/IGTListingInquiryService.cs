@@ -4,19 +4,19 @@ namespace GT.Core.Services.Interfaces
 {
 	public interface IGTListingInquiryService : IGTService
 	{
-		Task<List<ListingInquiryDTO?>> GetAsync();
+		Task<List<ListingInquiryDTO?>> GetAllAsync();
 
 		Task<ListingInquiryDTO?> GetByIdAsync(string id);
 
-		Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string listingId);
+		Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string id);
 
-		Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO inquiryDTO, string? signedInUserId = null);
+		Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO dto, string? signedInUserId = null);
 
-		Task UpdateAsync(ListingInquiryDTO inquiryDTO, string id);
+		Task UpdateAsync(ListingInquiryDTO dto, string id);
 
 		Task DeleteAsync(string id);
 
-		Task DeleteInquiriesAssociatedWithUserAsync(string userId);
+		Task DeleteInquiriesAssociatedWithUserIdAsync(string userId);
 
 		Task<bool> ExistsByIdAsync(string id);
 	}

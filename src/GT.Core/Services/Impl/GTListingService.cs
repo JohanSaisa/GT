@@ -51,13 +51,12 @@ namespace GT.Core.Services.Impl
 		/// Converts a DTO to entities and updates the database.
 		/// Requires the signed in users Id for assignment of CreatedBy property.
 		/// </summary>
-		/// <param name="listingDTO"></param>
 		/// <returns>The input DTO with an updated Id.</returns>
-		public async Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId)
+		public async Task<ListingDTO?> AddAsync(ListingDTO dto, string signedInUserId)
 		{
 			try
 			{
-				if (listingDTO is null)
+				if (dto is null)
 				{
 					_logger.LogWarning($"Attempted to add a null reference to the database.");
 					return null;
@@ -69,33 +68,33 @@ namespace GT.Core.Services.Impl
 				}
 
 				// Ensures that all necessary entities exists in the database.
-				await _companyService.AddAsync(new CompanyDTO { Name = listingDTO.Employer });
-				await _locationService.AddAsync(new LocationDTO { Name = listingDTO.Location });
-				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = listingDTO.Location });
+				await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
+				await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
+				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
 
 				var newListing = new Listing()
 				{
 					Id = Guid.NewGuid().ToString(),
 					CreatedById = signedInUserId,
 					CreatedDate = DateTime.Now,
-					ApplicationDeadline = listingDTO.ApplicationDeadline,
-					ListingTitle = listingDTO.ListingTitle == null ? null : listingDTO.ListingTitle.Trim(),
-					Description = listingDTO.Description == null ? null : listingDTO.Description.Trim(),
-					JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim(),
-					SalaryMin = listingDTO.SalaryMin,
-					SalaryMax = listingDTO.SalaryMax,
-					FTE = listingDTO.FTE,
-					Employer = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Name == listingDTO.Employer),
-					Location = await _locationRepository.GetAll().FirstOrDefaultAsync(e => e.Name == listingDTO.Location),
-					ExperienceLevel = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Name == listingDTO.ExperienceLevel),
+					ApplicationDeadline = dto.ApplicationDeadline,
+					ListingTitle = dto.ListingTitle == null ? null : dto.ListingTitle.Trim(),
+					Description = dto.Description == null ? null : dto.Description.Trim(),
+					JobTitle = dto.JobTitle == null ? null : dto.JobTitle.Trim(),
+					SalaryMin = dto.SalaryMin,
+					SalaryMax = dto.SalaryMax,
+					FTE = dto.FTE,
+					Employer = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.Employer),
+					Location = await _locationRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.Location),
+					ExperienceLevel = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.ExperienceLevel),
 				};
 
 				await _listingRepository.AddAsync(newListing);
 
 				// Assigning the updated id to the DTO as it is the only property with a new value.
-				listingDTO.Id = newListing.Id;
-				listingDTO.CreatedDate = newListing.CreatedDate;
-				return listingDTO;
+				dto.Id = newListing.Id;
+				dto.CreatedDate = newListing.CreatedDate;
+				return dto;
 			}
 			catch (Exception e)
 			{
@@ -130,7 +129,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null)
+		public async Task<List<ListingOverviewDTO>> GetAllByFilterAsync(IListingFilterModel? filter = null)
 		{
 			// TODO - Refactor code and split up into multiple methods which modifys an IQueryable.
 			// Suggesting that the methods should be implemented in the FilterModel as static methods.
@@ -276,14 +275,14 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task UpdateAsync(ListingDTO listingDTO, string id)
+		public async Task UpdateAsync(ListingDTO dto, string id)
 		{
-			if (listingDTO is null || listingDTO.Id is null || id is null)
+			if (dto is null || dto.Id is null || id is null)
 			{
 				_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
 				return;
 			}
-			if (listingDTO.Id != id)
+			if (dto.Id != id)
 			{
 				_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
 				return;
@@ -293,39 +292,39 @@ namespace GT.Core.Services.Impl
 			{
 				if (await ExistsByIdAsync(id))
 				{
-					await _companyService.AddAsync(new CompanyDTO { Name = listingDTO.Employer });
-					await _locationService.AddAsync(new LocationDTO { Name = listingDTO.Location });
-					await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = listingDTO.Location });
+					await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
+					await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
+					await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
 
 					var entity = await _listingRepository
 						.GetAll()
 						.Include(e => e.Employer)
 						.Include(e => e.Location)
 						.Include(e => e.ExperienceLevel)
-						.FirstOrDefaultAsync(e => e.Id == listingDTO.Id);
+						.FirstOrDefaultAsync(e => e.Id == dto.Id);
 
-					entity.ListingTitle = listingDTO.ListingTitle == null ? null : listingDTO.ListingTitle.Trim();
-					entity.Description = listingDTO.Description == null ? null : listingDTO.Description.Trim();
-					entity.SalaryMin = listingDTO.SalaryMin;
-					entity.SalaryMax = listingDTO.SalaryMax;
-					entity.JobTitle = listingDTO.JobTitle == null ? null : listingDTO.JobTitle.Trim();
-					entity.FTE = listingDTO.FTE;
-					entity.ApplicationDeadline = listingDTO.ApplicationDeadline;
+					entity.ListingTitle = dto.ListingTitle == null ? null : dto.ListingTitle.Trim();
+					entity.Description = dto.Description == null ? null : dto.Description.Trim();
+					entity.SalaryMin = dto.SalaryMin;
+					entity.SalaryMax = dto.SalaryMax;
+					entity.JobTitle = dto.JobTitle == null ? null : dto.JobTitle.Trim();
+					entity.FTE = dto.FTE;
+					entity.ApplicationDeadline = dto.ApplicationDeadline;
 
-					if (entity.Employer?.Name != listingDTO.Employer)
+					if (entity.Employer?.Name != dto.Employer)
 					{
 						entity.Employer = await _companyRepository.GetAll()
-							.FirstOrDefaultAsync(e => e.Name == listingDTO.Employer);
+							.FirstOrDefaultAsync(e => e.Name == dto.Employer);
 					}
-					if (entity.Location?.Name != listingDTO.Location)
+					if (entity.Location?.Name != dto.Location)
 					{
 						entity.Location = await _locationRepository.GetAll()
-							.FirstOrDefaultAsync(e => e.Name == listingDTO.Location);
+							.FirstOrDefaultAsync(e => e.Name == dto.Location);
 					}
-					if (entity.ExperienceLevel?.Name != listingDTO.ExperienceLevel)
+					if (entity.ExperienceLevel?.Name != dto.ExperienceLevel)
 					{
 						entity.ExperienceLevel = await _experienceLevelRepository.GetAll()
-							.FirstOrDefaultAsync(e => e.Name == listingDTO.ExperienceLevel);
+							.FirstOrDefaultAsync(e => e.Name == dto.ExperienceLevel);
 					}
 
 					await _listingRepository.UpdateAsync(entity, id);

@@ -35,7 +35,7 @@ namespace GT.Core.Tests.Services
 		/// - Location
 		/// </summary>
 		[Fact]
-		public async Task GetAllAsync_TestPartialFilterFunctionality_SucceedsAndReturnsMatch()
+		public async Task GetAllByFilterAsync_TestPartialFilterFunctionality_SucceedsAndReturnsMatch()
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
@@ -96,7 +96,7 @@ namespace GT.Core.Tests.Services
 				);
 
 			// Act
-			var result = await sut.GetAsync(partiallyFilledFilterModel);
+			var result = await sut.GetAllByFilterAsync(partiallyFilledFilterModel);
 
 			// Assert
 			result.Count.Should().Be(1);
@@ -130,7 +130,7 @@ namespace GT.Core.Tests.Services
 		}
 
 		[Fact]
-		public async Task GetAllAsync_EmptyFilterModel_SucceedsAndReturnsAllEntitiesInDatabase()
+		public async Task GetAllByFilterAsync_EmptyFilterModel_SucceedsAndReturnsAllEntitiesInDatabase()
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
@@ -166,7 +166,7 @@ namespace GT.Core.Tests.Services
 				);
 
 			// Act
-			var result = await sut.GetAsync(emptyFilterModel);
+			var result = await sut.GetAllByFilterAsync(emptyFilterModel);
 
 			// Assert
 			result.Count.Should().Be(3);
