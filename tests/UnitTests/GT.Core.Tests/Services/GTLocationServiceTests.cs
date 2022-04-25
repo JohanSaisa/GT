@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GT.Core.DTO.Impl;
 using GT.Core.Services.Impl;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
-using Moq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.RenderTree;
 using MockQueryable.Moq;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TestHelpers;
 using Xunit;
 
@@ -61,7 +60,7 @@ namespace GT.Core.Tests.Services
 		[Theory]
 		[InlineData(null, "id which should be replaced by service")]
 		[InlineData("", null)]
-		public async Task AddAsync_AddInValidNewLocation_FailsAndReturnsNull(string? inputLocationName, string? inputTempId)
+		public async Task AddAsync_AddInvalidNewLocation_FailsAndReturnsNull(string? inputLocationName, string? inputTempId)
 		{
 			// Arrange
 			var dto = new LocationDTO()
