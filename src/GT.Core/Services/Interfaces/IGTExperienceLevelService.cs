@@ -12,7 +12,7 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> ExistsByNameAsync(string name);
 
-		Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name);
+		Task UpdateAsync(ExperienceLevelDTO dto, string name);
 
 		Task DeleteAsync(string id);
 	}
