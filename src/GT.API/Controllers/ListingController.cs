@@ -1,8 +1,6 @@
 ﻿using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -17,22 +15,23 @@ namespace GT.API.Controllers
 	public class ListingController : ControllerBase
 	{
 		private readonly IGTListingService _listingService;
-		private readonly IGTExperienceLevelService _experienceService;
+		private readonly IGTCompanyService _companyService;
+		private readonly IGTExperienceLevelService _experienceLevelService;
 		private readonly IGTLocationService _locationService;
-		private readonly IGTListingInquiryService _listingInquiryService;
 		private readonly IConfiguration _configuration;
 
 		public ListingController(
 			IGTListingService listingService,
-			IGTExperienceLevelService experienceService,
+			IGTCompanyService companyService,
+			IGTExperienceLevelService experienceLevelService,
 			IGTLocationService locationService,
 			IGTListingInquiryService listingInquiryService,
 			IConfiguration configuration)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
-			_experienceService = experienceService ?? throw new ArgumentNullException(nameof(experienceService));
+			_companyService = companyService ?? throw new ArgumentNullException(nameof(companyService));
+			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
 			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
-			_listingInquiryService = listingInquiryService ?? throw new ArgumentNullException(nameof(listingInquiryService));
 			_configuration = configuration;
 		}
 
@@ -43,14 +42,14 @@ namespace GT.API.Controllers
 		{
 			ListingFilterModel filterModel = new ListingFilterModel();
 
-			var listingDTOs = await _listingService
+			var dtos = await _listingService
 				.GetAllByFilterAsync(filterModel);
 
-			if (listingDTOs == null)
+			if (dtos == null)
 			{
 				return NotFound();
 			}
-			var result = JsonConvert.SerializeObject(listingDTOs);
+			var result = JsonConvert.SerializeObject(dtos);
 
 			return Ok(result);
 		}
@@ -64,15 +63,15 @@ namespace GT.API.Controllers
 				return BadRequest();
 			}
 
-			var listing = await _listingService
+			var dto = await _listingService
 				.GetByIdAsync(id);
 
-			if (listing == null)
+			if (dto == null)
 			{
 				return NotFound();
 			}
 
-			var result = JsonConvert.SerializeObject(listing);
+			var result = JsonConvert.SerializeObject(dto);
 
 			return Ok(result);
 		}
@@ -102,16 +101,21 @@ namespace GT.API.Controllers
 		// PUT: update/5
 		[Route("update")]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutListing(string id, ListingDTO listing)
+		public async Task<IActionResult> PutListing(string id, ListingDTO dto)
 		{
-			if (string.IsNullOrEmpty(id) || id != listing.Id)
+			if (string.IsNullOrEmpty(id) || id != dto.Id)
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				await _listingService.UpdateAsync(listing, id);
+				// Ensures that all necessary entities exists in the database.
+				await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
+				await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
+				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
+
+				await _listingService.UpdateAsync(dto, id);
 			}
 			catch
 			{
@@ -124,16 +128,21 @@ namespace GT.API.Controllers
 		// POST: /create
 		[Route("create")]
 		[HttpPost]
-		public async Task<ActionResult<string?>> PostListing(ListingDTO listing)
+		public async Task<ActionResult<string?>> PostListing(ListingDTO dto)
 		{
-			if (listing is null)
+			if (dto is null)
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				var objToReturn = await _listingService.AddAsync(listing, GetUserId());
+				// Ensures that all necessary entities exists in the database.
+				await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
+				await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
+				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
+
+				var objToReturn = await _listingService.AddAsync(dto, GetUserId());
 				var result = JsonConvert.SerializeObject(objToReturn);
 				return Ok(result);
 			}

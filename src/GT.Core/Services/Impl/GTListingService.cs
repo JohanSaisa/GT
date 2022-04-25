@@ -16,9 +16,6 @@ namespace GT.Core.Services.Impl
 	{
 		private readonly ILogger<GTListingService> _logger;
 
-		private readonly IGTCompanyService _companyService;
-		private readonly IGTExperienceLevelService _experienceLevelService;
-		private readonly IGTLocationService _locationService;
 		private readonly IGTGenericRepository<Listing> _listingRepository;
 		private readonly IGTGenericRepository<Company> _companyRepository;
 		private readonly IGTGenericRepository<Location> _locationRepository;
@@ -27,9 +24,7 @@ namespace GT.Core.Services.Impl
 
 		public GTListingService(
 			ILogger<GTListingService> logger,
-			IGTCompanyService companyService,
-			IGTExperienceLevelService experienceLevelService,
-			IGTLocationService locationService,
+
 			IGTGenericRepository<Listing> listingRepository,
 			IGTGenericRepository<Company> companyRepository,
 			IGTGenericRepository<Location> locationRepository,
@@ -37,9 +32,6 @@ namespace GT.Core.Services.Impl
 			IGTGenericRepository<ListingInquiry> inquiryRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
-			_companyService = companyService ?? throw new ArgumentNullException(nameof(companyService));
-			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
-			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
 			_listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));
 			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
 			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
@@ -66,11 +58,6 @@ namespace GT.Core.Services.Impl
 					_logger.LogWarning($"Attempted to add a new listing with a null reference on signedInUserId.");
 					return null;
 				}
-
-				// Ensures that all necessary entities exists in the database.
-				await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
-				await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
-				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
 
 				var newListing = new Listing()
 				{
@@ -292,10 +279,6 @@ namespace GT.Core.Services.Impl
 			{
 				if (await ExistsByIdAsync(id))
 				{
-					await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
-					await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
-					await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
-
 					var entity = await _listingRepository
 						.GetAll()
 						.Include(e => e.Employer)

@@ -2,7 +2,6 @@
 using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Impl;
-using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -39,9 +38,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -85,9 +81,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -134,9 +127,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -155,9 +145,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -179,9 +166,6 @@ namespace GT.Core.Tests.Services
 			var idOfListingWhichExistsInDb = "92f44091-1f99-400c-b18d-b2789eac5c81";
 
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -197,9 +181,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -240,9 +221,6 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -255,9 +233,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -278,9 +253,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -343,9 +315,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -394,9 +363,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -405,9 +371,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -419,9 +382,6 @@ namespace GT.Core.Tests.Services
 			var result = await sut.AddAsync(null, null);
 
 			// Assert
-			mockCompanyService.Verify(m => m.AddAsync(It.IsAny<CompanyDTO>()), Times.Never);
-			mockLocationService.Verify(m => m.AddAsync(It.IsAny<LocationDTO>()), Times.Never);
-			mockExperienceLevelService.Verify(m => m.AddAsync(It.IsAny<ExperienceLevelDTO>()), Times.Never);
 			mockListingRepository.Verify(m => m.AddAsync(It.IsAny<Listing>()), Times.Never);
 
 			result.Should().BeNull();
@@ -465,9 +425,6 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -505,9 +462,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -519,10 +473,6 @@ namespace GT.Core.Tests.Services
 			await sut.UpdateAsync(inputUpdatedDTO, inputUpdatedDTO.Id);
 
 			// Assert
-			mockCompanyService.Verify(m => m.AddAsync(It.IsAny<CompanyDTO>()), Times.Once);
-			mockLocationService.Verify(m => m.AddAsync(It.IsAny<LocationDTO>()), Times.Once);
-			mockExperienceLevelService.Verify(m => m.AddAsync(It.IsAny<ExperienceLevelDTO>()), Times.Once);
-
 			mockListingRepository.Verify(m => m.UpdateAsync(It.IsAny<Listing>(), It.IsAny<string>()), Times.Once);
 
 			callbackListingResult.Id.Should()
@@ -561,9 +511,6 @@ namespace GT.Core.Tests.Services
 		public async Task UpdateAsync_NullReferenceArgument_Fails()
 		{
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -572,9 +519,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -596,9 +540,6 @@ namespace GT.Core.Tests.Services
 		public async Task UpdateAsync_MultipleUnmatchingIdInputs_Fails(string unmatchingId1, string unmatchingId2)
 		{
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -607,9 +548,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -629,9 +567,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -651,9 +586,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -676,9 +608,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -696,9 +625,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
@@ -721,9 +647,6 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<GTListingService>>();
-			var mockCompanyService = new Mock<IGTCompanyService>();
-			var mockExperienceLevelService = new Mock<IGTExperienceLevelService>();
-			var mockLocationService = new Mock<IGTLocationService>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -741,9 +664,6 @@ namespace GT.Core.Tests.Services
 
 			var sut = new GTListingService(
 				mockLogger.Object,
-				mockCompanyService.Object,
-				mockExperienceLevelService.Object,
-				mockLocationService.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
 				mockLocationRepository.Object,
