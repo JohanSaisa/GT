@@ -112,6 +112,27 @@ namespace GT.Core.Tests.Services
 				.Be(expected);
 		}
 
+		[Fact]
+		public async Task AddAsync_NullReferenceArgument_FailsAndReturnsNull()
+		{
+			// Arrange
+			ExperienceLevelDTO dto = null;
+
+			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+
+			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.AddAsync(dto);
+
+			// Assert
+			mockRepository.Verify(m => m.AddAsync(It.IsAny<ExperienceLevel>()), Times.Never);
+
+			result.Should()
+				.BeNull();
+		}
+
 		[Theory]
 		[InlineData("NameInDb", true)]
 		[InlineData("NameNotInDb1", false)]
