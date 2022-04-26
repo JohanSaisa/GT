@@ -158,11 +158,12 @@ namespace GT.Core.Tests.Services
 			mockRepository.Verify(m => m.DeleteAsync(It.IsAny<Company>()), Times.Never);
 		}
 
-		[Theory]
-		[InlineData("Valid companyId")]
-		public async Task DeleteAsync_ValidInputId_Succeeds(string inputCompanyId)
+		[Fact]
+		public async Task DeleteAsync_ValidInputId_Succeeds()
 		{
 			//	Arrange
+			string inputCompanyId = "Valid companyId";
+
 			var mockLogger = new Mock<ILogger<GTCompanyService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Company>>();
 			var callBackResult = new Company();
@@ -185,5 +186,259 @@ namespace GT.Core.Tests.Services
 			//	Assert
 			mockRepository.Verify(m => m.DeleteAsync(It.IsAny<Company>()), Times.Once);
 		}
+
+		[Fact]
+		public async Task ExistsByNameAsync_ValidInputName_Succeeds()
+		{
+			//	Arrange
+			string inputCompanyName = "Valid companyName";
+
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+			var callBackResult = new Company();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>()
+				{
+					new Company()
+					{
+						Name = inputCompanyName
+					}
+				}.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.ExistsByNameAsync(inputCompanyName);
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Once);
+
+			result.Should()
+				.BeTrue();
+		}
+
+		[Theory]
+		[InlineData("")]
+		[InlineData(null)]
+		public async Task ExistsByNameAsync_InvalidInputName_Fails(string inputCompanyName)
+		{
+			//	Arrange
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+			var callBackResult = new Company();
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			await sut.ExistsByNameAsync(inputCompanyName);
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Never);
+		}
+
+		[Fact]
+		public async Task ExistsByNameAsync_ValidNameDoesNotExistInDB_SucceedsButReturnsFalse()
+		{
+			//	Arrange
+			string inputCompanyName = "Valid companyName";
+
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+			var callBackResult = new Company();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>()
+				{
+					new Company()
+					{
+						Name = "Google"
+					}
+				}.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.ExistsByNameAsync(inputCompanyName);
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Once);
+
+			result.Should()
+				.BeFalse();
+		}
+
+		[Fact]
+		public async Task GetAllAsync_ThreeEntitiesExistInDB_SucceedsAndReturnsThreeEntities()
+		{
+			//	Arrange
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>()
+				{
+					new Company(),
+					new Company(),
+					new Company(),
+				}
+				.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.GetAllAsync();
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Once);
+
+			result.Count.Should()
+				.Be(3);
+		}
+
+		[Fact]
+		public async Task GetAllAsync_EmptyDB_SucceedsButReturnsEmptyList()
+		{
+			//	Arrange
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>(){}
+				.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.GetAllAsync();
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Once);
+
+			result.Count.Should()
+				.Be(0);
+		}
+
+		[Theory]
+		[InlineData("")]
+		[InlineData(null)]
+		public async Task GetByIdAsync_InvalidCompanyId_FailsAndReturnsNull(string inputCompanyId)
+		{
+			//	Arrange
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.GetByIdAsync(inputCompanyId);
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Never);
+
+			result.Should()
+				.BeNull();
+		}
+
+		[Theory]
+		[InlineData("validCompanyId")]
+		[InlineData("    validCompanyId   ")]
+		public async Task GetByIdAsync_ValidCompanyId_SucceedsAndReturnsDTO(string inputCompanyId)
+		{
+			//	Arrange
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>()
+				{
+					new Company()
+					{
+						Id = "validCompanyId"
+					}
+				}.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.GetByIdAsync(inputCompanyId);
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Once);
+
+			result.Id.Should()
+				.Be("validCompanyId");
+		}
+
+		[Fact]
+		public async Task GetByIdAsync_ValidCompanyIdButNoMatchInDB_SucceedsAndReturnsNull()
+		{
+			//	Arrange
+			string inputCompanyId = "ValidInputId";
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>()
+				{
+					new Company()
+					{
+						Id = "validCompanyId"
+					}
+				}.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			//	Act
+			var result = await sut.GetByIdAsync(inputCompanyId);
+
+			//	Assert
+			mockRepository.Verify(m => m.Get(), Times.Once);
+
+			result.Should()
+				.BeNull();
+		}
+
+		[Fact]
+		public async Task GetByIdAsync_CheckIfMethodTrimInputId_TrimsLeadingAndTrailingWhitespaces()
+		{
+			// Arrange
+			string inputCompanyId = "    validCompanyId    ";
+
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+			mockRepository
+				.Setup(m => m.Get())
+				.Returns(new List<Company>()
+				{
+					new Company()
+					{
+						Id = "validCompanyId"
+					}
+				}.AsQueryable().BuildMock());
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.GetByIdAsync(inputCompanyId);
+
+			// Assert
+			result.Id.Should()
+				.Be(inputCompanyId.Trim());
+		}
+
+		[Fact]
+		public async Task UpdateAsync_CheckIfDTOIdAndInputIdMatch_FailsReturnFalse(){		}
+
+		public async Task UpdateAsync_InvalidId_FailsReturnFalse() { }
+
+		public async Task UpdateAsync_ValidId_SucceedsReturnTrue() { }
 	}
 }

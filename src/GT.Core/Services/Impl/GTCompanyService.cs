@@ -159,6 +159,12 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
+			if (string.IsNullOrEmpty(name))
+			{
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(DeleteAsync)}");
+				return false;
+			}
+
 			try
 			{
 				return await _companyRepository.Get().Where(e => e.Name == name).AnyAsync();
@@ -177,6 +183,11 @@ namespace GT.Core.Services.Impl
 				var entities = await _companyRepository.Get().ToListAsync();
 				var companyDTOs = new List<CompanyDTO>();
 
+				if (entities is null)
+				{
+					return null;
+				}
+				
 				foreach (var entity in entities)
 				{
 					// TODO add automapper
@@ -199,7 +210,7 @@ namespace GT.Core.Services.Impl
 
 		public async Task<CompanyDTO> GetByIdAsync(string id)
 		{
-			if (id is null)
+			if (string.IsNullOrEmpty(id) || string.IsNullOrWhiteSpace(id))
 			{
 				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByIdAsync)}");
 				return null;
@@ -207,18 +218,18 @@ namespace GT.Core.Services.Impl
 
 			try
 			{
-				// Get entity
+				id = id.Trim();
+
 				var entity = await _companyRepository
 					.Get()
 					.FirstOrDefaultAsync(e => e.Id == id);
 
-				if (entity == null)
+				if (entity is null)
 				{
 					_logger.LogInformation($"Entity with id {id} not found.");
 					return null;
 				}
 
-				// Map entity to DTO
 				var company = new CompanyDTO()
 				{
 					Id = entity.Id,
@@ -237,28 +248,30 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> UpdateAsync(CompanyDTO dto, string id)
 		{
-			try
+			if (dto.Id != id)
 			{
-				if (dto.Id != id)
-				{
-					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
-					return false;
-				}
-				if (dto.Id is not null && id is not null)
-				{
-					if (await ExistsByNameAsync(dto.Name))
-					{
-						var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
+				_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
+				return false;
+			}
 
-						// TODO implement automapper
-						entityToUpdate.Id = dto.Id;
-						entityToUpdate.Name = dto.Name;
-						entityToUpdate.CompanyLogoId = dto.CompanyLogoId;
+			if (string.IsNullOrEmpty(id))
+			{
+				_logger.LogWarning($"Can not use null arguments in method: { nameof(UpdateAsync)}.");
+				return false;
+			}
 
-						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
-						return true;
-					}
-					return false;
+			try
+			{				
+				if (await ExistsByNameAsync(dto.Name))
+				{
+					var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
+
+					// TODO implement automapper
+					entityToUpdate.Name = dto.Name;
+					entityToUpdate.CompanyLogoId = dto.CompanyLogoId;
+
+					await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+					return true;
 				}
 				else
 				{
