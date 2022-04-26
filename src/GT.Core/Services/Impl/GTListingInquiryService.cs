@@ -77,40 +77,43 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
-			//try
-			//{
-			//	if (_listingInquiryRepository.GetAll().Any(e => e.Id == id))
-			//	{
-			//		await _listingInquiryRepository.DeleteAsync(id);
-			//	}
-			//}
-			//catch (Exception e)
-			//{
-			//	_logger.LogError(e.Message);
-			//}
+			try
+			{
+				var entity = await _listingInquiryRepository.GetAll()
+					.Include(e => e.Listing)
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (entity is not null)
+				{
+					await _listingInquiryRepository.DeleteAsync(entity);
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 
 		public async Task DeleteInquiriesAssociatedWithUserIdAsync(string userId)
 		{
-			//try
-			//{
-			//	var associatedInquiryIds = await _listingInquiryRepository.GetAll()
-			//		.Where(e => e.ApplicantId == userId)
-			//		.Select(e => e.Id)
-			//		.ToListAsync();
+			try
+			{
+				var associatedInquiries = await _listingInquiryRepository.GetAll()
+					.Where(e => e.ApplicantId == userId)
+					.ToListAsync();
 
-			//	if (associatedInquiryIds is not null)
-			//	{
-			//		foreach (var id in associatedInquiryIds)
-			//		{
-			//			await _listingInquiryRepository.DeleteAsync(id);
-			//		}
-			//	}
-			//}
-			//catch (Exception e)
-			//{
-			//	_logger.LogError(e.Message);
-			//}
+				if (associatedInquiries is not null)
+				{
+					foreach (var entity in associatedInquiries)
+					{
+						await _listingInquiryRepository.DeleteAsync(entity);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 
 		public async Task<bool> ExistsByIdAsync(string id)

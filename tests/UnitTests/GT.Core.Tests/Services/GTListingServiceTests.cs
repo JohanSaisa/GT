@@ -555,7 +555,7 @@ namespace GT.Core.Tests.Services
 				mockInquiryRepository.Object
 				);
 
-			// Act 
+			// Act
 			await sut.UpdateAsync(new ListingDTO { Id = unmatchingId1 }, unmatchingId2);
 
 			// Assert
@@ -597,7 +597,7 @@ namespace GT.Core.Tests.Services
 			await sut.DeleteAsync(exampleIdInDB);
 
 			// Assert
-			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<string>()), Times.Once);
+			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<Listing>()), Times.Once);
 		}
 
 		[Theory]
@@ -636,7 +636,7 @@ namespace GT.Core.Tests.Services
 			await sut.DeleteAsync(inputIdNotInDB);
 
 			// Assert
-			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<string>()), Times.Never);
+			mockListingRepository.Verify(m => m.DeleteAsync(It.IsAny<Listing>()), Times.Never);
 		}
 
 		[Theory]

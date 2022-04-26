@@ -104,14 +104,22 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
-			//try
-			//{
-			//	await _companyRepository.DeleteAsync(id);
-			//}
-			//catch (Exception e)
-			//{
-			//	_logger.LogError(e.Message);
-			//}
+			try
+			{
+				var entity = await _companyRepository.GetAll()
+					.Include(e => e.Locations)
+					.Include(e => e.CompanyLogoId)
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (entity is not null)
+				{
+					await _companyRepository.DeleteAsync(entity);
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 
 		public async Task<bool> DeleteCompanyLogoAsync(string id)

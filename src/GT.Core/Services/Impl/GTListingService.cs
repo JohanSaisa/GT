@@ -92,28 +92,24 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
-			//try
-			//{
-			//	if (_listingRepository.GetAll().Any(e => e.Id == id))
-			//	{
-			//		var linkedInquiries = _inquiryRepository
-			//			.GetAll()
-			//			.Include(e => e.Listing)
-			//			.Where(e => e.Listing.Id == id)
-			//			.Select(e => e.Id).ToArray();
+			try
+			{
+				var entity = await _listingRepository.GetAll()
+					.Include(e => e.Inquiries)
+					.Include(e => e.ExperienceLevel)
+					.Include(e => e.Employer)
+					.Include(e => e.Location)
 
-			//		foreach (var inquiryId in linkedInquiries)
-			//		{
-			//			//await _inquiryRepository.DeleteAsync(inquiryId);
-			//		}
-			
-			//		//await _listingRepository.DeleteAsync(id);
-			//	}
-			//}
-			//catch (Exception e)
-			//{
-			//	_logger.LogError(e.Message);
-			//}
+					.FirstOrDefaultAsync(e => e.Id == id);
+				if (entity is not null)
+				{
+					await _listingRepository.DeleteAsync(entity);
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 
 		public async Task<List<ListingOverviewDTO>> GetAllByFilterAsync(IListingFilterModel? filter = null)
