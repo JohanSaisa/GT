@@ -42,7 +42,7 @@ namespace GT.Core.Services.Impl
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
 
-					var entity = await _experienceLevelRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _experienceLevelRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
 					// TODO - Use IMapper
 					if (entity is not null)
@@ -79,10 +79,13 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (_experienceLevelRepository.GetAll().Any(e => e.Id == id))
-				{
+				var entity = await _experienceLevelRepository.Get()
+					.Include(e => e.Listings)
+					.FirstOrDefaultAsync(e => e.Id == id);
 
-					await _experienceLevelRepository.DeleteAsync(id);
+				if (entity is not null)
+				{
+					await _experienceLevelRepository.DeleteAsync(entity);
 				}
 			}
 			catch (Exception e)
@@ -95,7 +98,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _experienceLevelRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _experienceLevelRepository.Get().Where(e => e.Name == name).AnyAsync();
 			}
 			catch (Exception e)
 			{
@@ -109,7 +112,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				var experienceLevelEntitiess = await _experienceLevelRepository
-					.GetAll()
+					.Get()
 					.ToListAsync();
 
 				var experienceLevelDTOs = new List<ExperienceLevelDTO>();
@@ -139,7 +142,7 @@ namespace GT.Core.Services.Impl
 			{
 				// Get entity
 				var entity = await _experienceLevelRepository
-					.GetAll()
+					.Get()
 					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)
@@ -177,7 +180,7 @@ namespace GT.Core.Services.Impl
 				{
 					if (await ExistsByNameAsync(name))
 					{
-						var entityToUpdate = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
+						var entityToUpdate = await _experienceLevelRepository.Get().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
 
 						// TODO implement automapper
 						entityToUpdate.Name = name;

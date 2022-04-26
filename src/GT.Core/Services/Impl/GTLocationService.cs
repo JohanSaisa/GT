@@ -41,7 +41,7 @@ namespace GT.Core.Services.Impl
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
 					var entity = await _locationRepository
-						.GetAll()
+						.Get()
 						.FirstOrDefaultAsync(e => e.Name == dto.Name);
 
 					// TODO - Use IMapper
@@ -79,7 +79,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				return await _locationRepository
-					.GetAll()
+					.Get()
 					.AnyAsync(e => e.Name == name);
 			}
 			catch (Exception e)
@@ -94,7 +94,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				var query = _locationRepository
-					.GetAll();
+					.Get();
 
 				return await query
 					.Select(e => new LocationDTO
