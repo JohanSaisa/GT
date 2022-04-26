@@ -77,40 +77,40 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
-			try
-			{
-				if (_listingInquiryRepository.GetAll().Any(e => e.Id == id))
-				{
-					await _listingInquiryRepository.DeleteAsync(id);
-				}
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-			}
+			//try
+			//{
+			//	if (_listingInquiryRepository.GetAll().Any(e => e.Id == id))
+			//	{
+			//		await _listingInquiryRepository.DeleteAsync(id);
+			//	}
+			//}
+			//catch (Exception e)
+			//{
+			//	_logger.LogError(e.Message);
+			//}
 		}
 
 		public async Task DeleteInquiriesAssociatedWithUserIdAsync(string userId)
 		{
-			try
-			{
-				var associatedInquiryIds = await _listingInquiryRepository.GetAll()
-					.Where(e => e.ApplicantId == userId)
-					.Select(e => e.Id)
-					.ToListAsync();
+			//try
+			//{
+			//	var associatedInquiryIds = await _listingInquiryRepository.GetAll()
+			//		.Where(e => e.ApplicantId == userId)
+			//		.Select(e => e.Id)
+			//		.ToListAsync();
 
-				if (associatedInquiryIds is not null)
-				{
-					foreach (var id in associatedInquiryIds)
-					{
-						await _listingInquiryRepository.DeleteAsync(id);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-			}
+			//	if (associatedInquiryIds is not null)
+			//	{
+			//		foreach (var id in associatedInquiryIds)
+			//		{
+			//			await _listingInquiryRepository.DeleteAsync(id);
+			//		}
+			//	}
+			//}
+			//catch (Exception e)
+			//{
+			//	_logger.LogError(e.Message);
+			//}
 		}
 
 		public async Task<bool> ExistsByIdAsync(string id)

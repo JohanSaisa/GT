@@ -13,6 +13,6 @@ namespace GT.Data.Repositories.Interfaces
 		Task<TEntity?> FindAsync(params object[] keys);
 		Task<TEntity?> AddAsync(TEntity entity);
 		Task UpdateAsync(TEntity entity, string id);
-		Task DeleteAsync(string id);
+		Task DeleteAsync(TEntity entity);
 	}
 }

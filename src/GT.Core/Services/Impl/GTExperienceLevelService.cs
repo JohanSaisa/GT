@@ -79,10 +79,12 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (_experienceLevelRepository.GetAll().Any(e => e.Id == id))
+				var entity = await _experienceLevelRepository.GetAll()
+					.Include(e => e.Listings)
+					.FirstOrDefaultAsync(e => e.Id == id);
+				if (entity is not null)
 				{
-
-					await _experienceLevelRepository.DeleteAsync(id);
+					await _experienceLevelRepository.DeleteAsync(entity);
 				}
 			}
 			catch (Exception e)

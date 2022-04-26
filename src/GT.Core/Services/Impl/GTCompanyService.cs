@@ -104,14 +104,14 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
-			try
-			{
-				await _companyRepository.DeleteAsync(id);
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-			}
+			//try
+			//{
+			//	await _companyRepository.DeleteAsync(id);
+			//}
+			//catch (Exception e)
+			//{
+			//	_logger.LogError(e.Message);
+			//}
 		}
 
 		public async Task<bool> DeleteCompanyLogoAsync(string id)

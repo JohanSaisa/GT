@@ -131,33 +131,26 @@ namespace GT.Data.Repositories.Impl
 		/// </summary>
 		/// <param name="id">ID of the entity to be deleted.</param>
 		/// <returns></returns>
-		public async Task DeleteAsync(string id)
+		public async Task DeleteAsync(TEntity entity)
 		{
-			if (id is not null)
+			try
 			{
-				try
+				if (entity is not null)
 				{
-					var item = await _context
+					_context
 						.Set<TEntity>()
-						.FirstOrDefaultAsync(e => e.Id == id);
+						.Remove(entity);
 
-					if (item is not null)
-					{
-						_context
-							.Set<TEntity>()
-							.Remove(item);
-
-						await _context.SaveChangesAsync();
-					}
+					await _context.SaveChangesAsync();
 				}
-				catch (Exception ex)
+				else
 				{
-					_logger.LogError(ex.Message);
+					_logger.LogWarning("Attempted to update a null reference entity to the database.");
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				_logger.LogWarning("Attempted to update a null reference entity to the database.");
+				_logger.LogError(ex.Message);
 			}
 		}
 
