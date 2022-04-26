@@ -71,9 +71,9 @@ namespace GT.Core.Services.Impl
 					SalaryMin = dto.SalaryMin,
 					SalaryMax = dto.SalaryMax,
 					FTE = dto.FTE,
-					Employer = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.Employer),
-					Location = await _locationRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.Location),
-					ExperienceLevel = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Name == dto.ExperienceLevel),
+					Employer = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Name == dto.Employer),
+					Location = await _locationRepository.Get().FirstOrDefaultAsync(e => e.Name == dto.Location),
+					ExperienceLevel = await _experienceLevelRepository.Get().FirstOrDefaultAsync(e => e.Name == dto.ExperienceLevel),
 				};
 
 				await _listingRepository.AddAsync(newListing);
@@ -94,7 +94,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var entity = await _listingRepository.GetAll()
+				var entity = await _listingRepository.Get()
 					.Include(e => e.Inquiries)
 					.Include(e => e.ExperienceLevel)
 					.Include(e => e.Employer)
@@ -123,7 +123,7 @@ namespace GT.Core.Services.Impl
 			}
 
 			var query = _listingRepository?
-				.GetAll()?
+				.Get()?
 				.Include(e => e.ExperienceLevel)
 				.Include(e => e.Location)
 				.Include(e => e.Employer)
@@ -220,7 +220,7 @@ namespace GT.Core.Services.Impl
 			{
 				// Get entity
 				var entity = await _listingRepository
-					.GetAll()
+					.Get()
 					.Include(e => e.Employer)
 					.Include(e => e.Location)
 					.Include(e => e.ExperienceLevel)
@@ -276,7 +276,7 @@ namespace GT.Core.Services.Impl
 				if (await ExistsByIdAsync(id))
 				{
 					var entity = await _listingRepository
-						.GetAll()
+						.Get()
 						.Include(e => e.Employer)
 						.Include(e => e.Location)
 						.Include(e => e.ExperienceLevel)
@@ -292,17 +292,17 @@ namespace GT.Core.Services.Impl
 
 					if (entity.Employer?.Name != dto.Employer)
 					{
-						entity.Employer = await _companyRepository.GetAll()
+						entity.Employer = await _companyRepository.Get()
 							.FirstOrDefaultAsync(e => e.Name == dto.Employer);
 					}
 					if (entity.Location?.Name != dto.Location)
 					{
-						entity.Location = await _locationRepository.GetAll()
+						entity.Location = await _locationRepository.Get()
 							.FirstOrDefaultAsync(e => e.Name == dto.Location);
 					}
 					if (entity.ExperienceLevel?.Name != dto.ExperienceLevel)
 					{
-						entity.ExperienceLevel = await _experienceLevelRepository.GetAll()
+						entity.ExperienceLevel = await _experienceLevelRepository.Get()
 							.FirstOrDefaultAsync(e => e.Name == dto.ExperienceLevel);
 					}
 
@@ -320,7 +320,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				return await _listingRepository
-					.GetAll()
+					.Get()
 					.AnyAsync(e => e.Id == id);
 			}
 			catch (Exception e)

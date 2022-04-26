@@ -45,7 +45,7 @@ namespace GT.Core.Services.Impl
 
 				if (dto.ApplicantId != null)
 				{
-					if (_listingInquiryRepository.GetAll().Any(e => e.ApplicantId == dto.ApplicantId && e.ListingId == dto.ListingId))
+					if (_listingInquiryRepository.Get().Any(e => e.ApplicantId == dto.ApplicantId && e.ListingId == dto.ListingId))
 					{
 						_logger.LogWarning($"Attempted to add another listing inquiry by same user id.");
 						return null;
@@ -79,7 +79,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var entity = await _listingInquiryRepository.GetAll()
+				var entity = await _listingInquiryRepository.Get()
 					.Include(e => e.Listing)
 					.FirstOrDefaultAsync(e => e.Id == id);
 
@@ -98,7 +98,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var associatedInquiries = await _listingInquiryRepository.GetAll()
+				var associatedInquiries = await _listingInquiryRepository.Get()
 					.Where(e => e.ApplicantId == userId)
 					.ToListAsync();
 
@@ -121,7 +121,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				return await _listingInquiryRepository
-					.GetAll()
+					.Get()
 					.AnyAsync(e => e.Id == id);
 			}
 			catch (Exception e)
@@ -137,7 +137,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				var entities = await _listingInquiryRepository
-					.GetAll()
+					.Get()
 					.ToListAsync();
 
 				var inquiryDTOs = new List<ListingInquiryDTO>();
@@ -180,7 +180,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				var entity = await _listingInquiryRepository
-					.GetAll()
+					.Get()
 					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)
@@ -223,7 +223,7 @@ namespace GT.Core.Services.Impl
 			}
 
 			var entities = await _listingInquiryRepository
-				.GetAll()
+				.Get()
 				.Where(e => e.ListingId == id)
 				.ToListAsync();
 
@@ -268,7 +268,7 @@ namespace GT.Core.Services.Impl
 					if (await ExistsByIdAsync(id))
 					{
 						var entityToUpdate = await _listingInquiryRepository
-							.GetAll()
+							.Get()
 							.FirstOrDefaultAsync(e => e.Id == id);
 
 						// TODO implement automapper

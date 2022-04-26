@@ -23,7 +23,7 @@ namespace GT.Data.Repositories.Impl
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public virtual IQueryable<TEntity>? GetAll()
+		public virtual IQueryable<TEntity>? Get()
 		{
 			try
 			{
@@ -65,12 +65,6 @@ namespace GT.Data.Repositories.Impl
 			}
 		}
 
-		/// <summary>
-		/// Adds a new entity to the database.
-		/// </summary>
-		/// <param name="entity"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
 		public async Task<TEntity?> AddAsync(TEntity entity)
 		{
 			if (entity is not null)
@@ -96,13 +90,6 @@ namespace GT.Data.Repositories.Impl
 			}
 		}
 
-		/// <summary>
-		/// Updates an entity in the database.
-		/// </summary>
-		/// <param name="entity">Updated entity data.</param>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
 		public async Task UpdateAsync(TEntity entity, string id)
 		{
 			if (entity is not null && id is not null)
@@ -126,11 +113,6 @@ namespace GT.Data.Repositories.Impl
 			}
 		}
 
-		/// <summary>
-		/// Deletes a database entity.
-		/// </summary>
-		/// <param name="id">ID of the entity to be deleted.</param>
-		/// <returns></returns>
 		public async Task DeleteAsync(TEntity entity)
 		{
 			try

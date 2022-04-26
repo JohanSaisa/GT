@@ -72,7 +72,7 @@ namespace GT.Core.Tests.Services
 			};
 
 			mockListingRepository
-				.Setup(x => x.GetAll())
+				.Setup(x => x.Get())
 				.Returns(new List<Listing> {
 					listingInDatabase,
 					new Listing(),
@@ -136,7 +136,7 @@ namespace GT.Core.Tests.Services
 			var emptyFilterModel = new ListingFilterModel();
 
 			mockListingRepository
-				.Setup(x => x.GetAll())
+				.Setup(x => x.Get())
 				.Returns(new List<Listing> {
 					new Listing(),
 					new Listing(),
@@ -173,7 +173,7 @@ namespace GT.Core.Tests.Services
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() { new Listing { Id = idOfListingWhichExistsInDb } }
 				.AsQueryable()
 				.BuildMock()
@@ -228,7 +228,7 @@ namespace GT.Core.Tests.Services
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() { listingInDatabase }.AsQueryable().BuildMock());
 
 			var sut = new GTListingService(
@@ -289,21 +289,21 @@ namespace GT.Core.Tests.Services
 			};
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() { }.AsQueryable().BuildMock());
 
 			mockCompanyRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Company>() { new Company { Name = "ExampleCompanyName" } }
 				.AsQueryable().BuildMock());
 
 			mockLocationRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Location>() { new Location { Name = "ExampleLocationName" } }
 				.AsQueryable().BuildMock());
 
 			mockExperienceLevelRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<ExperienceLevel>() { new ExperienceLevel { Name = "ExampleExperienceLevelName" } }
 				.AsQueryable().BuildMock());
 
@@ -432,21 +432,21 @@ namespace GT.Core.Tests.Services
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() { entityInDb }.AsQueryable().BuildMock());
 
 			mockCompanyRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Company>() { new Company { Name = "New Company" } }
 				.AsQueryable().BuildMock());
 
 			mockLocationRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Location>() { new Location { Name = "New Location" } }
 				.AsQueryable().BuildMock());
 
 			mockExperienceLevelRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<ExperienceLevel>() { new ExperienceLevel { Name = "New ExperienceLevel" } }
 				.AsQueryable().BuildMock());
 
@@ -576,7 +576,7 @@ namespace GT.Core.Tests.Services
 			var exampleIdInDB = "92f44091-1f99-400c-b18d-b2789eac5c81";
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() {
 				new Listing() { Id = exampleIdInDB }
 				}
@@ -615,7 +615,7 @@ namespace GT.Core.Tests.Services
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() {
 				new Listing() { Id = "92f44091-1f99-400c-b18d-b2789eac5c81" }
 				}
@@ -654,7 +654,7 @@ namespace GT.Core.Tests.Services
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
 			mockListingRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Listing>() {
 				new Listing() { Id = "92f44091-1f99-400c-b18d-b2789eac5c81" }
 				}

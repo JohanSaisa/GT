@@ -33,7 +33,7 @@ namespace GT.Core.Services.Impl
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-					var entity = await _companyRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _companyRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
 					// TODO - Use IMapper
 					if (entity is not null)
@@ -106,7 +106,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var entity = await _companyRepository.GetAll()
+				var entity = await _companyRepository.Get()
 					.Include(e => e.Locations)
 					.Include(e => e.CompanyLogoId)
 					.FirstOrDefaultAsync(e => e.Id == id);
@@ -152,7 +152,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _companyRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _companyRepository.Get().Where(e => e.Name == name).AnyAsync();
 			}
 			catch (Exception e)
 			{
@@ -165,7 +165,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var entities = await _companyRepository.GetAll().ToListAsync();
+				var entities = await _companyRepository.Get().ToListAsync();
 				var companyDTOs = new List<CompanyDTO>();
 
 				foreach (var entity in entities)
@@ -200,7 +200,7 @@ namespace GT.Core.Services.Impl
 			{
 				// Get entity
 				var entity = await _companyRepository
-					.GetAll()
+					.Get()
 					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)
@@ -239,7 +239,7 @@ namespace GT.Core.Services.Impl
 				{
 					if (await ExistsByNameAsync(dto.Name))
 					{
-						var entityToUpdate = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Id == dto.Id);
+						var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
 
 						// TODO implement automapper
 						entityToUpdate.Id = dto.Id;
