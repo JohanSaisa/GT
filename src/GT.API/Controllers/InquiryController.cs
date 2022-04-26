@@ -20,7 +20,6 @@ namespace GT.API.Controllers
 		}
 
 		// GET: /overview
-		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetInquiries()
 		{
