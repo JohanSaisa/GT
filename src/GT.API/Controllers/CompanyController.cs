@@ -29,24 +29,26 @@ namespace GT.API.Controllers
 			_configuration = configuration;
 		}
 
-		// GET: api/Company
+		// GET: /overview
+		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetAllCompanies()
 		{
-			var companyDTOs = await _companyService
-				.GetAsync();
+			var dtos = await _companyService
+				.GetAllAsync();
 
-			if (companyDTOs is null)
+			if (dtos is null)
 			{
 				return StatusCode(500);
 			}
 
-			var result = JsonConvert.SerializeObject(companyDTOs);
+			var result = JsonConvert.SerializeObject(dtos);
 
 			return Ok(result);
 		}
 
 		// GET: /5
+		[Route("getbyid/{id}")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<string>> GetCompany(string id)
 		{
@@ -55,32 +57,31 @@ namespace GT.API.Controllers
 				return BadRequest();
 			}
 
-			var company = await _companyService
-				.GetByIdAsync(id);
+			var dto = await _companyService.GetByIdAsync(id);
 
-			if (company is null)
+			if (dto is null)
 			{
 				return NotFound();
 			}
 
-			var result = JsonConvert.SerializeObject(company);
+			var result = JsonConvert.SerializeObject(dto);
 
 			return Ok(result);
 		}
 
-		// POST: api/Company
+		// POST: /create
 		[Route("create")]
 		[HttpPost]
-		public async Task<ActionResult<string>> PostCompany(CompanyDTO company)
+		public async Task<ActionResult<string>> PostCompany(CompanyDTO dto)
 		{
-			if (company is null)
+			if (dto is null)
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				var objToReturn = await _companyService.AddAsync(company);
+				var objToReturn = await _companyService.AddAsync(dto);
 
 				var result = JsonConvert.SerializeObject(objToReturn);
 
@@ -92,19 +93,19 @@ namespace GT.API.Controllers
 			}
 		}
 
-		// PUT: company/5
-		[Route("update")]
+		// PUT: update/5
+		[Route("update/{id}")]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutCompany(string id, CompanyDTO company)
+		public async Task<IActionResult> PutCompany(string id, CompanyDTO dto)
 		{
-			if (string.IsNullOrEmpty(id) || id != company.Id)
+			if (string.IsNullOrEmpty(id) || id != dto.Id)
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				await _companyService.UpdateAsync(company, id);
+				await _companyService.UpdateAsync(dto, id);
 			}
 			catch
 			{
@@ -114,7 +115,8 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// DELETE: api/Company/5
+		// DELETE: delete/5
+		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
