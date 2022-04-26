@@ -19,6 +19,8 @@ namespace GT.API.Controllers
 			_inquiryService = inquiryService ?? throw new ArgumentNullException(nameof(inquiryService));
 		}
 
+		// GET: /overview
+		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetInquiries()
 		{
@@ -34,6 +36,7 @@ namespace GT.API.Controllers
 			return Ok(result);
 		}
 
+		// GET: /5
 		[HttpGet("{id}")]
 		public async Task<ActionResult<string>> GetInquiry(string id)
 		{
@@ -54,6 +57,7 @@ namespace GT.API.Controllers
 			return Ok(result);
 		}
 
+		// POST: /create
 		[Route("create")]
 		[HttpPost]
 		public async Task<ActionResult<string>> PostInquiry(ListingInquiryDTO dto)
@@ -77,6 +81,7 @@ namespace GT.API.Controllers
 			}
 		}
 
+		// PUT: update/5
 		[Route("update")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutInquiry(string id, ListingInquiryDTO dto)
@@ -97,6 +102,7 @@ namespace GT.API.Controllers
 			}
 		}
 
+		// DELETE: /5
 		[Route("delete")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteInquiry(string id)
