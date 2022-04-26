@@ -90,7 +90,7 @@ namespace GT.API.Controllers
 			{
 				await _listingService.DeleteAsync(id);
 			}
-			catch (Exception)
+			catch
 			{
 				return NotFound();
 			}
