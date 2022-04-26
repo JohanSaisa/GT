@@ -22,34 +22,38 @@ namespace GT.Core.Services.Impl
 
 		public async Task<CompanyDTO> AddAsync(CompanyDTO dto)
 		{
+			if (dto is null || string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrEmpty(dto.Name))
+			{
+				_logger.LogWarning($"Attempted to add a null reference to the database.");
+				return null;
+			}
 			try
 			{
-				if (dto is null || dto.Name == null)
-				{
-					_logger.LogWarning($"Attempted to add a null reference to the database.");
-					return null;
-				}
+				dto.Name = dto.Name.Trim();
+				dto.CompanyLogoId = null;
 
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
 					var entity = await _companyRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
-					// TODO - Use IMapper
+					// TODO: Use IMapper
 					if (entity is not null)
 					{
 						dto.Id = entity.Id;
 						dto.Name = entity.Name;
+						dto.CompanyLogoId = entity.CompanyLogoId;
 					}
 
 					return dto;
 				}
 
-				// TODO - Use IMapper
+				// TODO: Use IMapper
 				var newEntity = new Company()
 				{
 					Id = Guid.NewGuid().ToString(),
-					Name = dto.Name
+					Name = dto.Name,
+					CompanyLogoId = dto.CompanyLogoId,
 				};
 
 				await _companyRepository.AddAsync(newEntity);
@@ -104,6 +108,11 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
+			if (string.IsNullOrEmpty(id))
+			{
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(DeleteAsync)}");
+				return;
+			}
 			try
 			{
 				var entity = await _companyRepository.Get()
