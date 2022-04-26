@@ -148,7 +148,7 @@ namespace GT.API.Controllers
 
 				var objToReturn = await _listingService.AddAsync(dto, GetUserId());
 				var result = JsonConvert.SerializeObject(objToReturn);
-				return Ok(result);
+				return StatusCode(201, result);
 			}
 			catch (Exception)
 			{

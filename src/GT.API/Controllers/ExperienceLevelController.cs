@@ -98,7 +98,8 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// DELETE: /5
+		// DELETE: delete/5
+		[Route("delete")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteExperienceLevel(string id)
 		{

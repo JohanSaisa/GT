@@ -20,6 +20,7 @@ namespace GT.API.Controllers
 		}
 
 		// GET: /overview
+		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetInquiries()
 		{
@@ -72,7 +73,7 @@ namespace GT.API.Controllers
 
 				var result = JsonConvert.SerializeObject(objToReturn);
 
-				return Ok(result);
+				return StatusCode(201, result);
 			}
 			catch (Exception)
 			{
