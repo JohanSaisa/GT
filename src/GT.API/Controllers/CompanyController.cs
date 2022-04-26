@@ -16,17 +16,11 @@ namespace GT.API.Controllers
 	public class CompanyController : ControllerBase
 	{
 		private readonly IGTCompanyService _companyService;
-		private readonly ILogger<CompanyController> _logger;
-		private readonly IConfiguration _configuration;
 
 		public CompanyController(
-			IGTCompanyService companyService,
-			ILogger<CompanyController> logger,
-			IConfiguration configuration)
+			IGTCompanyService companyService)
 		{
 			_companyService = companyService;
-			_logger = logger;
-			_configuration = configuration;
 		}
 
 		// GET: /overview
