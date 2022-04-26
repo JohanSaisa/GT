@@ -107,6 +107,19 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public async Task<bool> ExistsByIdAsync(string id)
+		{
+			try
+			{
+				return await _experienceLevelRepository.Get().AnyAsync(e => e.Id == id);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return false;
+			}
+		}
+
 		public async Task<List<ExperienceLevelDTO?>> GetAllAsync()
 		{
 			try
