@@ -74,7 +74,7 @@ namespace GT.API.Controllers
 		}
 
 		// GET: delete/5
-		[Route("delete")]
+		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string? id)
 		{
@@ -84,12 +84,12 @@ namespace GT.API.Controllers
 			}
 
 			var listingExists = await _listingService.ExistsByIdAsync(id);
-			
+
 			if (!listingExists)
 			{
 				return NotFound();
 			}
-			
+
 			try
 			{
 				await _listingService.DeleteAsync(id);
@@ -103,7 +103,7 @@ namespace GT.API.Controllers
 		}
 
 		// PUT: update/5
-		[Route("update")]
+		[Route("update/{id}")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutListing(string id, ListingDTO dto)
 		{
