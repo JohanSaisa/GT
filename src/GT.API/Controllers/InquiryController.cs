@@ -8,17 +8,17 @@ namespace GT.API.Controllers
 {
 	[Route("api/v1/inquiries")]
 	[ApiController]
-	public class InquiryController : 
+	public class InquiryController :
 		GTControllerBase
 	{
 		private readonly GTListingInquiryService _inquiryService;
 
-		public InquiryController(GTListingInquiryService inquiryService, IConfiguration configuration) 
+		public InquiryController(GTListingInquiryService inquiryService, IConfiguration configuration)
 			: base(configuration)
 		{
 			_inquiryService = inquiryService ?? throw new ArgumentNullException(nameof(inquiryService));
 		}
-		
+
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetInquiries()
 		{
@@ -33,7 +33,7 @@ namespace GT.API.Controllers
 
 			return Ok(result);
 		}
-		
+
 		[HttpGet("{id}")]
 		public async Task<ActionResult<string>> GetInquiry(string id)
 		{
@@ -66,9 +66,9 @@ namespace GT.API.Controllers
 			try
 			{
 				var objToReturn = await _inquiryService.AddAsync(dto, GetUserId());
-				
+
 				var result = JsonConvert.SerializeObject(objToReturn);
-				
+
 				return Ok(result);
 			}
 			catch (Exception)
@@ -81,14 +81,46 @@ namespace GT.API.Controllers
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutInquiry(string id, ListingInquiryDTO dto)
 		{
-			
+			if (string.IsNullOrEmpty(id) || id != dto.Id)
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				await _inquiryService.UpdateAsync(dto, id);
+				return Ok();
+			}
+			catch (Exception)
+			{
+				return StatusCode(500);
+			}
 		}
 
 		[Route("delete")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteInquiry(string id)
 		{
-			
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest();
+			}
+
+			var inquiryExists = await _inquiryService.ExistsByIdAsync(id);
+			if (!inquiryExists)
+			{
+				return NotFound();
+			}
+
+			try
+			{
+				await _inquiryService.DeleteAsync(id);
+				return Ok();
+			}
+			catch (Exception)
+			{
+				return StatusCode(500);
+			}
 		}
 	}
 }
