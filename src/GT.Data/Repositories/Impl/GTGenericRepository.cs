@@ -23,7 +23,7 @@ namespace GT.Data.Repositories.Impl
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public virtual IQueryable<TEntity>? GetAll()
+		public virtual IQueryable<TEntity>? Get()
 		{
 			try
 			{
@@ -65,12 +65,6 @@ namespace GT.Data.Repositories.Impl
 			}
 		}
 
-		/// <summary>
-		/// Adds a new entity to the database.
-		/// </summary>
-		/// <param name="entity"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
 		public async Task<TEntity?> AddAsync(TEntity entity)
 		{
 			if (entity is not null)
@@ -96,13 +90,6 @@ namespace GT.Data.Repositories.Impl
 			}
 		}
 
-		/// <summary>
-		/// Updates an entity in the database.
-		/// </summary>
-		/// <param name="entity">Updated entity data.</param>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
 		public async Task UpdateAsync(TEntity entity, string id)
 		{
 			if (entity is not null && id is not null)
@@ -126,38 +113,26 @@ namespace GT.Data.Repositories.Impl
 			}
 		}
 
-		/// <summary>
-		/// Deletes a database entity.
-		/// </summary>
-		/// <param name="id">ID of the entity to be deleted.</param>
-		/// <returns></returns>
-		public async Task DeleteAsync(string id)
+		public async Task DeleteAsync(TEntity entity)
 		{
-			if (id is not null)
+			try
 			{
-				try
+				if (entity is not null)
 				{
-					var item = await _context
+					_context
 						.Set<TEntity>()
-						.FirstOrDefaultAsync(e => e.Id == id);
+						.Remove(entity);
 
-					if (item is not null)
-					{
-						_context
-							.Set<TEntity>()
-							.Remove(item);
-
-						await _context.SaveChangesAsync();
-					}
+					await _context.SaveChangesAsync();
 				}
-				catch (Exception ex)
+				else
 				{
-					_logger.LogError(ex.Message);
+					_logger.LogWarning("Attempted to update a null reference entity to the database.");
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				_logger.LogWarning("Attempted to update a null reference entity to the database.");
+				_logger.LogError(ex.Message);
 			}
 		}
 

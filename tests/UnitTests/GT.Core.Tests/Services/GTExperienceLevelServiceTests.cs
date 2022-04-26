@@ -144,7 +144,7 @@ namespace GT.Core.Tests.Services
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
 			mockRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<ExperienceLevel>()
 				 {
 						new ExperienceLevel { Name = "NameInDb" },
@@ -169,7 +169,7 @@ namespace GT.Core.Tests.Services
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
 			mockRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<ExperienceLevel>()
 				 {
 						new ExperienceLevel {},
@@ -196,7 +196,7 @@ namespace GT.Core.Tests.Services
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
 			mockRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<ExperienceLevel>()
 				{ }.AsQueryable().BuildMock()
 				);
