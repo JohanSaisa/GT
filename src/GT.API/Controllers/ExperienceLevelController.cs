@@ -23,7 +23,7 @@ namespace GT.API.Controllers
 		{
 			var experienceLevels = await _experienceLevelService.GetAllAsync();
 
-			if (experienceLevels == null)
+			if (experienceLevels is null)
 			{
 				return NotFound();
 			}
@@ -44,7 +44,7 @@ namespace GT.API.Controllers
 
 			var experienceLevel = await _experienceLevelService.GetByIdAsync(id);
 
-			if (experienceLevel == null)
+			if (experienceLevel is null)
 			{
 				return NotFound();
 			}
@@ -106,7 +106,7 @@ namespace GT.API.Controllers
 			{
 				return BadRequest();
 			}
-
+			
 			try
 			{
 				await _experienceLevelService.DeleteAsync(id);				
