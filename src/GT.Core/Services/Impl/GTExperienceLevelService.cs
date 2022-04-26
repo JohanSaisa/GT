@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+using GT.Core.DTO.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
@@ -98,7 +98,20 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _experienceLevelRepository.Get().Where(e => e.Name == name).AnyAsync();
+				return await _experienceLevelRepository.Get().AnyAsync(e => e.Name == name);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return false;
+			}
+		}
+
+		public async Task<bool> ExistsByIdAsync(string id)
+		{
+			try
+			{
+				return await _experienceLevelRepository.Get().AnyAsync(e => e.Id == id);
 			}
 			catch (Exception e)
 			{
@@ -167,25 +180,29 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name)
+		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string id)
 		{
 			try
 			{
-				if (experienceLevelDTO.Name != name)
+				if (experienceLevelDTO.Id != id)
 				{
-					_logger.LogWarning($"Names are not matching in method: {nameof(UpdateAsync)}.");
+					_logger.LogWarning($"Ids are not matching in method: {nameof(UpdateAsync)}.");
 					return;
 				}
-				if (experienceLevelDTO.Id is not null && name is not null)
+				if (experienceLevelDTO.Id is not null && id is not null)
 				{
-					if (await ExistsByNameAsync(name))
+					if (await ExistsByIdAsync(id))
 					{
 						var entityToUpdate = await _experienceLevelRepository.Get().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
 
-						// TODO implement automapper
-						entityToUpdate.Name = name;
+						// TODO: Refactor and implement automapper
+						if (entityToUpdate is null)
+						{
+							_logger.LogWarning($"Entity was not found with existing Id");
+							return;
+						}
 
-						await _experienceLevelRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+						await _experienceLevelRepository.UpdateAsync(entityToUpdate, id);
 					}
 				}
 				else

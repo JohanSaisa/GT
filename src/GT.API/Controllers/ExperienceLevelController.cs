@@ -23,7 +23,7 @@ namespace GT.API.Controllers
 		{
 			var experienceLevels = await _experienceLevelService.GetAllAsync();
 
-			if (experienceLevels == null)
+			if (experienceLevels is null)
 			{
 				return NotFound();
 			}
@@ -44,7 +44,7 @@ namespace GT.API.Controllers
 
 			var experienceLevel = await _experienceLevelService.GetByIdAsync(id);
 
-			if (experienceLevel == null)
+			if (experienceLevel is null)
 			{
 				return NotFound();
 			}
@@ -77,7 +77,7 @@ namespace GT.API.Controllers
 		}
 
 		// PUT: update/5
-		[Route("update")]
+		[Route("update/{id}")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutExperienceLevel(string id, ExperienceLevelDTO experienceLevel)
 		{
@@ -88,7 +88,7 @@ namespace GT.API.Controllers
 
 			try
 			{
-				await _experienceLevelService.UpdateAsync(experienceLevel, experienceLevel.Name);
+				await _experienceLevelService.UpdateAsync(experienceLevel, id);
 			}
 			catch
 			{
@@ -98,7 +98,8 @@ namespace GT.API.Controllers
 			return Ok();
 		}
 
-		// DELETE: /5
+		// DELETE: delete/5
+		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteExperienceLevel(string id)
 		{
@@ -109,7 +110,7 @@ namespace GT.API.Controllers
 
 			try
 			{
-				await _experienceLevelService.DeleteAsync(id);				
+				await _experienceLevelService.DeleteAsync(id);
 			}
 			catch (Exception)
 			{

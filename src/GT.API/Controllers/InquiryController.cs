@@ -1,5 +1,6 @@
 ﻿using GT.Core.DTO.Impl;
 using GT.Core.Services.Impl;
+using GT.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,15 +12,16 @@ namespace GT.API.Controllers
 	public class InquiryController :
 		GTControllerBase
 	{
-		private readonly GTListingInquiryService _inquiryService;
+		private readonly IGTListingInquiryService _inquiryService;
 
-		public InquiryController(GTListingInquiryService inquiryService, IConfiguration configuration)
+		public InquiryController(IGTListingInquiryService inquiryService, IConfiguration configuration)
 			: base(configuration)
 		{
 			_inquiryService = inquiryService ?? throw new ArgumentNullException(nameof(inquiryService));
 		}
 
 		// GET: /overview
+		[Route("overview")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetInquiries()
 		{
@@ -72,7 +74,7 @@ namespace GT.API.Controllers
 
 				var result = JsonConvert.SerializeObject(objToReturn);
 
-				return Ok(result);
+				return StatusCode(201, result);
 			}
 			catch (Exception)
 			{
@@ -81,7 +83,7 @@ namespace GT.API.Controllers
 		}
 
 		// PUT: update/5
-		[Route("update")]
+		[Route("update/{id}")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutInquiry(string id, ListingInquiryDTO dto)
 		{
@@ -102,7 +104,7 @@ namespace GT.API.Controllers
 		}
 
 		// DELETE: delete/5
-		[Route("delete")]
+		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteInquiry(string id)
 		{

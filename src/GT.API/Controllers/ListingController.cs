@@ -12,27 +12,24 @@ namespace GT.API.Controllers
 {
 	[Route("api/v1/listings")]
 	[ApiController]
-	public class ListingController : ControllerBase
+	public class ListingController : GTControllerBase
 	{
 		private readonly IGTListingService _listingService;
 		private readonly IGTCompanyService _companyService;
 		private readonly IGTExperienceLevelService _experienceLevelService;
 		private readonly IGTLocationService _locationService;
-		private readonly IConfiguration _configuration;
 
 		public ListingController(
 			IGTListingService listingService,
 			IGTCompanyService companyService,
 			IGTExperienceLevelService experienceLevelService,
 			IGTLocationService locationService,
-			IGTListingInquiryService listingInquiryService,
-			IConfiguration configuration)
+			IConfiguration configuration) : base(configuration)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 			_companyService = companyService ?? throw new ArgumentNullException(nameof(companyService));
 			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
 			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
-			_configuration = configuration;
 		}
 
 		// GET: /overview
@@ -45,7 +42,7 @@ namespace GT.API.Controllers
 			var dtos = await _listingService
 				.GetAllByFilterAsync(filterModel);
 
-			if (dtos == null)
+			if (dtos is null)
 			{
 				return NotFound();
 			}
@@ -66,7 +63,7 @@ namespace GT.API.Controllers
 			var dto = await _listingService
 				.GetByIdAsync(id);
 
-			if (dto == null)
+			if (dto is null)
 			{
 				return NotFound();
 			}
@@ -77,7 +74,7 @@ namespace GT.API.Controllers
 		}
 
 		// GET: delete/5
-		[Route("delete")]
+		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteListing(string? id)
 		{
@@ -86,20 +83,27 @@ namespace GT.API.Controllers
 				return BadRequest();
 			}
 
+			var listingExists = await _listingService.ExistsByIdAsync(id);
+
+			if (!listingExists)
+			{
+				return NotFound();
+			}
+
 			try
 			{
 				await _listingService.DeleteAsync(id);
 			}
 			catch
 			{
-				return NotFound();
+				return StatusCode(500);
 			}
 
 			return Ok();
 		}
 
 		// PUT: update/5
-		[Route("update")]
+		[Route("update/{id}")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutListing(string id, ListingDTO dto)
 		{
@@ -144,39 +148,12 @@ namespace GT.API.Controllers
 
 				var objToReturn = await _listingService.AddAsync(dto, GetUserId());
 				var result = JsonConvert.SerializeObject(objToReturn);
-				return Ok(result);
+				return StatusCode(201, result);
 			}
 			catch (Exception)
 			{
 				return StatusCode(500);
 			}
-		}
-
-		private string GetUserId()
-		{
-			string authHeaderValue = Request.Headers["Authorization"];
-
-			var tokenClaims = GetClaims(authHeaderValue.Substring("Bearer ".Length).Trim());
-
-			var userId = tokenClaims.Claims
-				.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-			return userId;
-		}
-
-		public ClaimsPrincipal GetClaims(string token)
-		{
-			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"]));
-			var handler = new JwtSecurityTokenHandler();
-			var validations = new TokenValidationParameters
-			{
-				ValidateIssuerSigningKey = true,
-				IssuerSigningKey = key,
-				ValidateIssuer = false,
-				ValidateAudience = false
-			};
-
-			return handler.ValidateToken(token, validations, out _);
 		}
 	}
 }
