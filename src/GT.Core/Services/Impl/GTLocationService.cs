@@ -29,6 +29,14 @@ namespace GT.Core.Services.Impl
 					return null;
 				}
 
+				dto.Name = dto.Name.Trim();
+
+				if (String.IsNullOrWhiteSpace(dto.Name))
+				{
+					_logger.LogWarning($"Attempted to add a dto without a name to the database.");
+					return null;
+				}
+
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");

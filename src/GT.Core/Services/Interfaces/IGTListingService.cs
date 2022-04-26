@@ -10,40 +10,35 @@ namespace GT.Core.Services.Interfaces
 		/// </summary>
 		/// <param name="filter">Optional filter paramater.</param>
 		/// <returns>Returns all listings which match the provided filtered values. Returns all listings if no filter is provided.</returns>
-		Task<List<ListingOverviewDTO>> GetAsync(IListingFilterModel? filter = null);
+		Task<List<ListingOverviewDTO>> GetAllByFilterAsync(IListingFilterModel? filter = null);
 
 		/// <summary>
-		/// Sends request to the repository to delete the entity from the database.
+		/// Sends request to the repository to find by id and map an entity to DTO from the database.
 		/// </summary>
-		Task<ListingDTO?> GetByIdAsync(string listingId);
+		Task<ListingDTO?> GetByIdAsync(string id);
 
 		/// <summary>
 		/// Converts a DTO to entities and sends a request to update the database.
 		/// Requires the signed in users Id for assignment of CreatedBy property.
 		/// </summary>
-		/// <param name="listingDTO"></param>
 		/// <returns>The input DTO with an updated Id.</returns>
-		Task<ListingDTO?> AddAsync(ListingDTO listingDTO, string signedInUserId);
+		Task<ListingDTO?> AddAsync(ListingDTO dto, string signedInUserId);
 
 		/// <summary>
 		/// Converts a DTO to entities and sends a request to update the database.
 		/// Requires the listingId for model validation.
 		/// </summary>
-		/// <param name="listingDTO"></param>
-		/// <param name="listingId"></param>
-		/// <returns></returns>
-		Task UpdateAsync(ListingDTO listingDTO, string listingId);
+		Task UpdateAsync(ListingDTO dto, string id);
 
 		/// <summary>
 		/// Sends request to the repository to delete the entity from the database.
 		/// </summary>
-		/// <param name="listingId"></param>
-		Task DeleteAsync(string listingId);
+		Task DeleteAsync(string id);
 
 		/// <summary>
 		/// Asks the repository if an entity with the assigned id exists.
 		/// </summary>
-		/// <param name="listingId">Confirmation as true if entity is found, false if not.</param>
-		Task<bool> ExistsByIdAsync(string listingId);
+		/// <returns>Confirmation as true if entity is found, false if not.</returns>
+		Task<bool> ExistsByIdAsync(string id);
 	}
 }

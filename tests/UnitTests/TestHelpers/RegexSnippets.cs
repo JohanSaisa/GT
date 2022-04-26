@@ -21,7 +21,7 @@ namespace TestHelpers
 			else
 			{
 				throw new Exception($"{nameof(regexString)} is not providing a valid regex pattern. " +
-					"Re Review method RegexSnippets.GetGuidRegex().");
+					"Re review method RegexSnippets.GetGuidRegex().");
 			}
 		}
 	}

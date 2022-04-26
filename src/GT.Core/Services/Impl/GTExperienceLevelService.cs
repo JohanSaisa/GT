@@ -75,6 +75,22 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
+		public async Task DeleteAsync(string id)
+		{
+			try
+			{
+				if (_experienceLevelRepository.GetAll().Any(e => e.Id == id))
+				{
+
+					await _experienceLevelRepository.DeleteAsync(id);
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
+		}
+
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
 			try
@@ -114,6 +130,69 @@ namespace GT.Core.Services.Impl
 			{
 				_logger.LogError(e.Message);
 				return null;
+			}
+		}
+
+		public async Task<ExperienceLevelDTO?> GetByIdAsync(string id)
+		{
+			try
+			{
+				// Get entity
+				var entity = await _experienceLevelRepository
+					.GetAll()
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (entity == null)
+				{
+					_logger.LogInformation($"Entity with id {id} not found.");
+					return null;
+				}
+
+				// Map entity to DTO
+				var experienceLevelDTO = new ExperienceLevelDTO()
+				{
+					Id = entity.Id,
+					Name = entity.Name,
+				};
+
+				return experienceLevelDTO;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return null;
+			}
+		}
+
+		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name)
+		{
+			try
+			{
+				if (experienceLevelDTO.Name != name)
+				{
+					_logger.LogWarning($"Names are not matching in method: {nameof(UpdateAsync)}.");
+					return;
+				}
+				if (experienceLevelDTO.Id is not null && name is not null)
+				{
+					if (await ExistsByNameAsync(name))
+					{
+						var entityToUpdate = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
+
+						// TODO implement automapper
+						entityToUpdate.Name = name;
+
+						await _experienceLevelRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+					}
+				}
+				else
+				{
+					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
 			}
 		}
 	}

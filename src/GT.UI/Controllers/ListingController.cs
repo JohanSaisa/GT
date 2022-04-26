@@ -52,7 +52,7 @@ namespace GT.UI.Controllers
 			}
 
 			var listingDTOs = await _listingService
-				.GetAsync(filterModel?.Filter);
+				.GetAllByFilterAsync(filterModel?.Filter);
 
 			if (listingDTOs == null)
 			{
