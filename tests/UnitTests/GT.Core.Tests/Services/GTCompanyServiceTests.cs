@@ -439,6 +439,6 @@ namespace GT.Core.Tests.Services
 
 		public async Task UpdateAsync_InvalidId_FailsReturnFalse() { }
 
-		public async Task UpdateAsync_ValidId_SucceedsReturnTrue() { }
+		public async Task UpdateAsync_ValidDTO_SucceedsReturnTrue() { }
 	}
 }
