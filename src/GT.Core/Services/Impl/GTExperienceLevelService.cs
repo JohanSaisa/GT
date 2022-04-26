@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+using GT.Core.DTO.Impl;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
@@ -42,7 +42,7 @@ namespace GT.Core.Services.Impl
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
 
-					var entity = await _experienceLevelRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _experienceLevelRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
 					// TODO - Use IMapper
 					if (entity is not null)
@@ -79,10 +79,13 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				if (_experienceLevelRepository.GetAll().Any(e => e.Id == id))
-				{
+				var entity = await _experienceLevelRepository.Get()
+					.Include(e => e.Listings)
+					.FirstOrDefaultAsync(e => e.Id == id);
 
-					await _experienceLevelRepository.DeleteAsync(id);
+				if (entity is not null)
+				{
+					await _experienceLevelRepository.DeleteAsync(entity);
 				}
 			}
 			catch (Exception e)
@@ -95,7 +98,20 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _experienceLevelRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _experienceLevelRepository.Get().AnyAsync(e => e.Name == name);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return false;
+			}
+		}
+
+		public async Task<bool> ExistsByIdAsync(string id)
+		{
+			try
+			{
+				return await _experienceLevelRepository.Get().AnyAsync(e => e.Id == id);
 			}
 			catch (Exception e)
 			{
@@ -109,7 +125,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				var experienceLevelEntitiess = await _experienceLevelRepository
-					.GetAll()
+					.Get()
 					.ToListAsync();
 
 				var experienceLevelDTOs = new List<ExperienceLevelDTO>();
@@ -139,7 +155,7 @@ namespace GT.Core.Services.Impl
 			{
 				// Get entity
 				var entity = await _experienceLevelRepository
-					.GetAll()
+					.Get()
 					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)
@@ -164,25 +180,29 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string name)
+		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string id)
 		{
 			try
 			{
-				if (experienceLevelDTO.Name != name)
+				if (experienceLevelDTO.Id != id)
 				{
-					_logger.LogWarning($"Names are not matching in method: {nameof(UpdateAsync)}.");
+					_logger.LogWarning($"Ids are not matching in method: {nameof(UpdateAsync)}.");
 					return;
 				}
-				if (experienceLevelDTO.Id is not null && name is not null)
+				if (experienceLevelDTO.Id is not null && id is not null)
 				{
-					if (await ExistsByNameAsync(name))
+					if (await ExistsByIdAsync(id))
 					{
-						var entityToUpdate = await _experienceLevelRepository.GetAll().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
+						var entityToUpdate = await _experienceLevelRepository.Get().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
 
-						// TODO implement automapper
-						entityToUpdate.Name = name;
+						// TODO: Refactor and implement automapper
+						if (entityToUpdate is null)
+						{
+							_logger.LogWarning($"Entity was not found with existing Id");
+							return;
+						}
 
-						await _experienceLevelRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+						await _experienceLevelRepository.UpdateAsync(entityToUpdate, id);
 					}
 				}
 				else

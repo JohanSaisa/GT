@@ -118,7 +118,7 @@ namespace GT.Core.Tests.Services
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
 			mockRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Location>
 				{
 					new Location { Name = "NameInDb" }
@@ -145,7 +145,7 @@ namespace GT.Core.Tests.Services
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
 			mockRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Location>()
 				 {
 						new Location {},
@@ -172,7 +172,7 @@ namespace GT.Core.Tests.Services
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
 			mockRepository
-				.Setup(m => m.GetAll())
+				.Setup(m => m.Get())
 				.Returns(new List<Location>()
 				{ }.AsQueryable().BuildMock()
 				);

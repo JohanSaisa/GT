@@ -22,38 +22,34 @@ namespace GT.Core.Services.Impl
 
 		public async Task<CompanyDTO> AddAsync(CompanyDTO dto)
 		{
-			if (dto is null || string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrEmpty(dto.Name))
-			{
-				_logger.LogWarning($"Attempted to add a null reference to the database.");
-				return null;
-			}
 			try
 			{
-				dto.Name = dto.Name.Trim();
-				dto.CompanyLogoId = null;
+				if (dto is null || dto.Name == null)
+				{
+					_logger.LogWarning($"Attempted to add a null reference to the database.");
+					return null;
+				}
 
 				if (await ExistsByNameAsync(dto.Name))
 				{
 					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-					var entity = await _companyRepository.GetAll().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
+					var entity = await _companyRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
-					// TODO: Use IMapper
+					// TODO - Use IMapper
 					if (entity is not null)
 					{
 						dto.Id = entity.Id;
 						dto.Name = entity.Name;
-						dto.CompanyLogoId = entity.CompanyLogoId;
 					}
 
 					return dto;
 				}
 
-				// TODO: Use IMapper
+				// TODO - Use IMapper
 				var newEntity = new Company()
 				{
 					Id = Guid.NewGuid().ToString(),
-					Name = dto.Name,
-					CompanyLogoId = dto.CompanyLogoId,
+					Name = dto.Name
 				};
 
 				await _companyRepository.AddAsync(newEntity);
@@ -108,16 +104,16 @@ namespace GT.Core.Services.Impl
 
 		public async Task DeleteAsync(string id)
 		{
-			if (string.IsNullOrEmpty(id))
-			{
-				_logger.LogWarning($"Can not use null arguments in method: {nameof(DeleteAsync)}");
-				return;
-			}
 			try
 			{
-				if(_companyRepository.GetAll().Any(e => e.Id == id))
+				var entity = await _companyRepository.Get()
+					.Include(e => e.Locations)
+					.Include(e => e.CompanyLogoId)
+					.FirstOrDefaultAsync(e => e.Id == id);
+
+				if (entity is not null)
 				{
-					await _companyRepository.DeleteAsync(id);
+					await _companyRepository.DeleteAsync(entity);
 				}
 			}
 			catch (Exception e)
@@ -156,7 +152,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				return await _companyRepository.GetAll().Where(e => e.Name == name).AnyAsync();
+				return await _companyRepository.Get().Where(e => e.Name == name).AnyAsync();
 			}
 			catch (Exception e)
 			{
@@ -169,7 +165,7 @@ namespace GT.Core.Services.Impl
 		{
 			try
 			{
-				var entities = await _companyRepository.GetAll().ToListAsync();
+				var entities = await _companyRepository.Get().ToListAsync();
 				var companyDTOs = new List<CompanyDTO>();
 
 				foreach (var entity in entities)
@@ -204,7 +200,7 @@ namespace GT.Core.Services.Impl
 			{
 				// Get entity
 				var entity = await _companyRepository
-					.GetAll()
+					.Get()
 					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)
@@ -243,7 +239,7 @@ namespace GT.Core.Services.Impl
 				{
 					if (await ExistsByNameAsync(dto.Name))
 					{
-						var entityToUpdate = await _companyRepository.GetAll().FirstOrDefaultAsync(e => e.Id == dto.Id);
+						var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
 
 						// TODO implement automapper
 						entityToUpdate.Id = dto.Id;
