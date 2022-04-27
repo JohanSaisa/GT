@@ -248,15 +248,15 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> UpdateAsync(CompanyDTO dto, string id)
 		{
-			if (dto.Id != id)
+			if (string.IsNullOrEmpty(id))
 			{
-				_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(UpdateAsync)}.");
 				return false;
 			}
 
-			if (string.IsNullOrEmpty(id))
+			if (dto.Id != id)
 			{
-				_logger.LogWarning($"Can not use null arguments in method: { nameof(UpdateAsync)}.");
+				_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
 				return false;
 			}
 

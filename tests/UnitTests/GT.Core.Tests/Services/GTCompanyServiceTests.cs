@@ -435,7 +435,50 @@ namespace GT.Core.Tests.Services
 		}
 
 		[Fact]
-		public async Task UpdateAsync_CheckIfDTOIdAndInputIdMatch_FailsReturnFalse(){		}
+		public async Task UpdateAsync_CheckIfDTOIdAndInputIdMatch_FailsReturnFalse()
+		{
+			// Arrange
+			CompanyDTO dto = new CompanyDTO() { Id = "dtoId"};
+			string inputId = "inputId";
+
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.UpdateAsync(dto, inputId);
+
+			// Assert
+			mockRepository.Verify(m => m.UpdateAsync(It.IsAny<Company>(), inputId), Times.Never);
+
+			result.Should()
+				.BeFalse();
+		}
+
+		[Fact]
+		public async Task UpdateAsync_CheckIfDTOIdAndInputIdMatch_SucceedsAndReturnTrue()
+		{
+			// Arrange
+			CompanyDTO dto = new CompanyDTO() { Id = "companyId" };
+			string inputId = "companyId";
+
+			var mockLogger = new Mock<ILogger<GTCompanyService>>();
+			var mockRepository = new Mock<IGTGenericRepository<Company>>();
+
+
+			var sut = new GTCompanyService(mockLogger.Object, mockRepository.Object);
+
+			// Act
+			var result = await sut.UpdateAsync(dto, inputId);
+
+			// Assert
+			mockRepository.Verify(m => m.UpdateAsync(It.IsAny<Company>(), inputId), Times.Once);
+
+			result.Should()
+				.BeTrue();
+		}
 
 		public async Task UpdateAsync_InvalidId_FailsReturnFalse() { }
 
