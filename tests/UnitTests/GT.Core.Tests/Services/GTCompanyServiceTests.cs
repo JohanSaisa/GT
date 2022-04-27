@@ -552,7 +552,7 @@ namespace GT.Core.Tests.Services
 
 			// Assert
 			mockRepository.Verify(m => m.Get(), Times.Exactly(2));
-			mockRepository.Verify(m => m.UpdateAsync(It.IsAny<Company>(), "validId"), Times.Once);
+			mockRepository.Verify(m => m.UpdateAsync(It.IsAny<Company>(), dto.Id), Times.Once);
 
 			result.Should()
 				.BeTrue();
