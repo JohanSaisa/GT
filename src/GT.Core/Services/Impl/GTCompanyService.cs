@@ -161,13 +161,32 @@ namespace GT.Core.Services.Impl
 		{
 			if (string.IsNullOrEmpty(name))
 			{
-				_logger.LogWarning($"Can not use null arguments in method: {nameof(DeleteAsync)}");
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(ExistsByNameAsync)}");
 				return false;
 			}
 
 			try
 			{
 				return await _companyRepository.Get().Where(e => e.Name == name).AnyAsync();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+				return false;
+			}
+		}
+
+		public async Task<bool> ExistsByIdAsync(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				_logger.LogWarning($"Can not use null arguments in method: {nameof(ExistsByIdAsync)}");
+				return false;
+			}
+
+			try
+			{
+				return await _companyRepository.Get().AnyAsync(e => e.Id == id);
 			}
 			catch (Exception e)
 			{
@@ -248,11 +267,14 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> UpdateAsync(CompanyDTO dto, string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(dto.Id))
 			{
 				_logger.LogWarning($"Can not use null arguments in method: {nameof(UpdateAsync)}.");
 				return false;
 			}
+
+			dto.Id = dto.Id.Trim();
+			id = id.Trim();
 
 			if (dto.Id != id)
 			{
@@ -261,10 +283,12 @@ namespace GT.Core.Services.Impl
 			}
 
 			try
-			{				
-				if (await ExistsByNameAsync(dto.Name))
+			{
+				if (await ExistsByIdAsync(dto.Id))
 				{
-					var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
+					var entityToUpdate = await _companyRepository
+						.Get()
+						.FirstOrDefaultAsync(e => e.Id == dto.Id);
 
 					// TODO implement automapper
 					entityToUpdate.Name = dto.Name;
@@ -275,7 +299,7 @@ namespace GT.Core.Services.Impl
 				}
 				else
 				{
-					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
+					_logger.LogWarning($"Entity to update does not exist: {nameof(UpdateAsync)}.");
 					return false;
 				}
 			}

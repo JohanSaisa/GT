@@ -12,6 +12,8 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> ExistsByNameAsync(string name);
 
+		Task<bool> ExistsByIdAsync(string id);
+
 		Task<bool> AddCompanyLogoAsync(CompanyLogoDTO dto);
 
 		Task<bool> DeleteCompanyLogoAsync(string id);
