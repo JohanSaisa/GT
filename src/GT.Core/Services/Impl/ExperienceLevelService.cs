@@ -17,60 +17,41 @@ namespace GT.Core.Services.Impl
 				?? throw new ArgumentNullException(nameof(experienceLevelRepository));
 		}
 
-		public async Task<bool> AddAsync(ExperienceLevelDTO dto)
+		public async Task<bool> AddAsync(PostExperienceLevelDTO dto)
 		{
-			if (string.IsNullOrWhiteSpace(dto.Name))
+			if (string.IsNullOrEmpty(dto.Name!.Trim()))
 			{
-				//sad **************************************************
+				throw new ArgumentException("Name property cannot be null or empty.");
 			}
 
 			dto.Name = dto.Name.Trim();
 
+			
 			if (await ExistsByNameAsync(dto.Name))
 			{
-				var entity = await _experienceLevelRepository.Get()!.Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
-
-				// TODO - Use IMapper
-				if (entity is not null)
-				{
-					dto.Id = entity.Id;
-					dto.Name = entity.Name;
-				}
-
-				return dto;
+				throw new ArgumentException($"ExperienceLevel with name {dto.Name} already exists.");
 			}
 
-			// TODO - Use IMapper
-			var newEntity = new ExperienceLevel()
+			var entity = new ExperienceLevel
 			{
 				Id = Guid.NewGuid().ToString(),
 				Name = dto.Name
 			};
 
-			await _experienceLevelRepository.AddAsync(newEntity);
+			await _experienceLevelRepository.AddAsync(entity);
 
-			// Assigning the updated id to the DTO as it is the only property with a new value.
-			dto.Id = newEntity.Id;
-
-			return dto;
+			return await _experienceLevelRepository.SaveAsync();
 		}
 
-		public async Task DeleteAsync(string id)
+		public async Task<bool> DeleteAsync(string id)
 		{
-			try
-			{
-				var entity = await _experienceLevelRepository.Get()
-					.Include(e => e.Listings)
-					.FirstOrDefaultAsync(e => e.Id == id);
+			var entity = await _experienceLevelRepository.Get()!
+				.Include(e => e.Listings)
+				.FirstOrDefaultAsync(e => e.Id == id);
 
-				if (entity is not null)
-				{
-					await _experienceLevelRepository.DeleteAsync(entity);
-				}
-			}
-			catch (Exception e)
+			if (entity is null)
 			{
-				_logger.LogError(e.Message);
+				
 			}
 		}
 
