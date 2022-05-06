@@ -23,26 +23,23 @@ namespace GT.API.Controllers
 			_companyService = companyService;
 		}
 
-		// GET: /overview
-		[Route("overview")]
-		[HttpGet]
-		public async Task<ActionResult<IEnumerable<string>>> GetAllCompanies()
+		// GET:
+		[HttpGet()]
+		public async Task<ActionResult<List<CompanyDTO>>> GetAllCompanies()
 		{
-			var dtos = await _companyService
-				.GetAllAsync();
-
-			if (dtos is null)
+			try
 			{
-				return StatusCode(500);
+				var dtos = await _companyService.GetAllAsync();
+
+				return Ok(dtos);
 			}
-
-			var result = JsonConvert.SerializeObject(dtos);
-
-			return Ok(result);
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
 		// GET: /5
-		[Route("getbyid/{id}")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<string>> GetCompany(string id)
 		{
@@ -51,16 +48,23 @@ namespace GT.API.Controllers
 				return BadRequest();
 			}
 
-			var dto = await _companyService.GetByIdAsync(id);
-
-			if (dto is null)
+			try
 			{
-				return NotFound();
+				var dto = await _companyService.GetByIdAsync(id);
+
+				if (dto is null)
+				{
+					return NotFound();
+				}
+
+				var result = JsonConvert.SerializeObject(dto);
+
+				return Ok(result);
 			}
-
-			var result = JsonConvert.SerializeObject(dto);
-
-			return Ok(result);
+			catch (Exception)
+			{
+				throw;
+			}
 		}
 
 		// POST: /create
