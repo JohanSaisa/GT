@@ -8,61 +8,43 @@ using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTCompanyService : IGTCompanyService
+	public class CompanyService : ICompanyService
 	{
-		private readonly ILogger<GTCompanyService> _logger;
 		private readonly IGTGenericRepository<Company> _companyRepository;
 
-		public GTCompanyService(ILogger<GTCompanyService> logger,
-			IGTGenericRepository<Company> companyRepository)
+		public CompanyService(IGTGenericRepository<Company> companyRepository)
 		{
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
 		}
 
-		public async Task<CompanyDTO> AddAsync(CompanyDTO dto)
+		public async Task<bool> AddAsync(PostCompanyDTO dto)
 		{
-			try
+			if (dto is null || dto.Name == null)
 			{
-				if (dto is null || dto.Name == null)
-				{
-					_logger.LogWarning($"Attempted to add a null reference to the database.");
-					return null;
-				}
-
-				if (await ExistsByNameAsync(dto.Name))
-				{
-					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-					var entity = await _companyRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
-
-					// TODO - Use IMapper
-					if (entity is not null)
-					{
-						dto.Id = entity.Id;
-						dto.Name = entity.Name;
-					}
-
-					return dto;
-				}
-
-				// TODO - Use IMapper
-				var newEntity = new Company()
-				{
-					Id = Guid.NewGuid().ToString(),
-					Name = dto.Name
-				};
-
-				await _companyRepository.AddAsync(newEntity);
-
-				// Assigning the updated id to the DTO as it is the only property with a new value.
-				dto.Id = newEntity.Id;
-				return dto;
+				throw new ArgumentNullException(nameof(dto));
 			}
-			catch (Exception e)
+
+			// trim input
+
+			if (await ExistsByNameAsync(dto.Name))
 			{
-				_logger.LogError(e.Message);
-				return null;
+				throw new ArgumentException($"Company with name {dto.Name} already exists.");
 			}
+
+			//*******************************************
+
+			// TODO - Use IMapper
+			var newEntity = new Company()
+			{
+				Id = Guid.NewGuid().ToString(),
+				Name = dto.Name
+			};
+
+			await _companyRepository.AddAsync(newEntity);
+
+			// Assigning the updated id to the DTO as it is the only property with a new value.
+			dto.Id = newEntity.Id;
+			return dto;
 		}
 
 		public async Task<bool> AddCompanyLogoAsync(CompanyLogoDTO dto)
