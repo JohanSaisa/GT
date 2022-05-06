@@ -4,7 +4,6 @@ using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
@@ -159,90 +158,68 @@ namespace GT.Core.Services.Impl
 
 		public async Task<CompanyDTO> GetByIdAsync(string id)
 		{
-			if (id is null)
+			if (string.IsNullOrEmpty(id))
 			{
-				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByIdAsync)}");
-				return null;
+				throw new ArgumentException("No id was submitted.");
 			}
 
-			try
+			// Get entity
+			var entity = await _companyRepository
+				.Get()
+				.FirstOrDefaultAsync(e => e.Id == id);
+
+			if (entity is null)
 			{
-				// Get entity
-				var entity = await _companyRepository
-					.Get()
-					.FirstOrDefaultAsync(e => e.Id == id);
-
-				if (entity == null)
-				{
-					_logger.LogInformation($"Entity with id {id} not found.");
-					return null;
-				}
-
-				// Map entity to DTO
-				var company = new CompanyDTO()
-				{
-					Id = entity.Id,
-					Name = entity.Name,
-					CompanyLogoId = entity.CompanyLogoId,
-				};
-
-				return company;
+				throw new Exception($"No entity with id: {id} was found.");
 			}
-			catch (Exception e)
+
+			// TODO: Add Automapper
+			var company = new CompanyDTO()
 			{
-				_logger.LogError(e.Message);
-				return null;
-			}
+				Id = entity.Id,
+				Name = entity.Name,
+			};
+
+			return company;
 		}
 
-		public async Task<bool> UpdateAsync(CompanyDTO dto, string id)
+		public async Task<bool> UpdateAsync(PostCompanyDTO dto, string id)
 		{
-			try
+			if (string.IsNullOrEmpty(id))
 			{
-				if (dto.Id != id)
-				{
-					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
-					return false;
-				}
-				if (dto.Id is not null && id is not null)
-				{
-					if (await ExistsByNameAsync(dto.Name))
-					{
-						var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
-
-						// TODO implement automapper
-						entityToUpdate.Id = dto.Id;
-						entityToUpdate.Name = dto.Name;
-						entityToUpdate.CompanyLogoId = dto.CompanyLogoId;
-
-						await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
-						return true;
-					}
-					return false;
-				}
-				else
-				{
-					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
-					return false;
-				}
+				throw new ArgumentException("No id was submitted.");
 			}
-			catch (Exception e)
+
+			if (dto is null)
 			{
-				_logger.LogError(e.Message);
-				return false;
+				throw new ArgumentNullException("No dto was submitted.");
 			}
+
+			if (await ExistsByNameAsync(dto.Name))
+			{
+					private var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
+
+		// TODO implement automapper
+		entityToUpdate.Id = dto.Id;
+					entityToUpdate.Name = dto.Name;
+					entityToUpdate.CompanyLogoId = dto.CompanyLogoId;
+
+					await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
+
+					return true;
 		}
+}
 
-		/// <summary>
-		/// Creates a filestream and adds the file to the specified folder as a PNG.
-		/// Will overwrite if file with the same name including filetype already exists.
-		/// </summary>
-		private void AddFileToFolder(IFormFile file, string fileNameWithPath)
-		{
-			using (var stream = new FileStream(fileNameWithPath + ".png", FileMode.Create))
-			{
-				file.CopyTo(stream);
-			}
-		}
+/// <summary>
+/// Creates a filestream and adds the file to the specified folder as a PNG.
+/// Will overwrite if file with the same name including filetype already exists.
+/// </summary>
+private void AddFileToFolder(IFormFile file, string fileNameWithPath)
+{
+	using (var stream = new FileStream(fileNameWithPath + ".png", FileMode.Create))
+	{
+		file.CopyTo(stream);
 	}
+}
+}
 }
