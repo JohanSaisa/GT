@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GT.Data.Data.GTIdentityDb.Entities;
 
 // Add profile data for application users by adding properties to the ApplicationUser class
-public class ApplicationUser : IdentityUser, IGTEntity
+public class ApplicationUser : IdentityUser, IAppEntity
 {
 	[PersonalData]
 	[Column(TypeName = "nvarchar(70)")]

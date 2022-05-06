@@ -16,20 +16,20 @@ namespace GT.Core.Services.Impl
 	{
 		private readonly ILogger<ListingService> _logger;
 
-		private readonly IGTGenericRepository<Listing> _listingRepository;
-		private readonly IGTGenericRepository<Company> _companyRepository;
-		private readonly IGTGenericRepository<Location> _locationRepository;
-		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
-		private readonly IGTGenericRepository<ListingInquiry> _inquiryRepository;
+		private readonly IGenericRepository<Listing> _listingRepository;
+		private readonly IGenericRepository<Company> _companyRepository;
+		private readonly IGenericRepository<Location> _locationRepository;
+		private readonly IGenericRepository<ExperienceLevel> _experienceLevelRepository;
+		private readonly IGenericRepository<ListingInquiry> _inquiryRepository;
 
 		public ListingService(
 			ILogger<ListingService> logger,
 
-			IGTGenericRepository<Listing> listingRepository,
-			IGTGenericRepository<Company> companyRepository,
-			IGTGenericRepository<Location> locationRepository,
-			IGTGenericRepository<ExperienceLevel> experienceLevelRepository,
-			IGTGenericRepository<ListingInquiry> inquiryRepository)
+			IGenericRepository<Listing> listingRepository,
+			IGenericRepository<Company> companyRepository,
+			IGenericRepository<Location> locationRepository,
+			IGenericRepository<ExperienceLevel> experienceLevelRepository,
+			IGenericRepository<ListingInquiry> inquiryRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));

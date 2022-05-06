@@ -44,16 +44,15 @@ builder.Services
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
-	.AddScoped<IGTIdentityRepository, GTIdentityRepository>();
+	.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // Add BLL services
 builder.Services
-	.AddScoped<IGTListingService, GTListingService>()
-	.AddScoped<IGTCompanyService, CompanyService>()
-	.AddScoped<IGTLocationService, GTLocationService>()
-	.AddScoped<IGTInquiryService, ListingInquiryService>()
-	.AddScoped<IGTExperienceLevelService, ExperienceLevelService>();
+	.AddScoped<IListingService, ListingService>()
+	.AddScoped<ICompanyService, CompanyService>()
+	.AddScoped<ILocationService, LocationService>()
+	.AddScoped<IInquiryService, ListingInquiryService>()
+	.AddScoped<IExperienceLevelService, ExperienceLevelService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

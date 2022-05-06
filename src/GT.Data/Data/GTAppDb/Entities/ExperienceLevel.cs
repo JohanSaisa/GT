@@ -2,7 +2,7 @@
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
-	public class ExperienceLevel : IGTEntity
+	public class ExperienceLevel : IAppEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]
 		public string Id { get; set; }

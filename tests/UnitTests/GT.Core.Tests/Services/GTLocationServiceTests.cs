@@ -30,7 +30,7 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<LocationService>>();
-			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGenericRepository<Location>>();
 			var callbackResult = new Location();
 
 			mockRepository
@@ -70,7 +70,7 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<LocationService>>();
-			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGenericRepository<Location>>();
 
 			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
@@ -91,7 +91,7 @@ namespace GT.Core.Tests.Services
 			LocationDTO dto = null;
 
 			var mockLogger = new Mock<ILogger<LocationService>>();
-			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGenericRepository<Location>>();
 
 			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
@@ -115,7 +115,7 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<LocationService>>();
-			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGenericRepository<Location>>();
 
 			mockRepository
 				.Setup(m => m.Get())
@@ -142,7 +142,7 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<LocationService>>();
-			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGenericRepository<Location>>();
 
 			mockRepository
 				.Setup(m => m.Get())
@@ -169,7 +169,7 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<LocationService>>();
-			var mockRepository = new Mock<IGTGenericRepository<Location>>();
+			var mockRepository = new Mock<IGenericRepository<Location>>();
 
 			mockRepository
 				.Setup(m => m.Get())

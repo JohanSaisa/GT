@@ -2,7 +2,7 @@
 
 namespace GT.Data.Data.GTAppDb.Entities
 {
-	public class ListingInquiry : IGTEntity
+	public class ListingInquiry : IAppEntity
 	{
 		[Column(TypeName = "nvarchar(450)")]
 		public string Id { get; set; }

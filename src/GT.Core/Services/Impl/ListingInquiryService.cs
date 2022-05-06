@@ -12,12 +12,12 @@ namespace GT.Core.Services.Impl
 	public class ListingInquiryService : IInquiryService
 	{
 		private readonly ILogger<ListingInquiryService> _logger;
-		private readonly IGTGenericRepository<ListingInquiry> _listingInquiryRepository;
+		private readonly IGenericRepository<ListingInquiry> _listingInquiryRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IListingService _listingService;
 
 		public ListingInquiryService(ILogger<ListingInquiryService> logger,
-			IGTGenericRepository<ListingInquiry> listingInquiryRepository,
+			IGenericRepository<ListingInquiry> listingInquiryRepository,
 			UserManager<ApplicationUser> userManager,
 			IListingService listingService)
 		{

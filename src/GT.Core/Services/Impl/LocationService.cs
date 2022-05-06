@@ -10,10 +10,10 @@ namespace GT.Core.Services.Impl
 	public class LocationService : ILocationService
 	{
 		private readonly ILogger<LocationService> _logger;
-		private readonly IGTGenericRepository<Location> _locationRepository;
+		private readonly IGenericRepository<Location> _locationRepository;
 
 		public LocationService(ILogger<LocationService> logger,
-			IGTGenericRepository<Location> locationRepository)
+			IGenericRepository<Location> locationRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));

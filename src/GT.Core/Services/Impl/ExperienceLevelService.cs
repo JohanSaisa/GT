@@ -10,10 +10,10 @@ namespace GT.Core.Services.Impl
 	public class ExperienceLevelService : IExperienceLevelService
 	{
 		private readonly ILogger<ExperienceLevelService> _logger;
-		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
+		private readonly IGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
 		public ExperienceLevelService(ILogger<ExperienceLevelService> logger,
-			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
+			IGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_experienceLevelRepository = experienceLevelRepository

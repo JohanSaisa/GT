@@ -30,7 +30,7 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 			var callbackResult = new ExperienceLevel();
 
 			mockRepository
@@ -69,7 +69,7 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 
 			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
@@ -95,7 +95,7 @@ namespace GT.Core.Tests.Services
 			};
 
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 			var callbackResult = new ExperienceLevel();
 
 			mockRepository
@@ -119,7 +119,7 @@ namespace GT.Core.Tests.Services
 			ExperienceLevelDTO dto = null;
 
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 
 			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
@@ -141,7 +141,7 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 
 			mockRepository
 				.Setup(m => m.Get())
@@ -166,7 +166,7 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 
 			mockRepository
 				.Setup(m => m.Get())
@@ -193,7 +193,7 @@ namespace GT.Core.Tests.Services
 		{
 			// Arrange
 			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
-			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
+			var mockRepository = new Mock<IGenericRepository<ExperienceLevel>>();
 
 			mockRepository
 				.Setup(m => m.Get())

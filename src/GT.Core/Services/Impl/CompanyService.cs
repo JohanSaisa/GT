@@ -10,9 +10,9 @@ namespace GT.Core.Services.Impl
 {
 	public class CompanyService : ICompanyService
 	{
-		private readonly IGTGenericRepository<Company> _companyRepository;
+		private readonly IGenericRepository<Company> _companyRepository;
 
-		public CompanyService(IGTGenericRepository<Company> companyRepository)
+		public CompanyService(IGenericRepository<Company> companyRepository)
 		{
 			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
 		}
