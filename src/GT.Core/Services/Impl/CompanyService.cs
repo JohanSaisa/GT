@@ -1,4 +1,6 @@
-﻿using GT.Core.DTO.Company;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using GT.Core.DTO.Company;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.AppDb.Entities;
 using GT.Data.Repositories.Interfaces;
@@ -9,41 +11,61 @@ namespace GT.Core.Services.Impl
 {
 	public class CompanyService : ICompanyService
 	{
+		private readonly IMapper _mapper;
 		private readonly IGenericRepository<Company> _companyRepository;
+		private readonly IGenericRepository<Location> _locationRepository;
 
-		public CompanyService(IGenericRepository<Company> companyRepository)
+		public CompanyService(
+			IMapper mapper,
+			IGenericRepository<Company> companyRepository,
+			IGenericRepository<Location> locationRepository)
 		{
+			_mapper = mapper;
 			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
+			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
 		}
 
 		public async Task<bool> AddAsync(PostCompanyDTO dto)
 		{
-			if (dto is null || string.IsNullOrEmpty(dto.Name))
+			if (string.IsNullOrEmpty(dto.Name))
 			{
-				throw new ArgumentNullException(nameof(dto));
+				throw new ArgumentException($"Name property cannot be null or empty.");
 			}
 
 			dto.Name = dto.Name.Trim();
+
 			if (await ExistsByNameAsync(dto.Name))
 			{
 				throw new ArgumentException($"Company with name {dto.Name} already exists.");
 			}
 
-			// TODO: Use IMapper
-			var newEntity = new Company()
+			var companyEntityToAdd = new Company()
 			{
 				Id = Guid.NewGuid().ToString(),
 				Name = dto.Name
 			};
 
-			await _companyRepository.AddAsync(newEntity);
+			foreach (var locationName in dto.Locations!)
+			{
+				var locationEntity = await _locationRepository.Get()!
+					.Where(e => e.Name == locationName).SingleOrDefaultAsync();
+
+				if (locationEntity is null)
+				{
+					throw new Exception($"Location {locationName} could not be found.");
+				}
+
+				companyEntityToAdd.Locations!.Add(locationEntity);
+			}
+
+			await _companyRepository.AddAsync(companyEntityToAdd);
 
 			return await _companyRepository.SaveAsync();
 		}
 
 		public async Task<List<CompanyDTO>> GetAllAsync()
 		{
-			var companyDTOs = await _companyRepository.Get()!.ToListAsync();
+			var companyDTOs = await _companyRepository.Get().ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
 			return companyDTOs;
 		}
@@ -52,7 +74,7 @@ namespace GT.Core.Services.Impl
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				throw new ArgumentException("No id was submitted.");
+				throw new ArgumentException("Id property cannot be null or empty.");
 			}
 
 			var entity = await _companyRepository

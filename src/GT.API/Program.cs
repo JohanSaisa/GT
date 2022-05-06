@@ -44,8 +44,7 @@ builder.Services
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
-	.AddScoped<IGTIdentityRepository, GTIdentityRepository>();
+	.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // Add BLL services
 builder.Services
@@ -54,6 +53,9 @@ builder.Services
 	.AddScoped<ILocationService, LocationService>()
 	.AddScoped<IInquiryService, ListingInquiryService>()
 	.AddScoped<IExperienceLevelService, ExperienceLevelService>();
+
+// Add automapper...
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

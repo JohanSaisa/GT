@@ -8,7 +8,7 @@ using GT.Data.Data.AppDb.Entities;
 
 namespace GT.Core.Services.Impl
 {
-	internal class MappingProfile : Profile
+	public class MappingProfile : Profile
 	{
 		public MappingProfile()
 		{

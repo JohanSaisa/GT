@@ -25,17 +25,16 @@ namespace GT.Data.Repositories.Impl
 		{
 			return _context.Set<TEntity>();
 		}
-		
+
 		public async Task<TEntity?> FindAsync(params object[] keys)
 		{
 			keys = keys
 				.Where(key => key != null)
 				.ToArray();
-			
+
 			return await _context
 				.Set<TEntity>()
 				.FindAsync(keys);
-
 		}
 
 		public async Task AddAsync(TEntity entity)
