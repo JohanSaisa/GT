@@ -41,7 +41,7 @@ namespace GT.API.Controllers
 
 		// GET: /5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<string>> GetCompany(string id)
+		public async Task<ActionResult<CompanyDTO>> GetCompany(string id)
 		{
 			if (string.IsNullOrEmpty(id))
 			{
@@ -57,46 +57,38 @@ namespace GT.API.Controllers
 					return NotFound();
 				}
 
-				var result = JsonConvert.SerializeObject(dto);
-
-				return Ok(result);
+				return Ok(dto);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				throw;
+				return StatusCode(500, ex.Message);
 			}
 		}
 
-		// POST: /create
-		[Route("create")]
+		// POST
 		[HttpPost]
-		public async Task<ActionResult<string>> PostCompany(CompanyDTO dto)
+		public async Task<ActionResult> PostCompany(PostCompanyDTO dto)
 		{
-			if (dto is null)
-			{
-				return BadRequest();
-			}
-
 			try
 			{
-				var objToReturn = await _companyService.AddAsync(dto);
+				if (!await _companyService.AddAsync(dto))
+				{
+					return StatusCode(500, "Could not save the company.");
+				}
 
-				var result = JsonConvert.SerializeObject(objToReturn);
-
-				return Created("", result);
+				return StatusCode(201);
 			}
-			catch
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 		}
 
-		// PUT: update/5
-		[Route("update/{id}")]
+		// PUT: /5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutCompany(string id, CompanyDTO dto)
+		public async Task<IActionResult> PutCompany(string id, PostCompanyDTO dto)
 		{
-			if (string.IsNullOrEmpty(id) || id != dto.Id)
+			if (string.IsNullOrEmpty(id))
 			{
 				return BadRequest();
 			}
@@ -105,16 +97,15 @@ namespace GT.API.Controllers
 			{
 				await _companyService.UpdateAsync(dto, id);
 			}
-			catch
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 
 			return Ok();
 		}
 
-		// DELETE: delete/5
-		[Route("delete/{id}")]
+		// DELETE: /5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
@@ -125,11 +116,15 @@ namespace GT.API.Controllers
 
 			try
 			{
-				await _companyService.DeleteAsync(id);
+
+				if (!await _companyService.DeleteAsync(id))
+				{
+					return StatusCode(500, "Could not delete the company.");
+				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 
 			return Ok();
