@@ -160,6 +160,19 @@ namespace GT.Core.Services.Impl
 				throw new Exception($"No entity with id '{id}' was found.");
 			}
 
+			entityToUpdate.Name = dto.Name;
+
+			foreach (var locationName in dto.Locations!)
+			{
+				var location = await _locationRepository.Get()!.Where(e => e.Name == locationName).SingleOrDefaultAsync();
+				if (location is null)
+				{
+					throw new Exception($"No entity with name '{locationName}' was found.");
+				}
+
+				entityToUpdate.Locations!.Add(location);
+			}
+
 			_companyRepository.Update(entityToUpdate);
 
 			return await _companyRepository.SaveAsync();
