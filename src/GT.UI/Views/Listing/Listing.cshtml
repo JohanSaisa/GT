@@ -100,7 +100,7 @@
 	else
 	{
 		@await Html.PartialAsync("~/Views/Inquiries/_SendInquiry.cshtml",
-	new ListingInquiryDTO(),
+	new InquiryDTO(),
 	new ViewDataDictionary(ViewData){ { "ListingId", Model.Id } })
 		@if (ViewData["RequestResult"] != null)
 		{

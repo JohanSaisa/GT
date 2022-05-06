@@ -48,7 +48,7 @@ namespace GT.UI.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateInquiry(ListingInquiryDTO inquiryDTO)
+		public async Task<IActionResult> CreateInquiry(InquiryDTO inquiryDTO)
 		{
 			string? userIdValue = null;
 			if (_signInManager.IsSignedIn(User))

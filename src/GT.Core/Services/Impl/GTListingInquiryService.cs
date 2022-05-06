@@ -180,7 +180,7 @@ namespace GT.Core.Services.Impl
 			try
 			{
 				var entity = await _listingInquiryRepository
-					.Get()
+					.Get()!
 					.FirstOrDefaultAsync(e => e.Id == id);
 
 				if (entity == null)

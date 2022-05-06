@@ -14,7 +14,7 @@ namespace GT.Core.Services.MappingProfiles
 			CreateMap<Listing, ListingOverviewDTO>()
 				.ReverseMap();
 
-			CreateMap<ListingInquiry, ListingInquiryDTO>()
+			CreateMap<ListingInquiry, InquiryDTO>()
 				.ReverseMap();
 
 			CreateMap<Location, LocationDTO>()

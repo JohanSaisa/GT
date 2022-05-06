@@ -2,7 +2,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-@model List<GT.Core.DTO.Impl.ListingInquiryDTO>
+@model List<GT.Core.DTO.Impl.InquiryDTO>
 @{
 	ViewData["Title"] = "Ansökningar";
 }
@@ -14,7 +14,7 @@
 		<div>
 			@if (ViewData["Inquiries"] is not null)
 			{
-				@foreach (var item in (List<ListingInquiryDTO>)ViewData["Inquiries"])
+				@foreach (var item in (List<InquiryDTO>)ViewData["Inquiries"])
 				{
 					<div class="card-body">
 						<h5>
