@@ -41,6 +41,117 @@ namespace GT.Core.Services.Impl
 			return await _companyRepository.SaveAsync();
 		}
 
+		public async Task<List<CompanyDTO>> GetAllAsync()
+		{
+			var companyDTOs = await _companyRepository.Get()!.ToListAsync();
+
+			return companyDTOs;
+		}
+
+		public async Task<CompanyDTO?> GetByIdAsync(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				throw new ArgumentException("No id was submitted.");
+			}
+
+			var entity = await _companyRepository
+				.Get()!
+				.FirstOrDefaultAsync(e => e.Id == id);
+
+			if (entity is null)
+			{
+				throw new Exception($"No entity with id: {id} was found.");
+			}
+
+			// TODO: Add Automapper
+			var company = new CompanyDTO()
+			{
+				Id = entity.Id,
+				Name = entity.Name,
+			};
+
+			return company;
+		}
+
+		public async Task<bool> ExistsByNameAsync(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				throw new ArgumentException("No name was submitted.");
+			}
+
+			name = name.Trim();
+			return await _companyRepository.Get()!.Where(e => e.Name == name).AnyAsync();
+		}
+
+		public async Task<bool> DeleteAsync(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				throw new ArgumentException("No id to delete was submitted.");
+			}
+
+			var entity = await _companyRepository.Get()
+				.Include(e => e.Locations)
+				.Include(e => e.CompanyLogoId)
+				.FirstOrDefaultAsync(e => e.Id == id);
+
+			if (entity is null)
+			{
+				throw new ArgumentException($"Company with id {id} does not exist.");
+			}
+
+			await _companyRepository.DeleteAsync(entity);
+			return await _companyRepository.SaveAsync();
+		}
+
+		public async Task<bool> UpdateAsync(PostCompanyDTO dto, string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				throw new ArgumentException("No id was submitted.");
+			}
+
+			if (dto is null)
+			{
+				throw new ArgumentNullException("No dto was submitted.");
+			}
+
+			if (string.IsNullOrEmpty(dto.Name))
+			{
+				throw new ArgumentNullException("No name was submitted.");
+			}
+
+			var entityToUpdate = _companyRepository.Get()!.Where(e => e.Id == id);
+
+			if (entityToUpdate is null)
+			{
+				throw new Exception($"Could not find entity with id: {id}");
+			}
+
+			dto.Name = dto.Name.Trim();
+			// Check if another company exists with the same name as the DTO to prevent duplicate companies
+			if (await _companyRepository.Get()!.AnyAsync((e => e.Id != id && e.Name == dto.Name)))
+			{
+				throw new ArgumentException($"Company with name: {dto.Name} already exist.");
+			}
+
+			await _companyRepository.UpdateAsync(entityToUpdate, id);
+
+			return await _companyRepository.SaveAsync();
+		}
+
+		public Task<bool> UpdateCompanyLocationsAsync(PatchCompanyLocationsDTO dto, string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> UpdateCompanyNameAsync(PatchCompanyNameDTO dto, string id)
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task<bool> AddCompanyLogoAsync(CompanyLogoDTO dto)
 		{
 			throw new NotImplementedException();
@@ -78,27 +189,6 @@ namespace GT.Core.Services.Impl
 			//}
 		}
 
-		public async Task<bool> DeleteAsync(string id)
-		{
-			if (string.IsNullOrEmpty(id))
-			{
-				throw new ArgumentException("No id to delete was submitted.");
-			}
-
-			var entity = await _companyRepository.Get()
-				.Include(e => e.Locations)
-				.Include(e => e.CompanyLogoId)
-				.FirstOrDefaultAsync(e => e.Id == id);
-
-			if (entity is null)
-			{
-				throw new ArgumentException($"Company with id {id} does not exist.");
-			}
-
-			await _companyRepository.DeleteAsync(entity);
-			return await _companyRepository.SaveAsync();
-		}
-
 		public async Task<bool> DeleteCompanyLogoAsync(string id)
 		{
 			throw new NotImplementedException();
@@ -125,101 +215,13 @@ namespace GT.Core.Services.Impl
 			//}
 		}
 
-		public async Task<bool> ExistsByNameAsync(string name)
+		private void AddFileToFolder(IFormFile file, string fileNameWithPath)
 		{
-			if (string.IsNullOrEmpty(name))
-			{
-				throw new ArgumentException("No name was submitted.");
-			}
-
-			name = name.Trim();
-			return await _companyRepository.Get()!.Where(e => e.Name == name).AnyAsync();
-		}
-
-		public async Task<List<CompanyDTO>> GetAllAsync()
-		{
-			// *********************************************************** TODO ****************************************************
-			var companyDTOs = await _companyRepository.Get()!.ToListAsync();
-			//var companyDTOs = new List<CompanyDTO>();
-
-			//foreach (var entity in entities)
+			throw new NotImplementedException();
+			//using (var stream = new FileStream(fileNameWithPath + ".png", FileMode.Create))
 			//{
-			//	// TODO add automapper
-			//	companyDTOs.Add(new CompanyDTO
-			//	{
-			//		Id = entity.Id,
-			//		Name = entity.Name,
-			//		Locations = entity.CompanyLogoId,
-			//	});
+			//	file.CopyTo(stream);
 			//}
-
-			return companyDTOs;
 		}
-
-		public async Task<CompanyDTO> GetByIdAsync(string id)
-		{
-			if (string.IsNullOrEmpty(id))
-			{
-				throw new ArgumentException("No id was submitted.");
-			}
-
-			// Get entity
-			var entity = await _companyRepository
-				.Get()
-				.FirstOrDefaultAsync(e => e.Id == id);
-
-			if (entity is null)
-			{
-				throw new Exception($"No entity with id: {id} was found.");
-			}
-
-			// TODO: Add Automapper
-			var company = new CompanyDTO()
-			{
-				Id = entity.Id,
-				Name = entity.Name,
-			};
-
-			return company;
-		}
-
-		public async Task<bool> UpdateAsync(PostCompanyDTO dto, string id)
-		{
-			if (string.IsNullOrEmpty(id))
-			{
-				throw new ArgumentException("No id was submitted.");
-			}
-
-			if (dto is null)
-			{
-				throw new ArgumentNullException("No dto was submitted.");
-			}
-
-			if (await ExistsByNameAsync(dto.Name))
-			{
-					private var entityToUpdate = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Id == dto.Id);
-
-		// TODO implement automapper
-		entityToUpdate.Id = dto.Id;
-					entityToUpdate.Name = dto.Name;
-					entityToUpdate.CompanyLogoId = dto.CompanyLogoId;
-
-					await _companyRepository.UpdateAsync(entityToUpdate, entityToUpdate.Id);
-
-					return true;
-		}
-}
-
-/// <summary>
-/// Creates a filestream and adds the file to the specified folder as a PNG.
-/// Will overwrite if file with the same name including filetype already exists.
-/// </summary>
-private void AddFileToFolder(IFormFile file, string fileNameWithPath)
-{
-	using (var stream = new FileStream(fileNameWithPath + ".png", FileMode.Create))
-	{
-		file.CopyTo(stream);
 	}
-}
-}
 }
