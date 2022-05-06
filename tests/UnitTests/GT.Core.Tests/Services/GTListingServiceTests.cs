@@ -59,7 +59,7 @@ namespace GT.Core.Tests.Services
 				ExperienceLevel = new ExperienceLevel() { Name = "ExampleExperienceLevelName" }
 			};
 
-			var partiallyFilledFilterModel = new ListingFilterModel
+			var partiallyFilledFilterModel = new PostListingFilterDTO
 			{
 				//KeywordsRawText = "eXaMpLeDescription eXampleListingTitle ExampleJobTitle ExampleCompanyName ExampleLocationName",
 				//Location = "ExampleLocationName",
@@ -133,7 +133,7 @@ namespace GT.Core.Tests.Services
 			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
-			var emptyFilterModel = new ListingFilterModel();
+			var emptyFilterModel = new PostListingFilterDTO();
 
 			mockListingRepository
 				.Setup(x => x.Get())

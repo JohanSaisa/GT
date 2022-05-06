@@ -2,9 +2,6 @@
 
 namespace GT.Core.DTO.Inquiry
 {
-	/// <summary>
-	/// Represents a ListingInquiry view and create model.
-	/// </summary>
 	public class InquiryDTO
 	{
 		public string? Id { get; set; }

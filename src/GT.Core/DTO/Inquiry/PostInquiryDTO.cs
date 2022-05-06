@@ -2,28 +2,25 @@
 
 namespace GT.Core.DTO.Inquiry
 {
-	/// <summary>
-	/// Represents a ListingInquiry view and create model.
-	/// </summary>
 	public class PostInquiryDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "ListingId is required")]
 		[StringLength(450)]
 		public string? ListingId { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "ApplicantEmail is required")]
 		[StringLength(254)]
 		public string? ApplicantEmail { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "MessageTitle is required")]
 		[StringLength(100)]
 		public string? MessageTitle { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "MessageBody is required")]
 		[StringLength(500)]
 		public string? MessageBody { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "LinkedInLink is required")]
 		[StringLength(254)]
 		public string? LinkedInLink { get; set; }
 	}

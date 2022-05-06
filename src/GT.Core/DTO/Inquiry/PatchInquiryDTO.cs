@@ -2,16 +2,13 @@
 
 namespace GT.Core.DTO.Inquiry
 {
-	/// <summary>
-	/// Represents a ListingInquiry view and create model.
-	/// </summary>
 	public class PatchInquiryDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "MessageTitle is required")]
 		[StringLength(100)]
 		public string? MessageTitle { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "MessageBody is required")]
 		[StringLength(500)]
 		public string? MessageBody { get; set; }
 	}

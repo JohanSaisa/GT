@@ -119,7 +119,7 @@ namespace GT.Core.Services.Impl
 
 			if (filter is null)
 			{
-				filter = new ListingFilterModel();
+				filter = new PostListingFilterDTO();
 			}
 
 			var query = _listingRepository?

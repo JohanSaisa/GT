@@ -4,14 +4,14 @@ namespace GT.Core.DTO.Listing
 {
 	public class PostListingDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "ListingTitle is required")]
 		[StringLength(100)]
 		public string? ListingTitle { get; set; }
 
 		[StringLength(2000)]
 		public string? Description { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "Employer is required")]
 		[StringLength(200)]
 		public string? Employer { get; set; }
 
@@ -30,7 +30,7 @@ namespace GT.Core.DTO.Listing
 		[StringLength(100)]
 		public string? ExperienceLevel { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "ApplicationDeadline is required")]
 		public DateTime? ApplicationDeadline { get; set; }
 	}
 }

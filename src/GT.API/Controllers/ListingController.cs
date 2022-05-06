@@ -38,7 +38,7 @@ namespace GT.API.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<string>>> GetListingsWithFilter()
 		{
-			ListingFilterModel filterModel = new ListingFilterModel();
+			PostListingFilterDTO filterModel = new PostListingFilterDTO();
 
 			var dtos = await _listingService
 				.GetAllByFilterAsync(filterModel);

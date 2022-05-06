@@ -9,6 +9,6 @@ namespace GT.Core.DTO.Impl
 
 		public string? Name { get; set; }
 
-		public List<CompanyDTO> Companies { get; set; }
+		public List<CompanyDTO>? Companies { get; set; }
 	}
 }

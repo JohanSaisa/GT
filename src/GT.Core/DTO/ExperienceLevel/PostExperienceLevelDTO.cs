@@ -2,12 +2,9 @@
 
 namespace GT.Core.DTO.ExperienceLevel
 {
-	/// <summary>
-	/// Represents an ExperienceLevel view and create model.
-	/// </summary>
 	public class PostExperienceLevelDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "Name is required")]
 		[StringLength(100)]
 		public string? Name { get; set; }
 	}
