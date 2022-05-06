@@ -1,5 +1,6 @@
 ﻿using GT.Core.DTO.Inquiry;
 using System.ComponentModel.DataAnnotations;
+using GT.Core.DTO.Impl;
 
 namespace GT.Core.DTO.Listing
 {
@@ -22,12 +23,10 @@ namespace GT.Core.DTO.Listing
 		public string? Location { get; set; }
 
 		public bool? FTE { get; set; }
-
-		public DateTime? CreatedDate { get; set; }
-
+		
 		public string? ExperienceLevel { get; set; }
-
-		public List<InquiryDTO>? Inquiries { get; set; }
+		
+		public DateTime? CreatedDate { get; set; }
 
 		public DateTime? ApplicationDeadline { get; set; }
 	}

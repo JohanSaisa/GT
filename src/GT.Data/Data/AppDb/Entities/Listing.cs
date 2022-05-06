@@ -42,7 +42,8 @@ namespace GT.Data.Data.AppDb.Entities
 
 		[Column(TypeName = "Date")]
 		public DateTime? CreatedDate { get; set; }
-
+		
+		[Column(TypeName = "Date")]
 		public DateTime? ApplicationDeadline { get; set; }
 
 		public ICollection<Inquiry> Inquiries { get; set; } = new List<Inquiry>();

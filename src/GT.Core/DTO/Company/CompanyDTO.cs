@@ -7,6 +7,6 @@ namespace GT.Core.DTO.Company
 	{
 		public string? Id { get; set; }
 		public string? Name { get; set; }
-		public List<LocationDTO>? Locations { get; set; }
+		public List<string>? Locations { get; set; }
 	}
 }
