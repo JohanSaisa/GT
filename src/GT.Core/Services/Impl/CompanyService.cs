@@ -52,7 +52,7 @@ namespace GT.Core.Services.Impl
 
 				if (locationEntity is null)
 				{
-					throw new Exception($"Location {locationName} could not be found.");
+					throw new Exception($"No entity with name '{dto.Name}' was found.");
 				}
 
 				companyEntityToAdd.Locations!.Add(locationEntity);
@@ -65,7 +65,10 @@ namespace GT.Core.Services.Impl
 
 		public async Task<List<CompanyDTO>> GetAllAsync()
 		{
-			var companyDTOs = await _companyRepository.Get().ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider).ToListAsync();
+			var companyDTOs = await _companyRepository.Get()!
+				.Include(e => e.Locations)
+				.ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider)
+				.ToListAsync();
 
 			return companyDTOs;
 		}
@@ -74,36 +77,33 @@ namespace GT.Core.Services.Impl
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				throw new ArgumentException("Id property cannot be null or empty.");
+				throw new ArgumentException($"Id property cannot be null or empty.");
 			}
 
-			var entity = await _companyRepository
+			var dto = await _companyRepository
 				.Get()!
-				.FirstOrDefaultAsync(e => e.Id == id);
+				.Where(e => e.Id == id)
+				.Include(e => e.Locations)
+				.ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider)
+				.SingleOrDefaultAsync();
 
-			if (entity is null)
+			if (dto is null)
 			{
-				throw new Exception($"No entity with id: {id} was found.");
+				throw new Exception($"No entity with id '{id}' was found.");
 			}
 
-			// TODO: Add Automapper
-			var company = new CompanyDTO()
-			{
-				Id = entity.Id,
-				Name = entity.Name,
-			};
-
-			return company;
+			return dto;
 		}
 
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
 			if (string.IsNullOrEmpty(name))
 			{
-				throw new ArgumentException("No name was submitted.");
+				throw new ArgumentException($"Name property cannot be null or empty.");
 			}
 
 			name = name.Trim();
+
 			return await _companyRepository.Get()!.Where(e => e.Name == name).AnyAsync();
 		}
 
@@ -114,9 +114,8 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentException("No id to delete was submitted.");
 			}
 
-			var entity = await _companyRepository.Get()
+			var entity = await _companyRepository.Get()!
 				.Include(e => e.Locations)
-				.Include(e => e.CompanyLogoId)
 				.FirstOrDefaultAsync(e => e.Id == id);
 
 			if (entity is null)
@@ -124,7 +123,8 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentException($"Company with id {id} does not exist.");
 			}
 
-			await _companyRepository.DeleteAsync(entity);
+			_companyRepository.Delete(entity);
+
 			return await _companyRepository.SaveAsync();
 		}
 
@@ -132,34 +132,35 @@ namespace GT.Core.Services.Impl
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				throw new ArgumentException("No id was submitted.");
+				throw new ArgumentException($"Id property cannot be null or empty.");
 			}
 
 			if (dto is null)
 			{
-				throw new ArgumentNullException("No dto was submitted.");
+				throw new ArgumentNullException("DTO cannot be null.");
 			}
 
 			if (string.IsNullOrEmpty(dto.Name))
 			{
-				throw new ArgumentNullException("No name was submitted.");
-			}
-
-			var entityToUpdate = _companyRepository.Get()!.Where(e => e.Id == id);
-
-			if (entityToUpdate is null)
-			{
-				throw new Exception($"Could not find entity with id: {id}");
+				throw new ArgumentNullException($"Name property cannot be null or empty.");
 			}
 
 			dto.Name = dto.Name.Trim();
+
 			// Check if another company exists with the same name as the DTO to prevent duplicate companies
 			if (await _companyRepository.Get()!.AnyAsync((e => e.Id != id && e.Name == dto.Name)))
 			{
 				throw new ArgumentException($"Company with name: {dto.Name} already exist.");
 			}
 
-			await _companyRepository.UpdateAsync(entityToUpdate, id);
+			var entityToUpdate = await _companyRepository.Get()!.Where(e => e.Id == id).SingleOrDefaultAsync();
+
+			if (entityToUpdate is null)
+			{
+				throw new Exception($"No entity with id '{id}' was found.");
+			}
+
+			_companyRepository.Update(entityToUpdate);
 
 			return await _companyRepository.SaveAsync();
 		}
