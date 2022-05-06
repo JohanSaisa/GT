@@ -9,70 +9,50 @@ namespace GT.Core.Services.Impl
 {
 	public class ExperienceLevelService : IExperienceLevelService
 	{
-		private readonly ILogger<ExperienceLevelService> _logger;
 		private readonly IGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
-		public ExperienceLevelService(ILogger<ExperienceLevelService> logger,
-			IGenericRepository<ExperienceLevel> experienceLevelRepository)
+		public ExperienceLevelService(IGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_experienceLevelRepository = experienceLevelRepository
 				?? throw new ArgumentNullException(nameof(experienceLevelRepository));
 		}
 
-		public async Task<ExperienceLevelDTO> AddAsync(ExperienceLevelDTO dto)
+		public async Task<bool> AddAsync(ExperienceLevelDTO dto)
 		{
-			try
+			if (string.IsNullOrWhiteSpace(dto.Name))
 			{
-				if (dto is null)
-				{
-					_logger.LogWarning($"Attempted to add a null reference to the database.");
-					return null;
-				}
+				//sad **************************************************
+			}
 
-				if (String.IsNullOrWhiteSpace(dto.Name))
-				{
-					_logger.LogWarning($"Attempted to add an ExperienceLevel without a name to the database.");
-					return null;
-				}
+			dto.Name = dto.Name.Trim();
 
-				dto.Name = dto.Name.Trim();
-
-				if (await ExistsByNameAsync(dto.Name))
-				{
-					_logger.LogWarning($"Attempted to add a company whose name already exists in the database.");
-
-					var entity = await _experienceLevelRepository.Get().Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
-
-					// TODO - Use IMapper
-					if (entity is not null)
-					{
-						dto.Id = entity.Id;
-						dto.Name = entity.Name;
-					}
-
-					return dto;
-				}
+			if (await ExistsByNameAsync(dto.Name))
+			{
+				var entity = await _experienceLevelRepository.Get()!.Where(e => e.Name == dto.Name).FirstOrDefaultAsync();
 
 				// TODO - Use IMapper
-				var newEntity = new ExperienceLevel()
+				if (entity is not null)
 				{
-					Id = Guid.NewGuid().ToString(),
-					Name = dto.Name
-				};
-
-				await _experienceLevelRepository.AddAsync(newEntity);
-
-				// Assigning the updated id to the DTO as it is the only property with a new value.
-				dto.Id = newEntity.Id;
+					dto.Id = entity.Id;
+					dto.Name = entity.Name;
+				}
 
 				return dto;
 			}
-			catch (Exception e)
+
+			// TODO - Use IMapper
+			var newEntity = new ExperienceLevel()
 			{
-				_logger.LogError(e.Message);
-				return null;
-			}
+				Id = Guid.NewGuid().ToString(),
+				Name = dto.Name
+			};
+
+			await _experienceLevelRepository.AddAsync(newEntity);
+
+			// Assigning the updated id to the DTO as it is the only property with a new value.
+			dto.Id = newEntity.Id;
+
+			return dto;
 		}
 
 		public async Task DeleteAsync(string id)
