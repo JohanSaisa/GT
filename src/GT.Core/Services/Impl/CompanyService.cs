@@ -19,21 +19,18 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> AddAsync(PostCompanyDTO dto)
 		{
-			if (dto is null || dto.Name == null)
+			if (dto is null || string.IsNullOrEmpty(dto.Name))
 			{
 				throw new ArgumentNullException(nameof(dto));
 			}
 
-			// trim input
-
+			dto.Name = dto.Name.Trim();
 			if (await ExistsByNameAsync(dto.Name))
 			{
 				throw new ArgumentException($"Company with name {dto.Name} already exists.");
 			}
 
-			//*******************************************
-
-			// TODO - Use IMapper
+			// TODO: Use IMapper
 			var newEntity = new Company()
 			{
 				Id = Guid.NewGuid().ToString(),
@@ -42,132 +39,122 @@ namespace GT.Core.Services.Impl
 
 			await _companyRepository.AddAsync(newEntity);
 
-			// Assigning the updated id to the DTO as it is the only property with a new value.
-			dto.Id = newEntity.Id;
-			return dto;
+			return await _companyRepository.SaveAsync();
 		}
 
 		public async Task<bool> AddCompanyLogoAsync(CompanyLogoDTO dto)
 		{
-			// Create folder if it does not exist
-			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
+			throw new NotImplementedException();
+			//// Create folder if it does not exist
+			//string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
+			//if (!Directory.Exists(path))
+			//	Directory.CreateDirectory(path);
 
-			if (dto.File == null || dto.CompanyId == null)
-			{
-				_logger.LogWarning($"Can not use null arguments in method: {nameof(AddCompanyLogoAsync)}");
-				return false;
-			}
+			//if (dto.Logo == null || dto.CompanyId == null)
+			//{
+			//	throw new ArgumentNullException(nameof(dto));
+			//}
 
-			var company = await GetByIdAsync(dto.CompanyId);
-			if (company == null)
-			{
-				_logger.LogWarning($"Could not find a company in method: {nameof(AddCompanyLogoAsync)}");
-				return false;
-			}
+			//var company = await GetByIdAsync(dto.CompanyId);
+			//if (company == null)
+			//{
+			//	throw new ArgumentNullException(nameof(AddCompanyLogoAsync));
+			//	return false;
+			//}
 
-			// Check if company already has a stored logo
-			if (company.CompanyLogoId != null || company.CompanyLogoId != String.Empty)
-			{
-				AddFileToFolder(dto.File, Path.Combine(path, company.CompanyLogoId));
-				return true;
-			}
-			else
-			{
-				// Update DB entity with new LogoID
-				company.CompanyLogoId = company.Id;
-				await UpdateAsync(company, company.Name);
+			//// Check if company already has a stored logo
+			//if (company.CompanyLogoId != null || company.CompanyLogoId != String.Empty)
+			//{
+			//	AddFileToFolder(dto.File, Path.Combine(path, company.CompanyLogoId));
+			//	return true;
+			//}
+			//else
+			//{
+			//	// Update DB entity with new LogoID
+			//	company.CompanyLogoId = company.Id;
+			//	await UpdateAsync(company, company.Name);
 
-				AddFileToFolder(dto.File, Path.Combine(path, company.CompanyLogoId));
-				return true;
-			}
+			//	AddFileToFolder(dto.File, Path.Combine(path, company.CompanyLogoId));
+			//	return true;
+			//}
 		}
 
-		public async Task DeleteAsync(string id)
+		public async Task<bool> DeleteAsync(string id)
 		{
-			try
+			if (string.IsNullOrEmpty(id))
 			{
-				var entity = await _companyRepository.Get()
-					.Include(e => e.Locations)
-					.Include(e => e.CompanyLogoId)
-					.FirstOrDefaultAsync(e => e.Id == id);
+				throw new ArgumentException("No id to delete was submitted.");
+			}
 
-				if (entity is not null)
-				{
-					await _companyRepository.DeleteAsync(entity);
-				}
-			}
-			catch (Exception e)
+			var entity = await _companyRepository.Get()
+				.Include(e => e.Locations)
+				.Include(e => e.CompanyLogoId)
+				.FirstOrDefaultAsync(e => e.Id == id);
+
+			if (entity is null)
 			{
-				_logger.LogError(e.Message);
+				throw new ArgumentException($"Company with id {id} does not exist.");
 			}
+
+			await _companyRepository.DeleteAsync(entity);
+			return await _companyRepository.SaveAsync();
 		}
 
 		public async Task<bool> DeleteCompanyLogoAsync(string id)
 		{
-			if (id == null || id.Length <= 0)
-			{
-				_logger.LogWarning($"Arguments cannot be null when using the method: { nameof(DeleteCompanyLogoAsync)}.");
-				return false;
-			}
+			throw new NotImplementedException();
+			//if (string.IsNullOrEmpty(id))
+			//{
+			//	throw new ArgumentException("No id to delete was submitted.");
+			//}
 
-			string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
-			string fileNameWithPath = Path.Combine(path, id);
+			//string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/CompanyLogos");
+			//string fileNameWithPath = Path.Combine(path, id);
 
-			using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-			{
-				try
-				{
-					File.Delete(fileNameWithPath);
-					return true;
-				}
-				catch (Exception e)
-				{
-					_logger.LogError(e.Message);
-					return false;
-				}
-			}
+			//using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+			//{
+			//	try
+			//	{
+			//		File.Delete(fileNameWithPath);
+			//		return true;
+			//	}
+			//	catch (Exception e)
+			//	{
+			//		_logger.LogError(e.Message);
+			//		return false;
+			//	}
+			//}
 		}
 
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
-			try
+			if (string.IsNullOrEmpty(name))
 			{
-				return await _companyRepository.Get().Where(e => e.Name == name).AnyAsync();
+				throw new ArgumentException("No name was submitted.");
 			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return false;
-			}
+
+			name = name.Trim();
+			return await _companyRepository.Get()!.Where(e => e.Name == name).AnyAsync();
 		}
 
 		public async Task<List<CompanyDTO>> GetAllAsync()
 		{
-			try
-			{
-				var entities = await _companyRepository.Get().ToListAsync();
-				var companyDTOs = new List<CompanyDTO>();
+			// *********************************************************** TODO ****************************************************
+			var companyDTOs = await _companyRepository.Get()!.ToListAsync();
+			//var companyDTOs = new List<CompanyDTO>();
 
-				foreach (var entity in entities)
-				{
-					// TODO add automapper
-					companyDTOs.Add(new CompanyDTO
-					{
-						Id = entity.Id,
-						Name = entity.Name,
-						CompanyLogoId = entity.CompanyLogoId,
-					});
-				}
+			//foreach (var entity in entities)
+			//{
+			//	// TODO add automapper
+			//	companyDTOs.Add(new CompanyDTO
+			//	{
+			//		Id = entity.Id,
+			//		Name = entity.Name,
+			//		Locations = entity.CompanyLogoId,
+			//	});
+			//}
 
-				return companyDTOs;
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return null;
-			}
+			return companyDTOs;
 		}
 
 		public async Task<CompanyDTO> GetByIdAsync(string id)
