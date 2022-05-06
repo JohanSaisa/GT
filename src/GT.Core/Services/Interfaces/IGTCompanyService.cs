@@ -4,7 +4,7 @@ namespace GT.Core.Services.Interfaces
 {
 	public interface IGTCompanyService : IGTService
 	{
-		Task<CompanyDTO> AddAsync(CompanyDTO dto);
+		Task<bool> AddAsync(PostCompanyDTO dto);
 
 		Task<List<CompanyDTO>> GetAllAsync();
 
@@ -16,8 +16,10 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> DeleteCompanyLogoAsync(string id);
 
-		Task DeleteAsync(string id);
+		Task<bool> DeleteAsync(string id);
 
-		Task<bool> UpdateAsync(CompanyDTO dto, string id);
+		Task<bool> UpdateAsync(PostCompanyDTO dto, string id);
+
+		Task<bool> UpdateLocationsAsync(PatchCompanyLocationsDTO dto, string id);
 	}
 }
