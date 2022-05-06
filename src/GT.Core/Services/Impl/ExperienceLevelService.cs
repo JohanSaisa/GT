@@ -26,7 +26,7 @@ namespace GT.Core.Services.Impl
 
 			dto.Name = dto.Name.Trim();
 
-			
+
 			if (await ExistsByNameAsync(dto.Name))
 			{
 				throw new ArgumentException($"ExperienceLevel with name {dto.Name} already exists.");
@@ -45,69 +45,60 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> DeleteAsync(string id)
 		{
+			if (string.IsNullOrEmpty(id))
+			{
+				throw new ArgumentException($"No entity with id '{id}' was found.");
+			}
+
 			var entity = await _experienceLevelRepository.Get()!
 				.Include(e => e.Listings)
-				.FirstOrDefaultAsync(e => e.Id == id);
+				.SingleOrDefaultAsync(e => e.Id == id);
 
 			if (entity is null)
 			{
-				
+				throw new ArgumentException($"No entity with id '{id}' was found.");
 			}
+
+			_experienceLevelRepository.Delete(entity);
+
+			return await _experienceLevelRepository.SaveAsync();
 		}
 
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
-			try
+			if (string.IsNullOrEmpty(name))
 			{
-				return await _experienceLevelRepository.Get().AnyAsync(e => e.Name == name);
+				throw new ArgumentException("Name property cannot be null or empty.");
 			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return false;
-			}
+			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Name == name);
 		}
 
-		public async Task<bool> ExistsByIdAsync(string id)
+		private async Task<bool> ExistsByIdAsync(string id)
 		{
-			try
-			{
-				return await _experienceLevelRepository.Get().AnyAsync(e => e.Id == id);
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return false;
-			}
+			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Id == id);
 		}
 
 		public async Task<List<ExperienceLevelDTO?>> GetAllAsync()
 		{
-			try
+			var experienceLevelEntitiess = await _experienceLevelRepository
+				.Get()
+				.ToListAsync();
+
+			var experienceLevelDTOs = new List<ExperienceLevelDTO>();
+
+			//TODO automapper
+			foreach (var entity in experienceLevelEntitiess)
 			{
-				var experienceLevelEntitiess = await _experienceLevelRepository
-					.Get()
-					.ToListAsync();
-
-				var experienceLevelDTOs = new List<ExperienceLevelDTO>();
-
-				//TODO automapper
-				foreach (var entity in experienceLevelEntitiess)
+				experienceLevelDTOs.Add(new ExperienceLevelDTO()
 				{
-					experienceLevelDTOs.Add(new ExperienceLevelDTO()
-					{
-						Id = entity.Id,
-						Name = entity.Name
-					});
-				}
+					Id = entity.Id,
+					Name = entity.Name
+				});
+			}
 
-				return experienceLevelDTOs;
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return null;
-			}
+			return experienceLevelDTOs;
+			_logger.LogError(e.Message);
+			return null;
 		}
 
 		public async Task<ExperienceLevelDTO?> GetByIdAsync(string id)
