@@ -15,10 +15,10 @@ namespace GT.API.Controllers
 	[ApiController]
 	public class CompanyController : ControllerBase
 	{
-		private readonly IGTCompanyService _companyService;
+		private readonly ICompanyService _companyService;
 
 		public CompanyController(
-			IGTCompanyService companyService)
+			ICompanyService companyService)
 		{
 			_companyService = companyService;
 		}

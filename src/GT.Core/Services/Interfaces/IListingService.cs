@@ -1,13 +1,13 @@
 ﻿using GT.Core.DTO.Listing;
-using GT.Core.FilterModels.Interfaces;
+using GT.Core.FilterModels.Impl;
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTListingService
+	public interface IListingService
 	{
 		Task<bool> AddAsync(PostListingDTO dto, string signedInUserId);
 
-		Task<List<ListingOverviewDTO>> GetAllByFilterAsync(IListingFilterModel? filter = null);
+		Task<List<ListingOverviewDTO>> GetAllByFilterAsync(PostListingFilterDTO? filter);
 
 		Task<ListingDTO?> GetByIdAsync(string id);
 

@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTLocationService : IGTLocationService
+	public class LocationService : ILocationService
 	{
-		private readonly ILogger<GTLocationService> _logger;
+		private readonly ILogger<LocationService> _logger;
 		private readonly IGTGenericRepository<Location> _locationRepository;
 
-		public GTLocationService(ILogger<GTLocationService> logger,
+		public LocationService(ILogger<LocationService> logger,
 			IGTGenericRepository<Location> locationRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));

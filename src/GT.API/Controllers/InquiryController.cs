@@ -12,9 +12,9 @@ namespace GT.API.Controllers
 	public class InquiryController :
 		GTControllerBase
 	{
-		private readonly IGTInquiryService _inquiryService;
+		private readonly IInquiryService _inquiryService;
 
-		public InquiryController(IGTInquiryService inquiryService, IConfiguration configuration)
+		public InquiryController(IInquiryService inquiryService, IConfiguration configuration)
 			: base(configuration)
 		{
 			_inquiryService = inquiryService ?? throw new ArgumentNullException(nameof(inquiryService));

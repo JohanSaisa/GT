@@ -2,7 +2,7 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTCompanyService
+	public interface ICompanyService
 	{
 		Task<bool> AddAsync(PostCompanyDTO dto);
 

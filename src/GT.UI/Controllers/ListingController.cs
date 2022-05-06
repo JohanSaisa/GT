@@ -13,14 +13,14 @@ namespace GT.UI.Controllers
 	public class ListingController : Controller
 	{
 		private readonly IGTListingService _listingService;
-		private readonly IGTExperienceLevelService _experienceService;
+		private readonly IExperienceLevelService _experienceService;
 		private readonly IGTLocationService _locationService;
 		private readonly IGTInquiryService _listingInquiryService;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
 			IGTListingService listingService,
-			IGTExperienceLevelService experienceService,
+			IExperienceLevelService experienceService,
 			IGTLocationService locationService,
 			IGTInquiryService listingInquiryService,
 			UserManager<ApplicationUser> userManager)

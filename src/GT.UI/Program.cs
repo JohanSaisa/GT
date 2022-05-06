@@ -55,10 +55,10 @@ builder.Services
 //Add BLL services
 builder.Services
 	.AddScoped<IGTListingService, GTListingService>()
-	.AddScoped<IGTCompanyService, GTCompanyService>()
+	.AddScoped<IGTCompanyService, CompanyService>()
 	.AddScoped<IGTLocationService, GTLocationService>()
-	.AddScoped<IGTInquiryService, GTListingInquiryService>()
-	.AddScoped<IGTExperienceLevelService, GTExperienceLevelService>();
+	.AddScoped<IGTInquiryService, ListingInquiryService>()
+	.AddScoped<IGTExperienceLevelService, ExperienceLevelService>();
 
 //Add Email service
 builder.Services

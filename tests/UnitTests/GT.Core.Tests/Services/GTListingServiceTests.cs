@@ -37,7 +37,7 @@ namespace GT.Core.Tests.Services
 		public async Task GetAllByFilterAsync_TestPartialFilterFunctionality_SucceedsAndReturnsMatch()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -79,7 +79,7 @@ namespace GT.Core.Tests.Services
 					new Listing()
 				}.AsQueryable().BuildMock());
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -126,7 +126,7 @@ namespace GT.Core.Tests.Services
 		public async Task GetAllByFilterAsync_EmptyFilterModel_SucceedsAndReturnsAllEntitiesInDatabase()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -143,7 +143,7 @@ namespace GT.Core.Tests.Services
 					new Listing()
 				}.AsQueryable().BuildMock());
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -165,7 +165,7 @@ namespace GT.Core.Tests.Services
 			// Arrange
 			var idOfListingWhichExistsInDb = "92f44091-1f99-400c-b18d-b2789eac5c81";
 
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -179,7 +179,7 @@ namespace GT.Core.Tests.Services
 				.BuildMock()
 				);
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -220,7 +220,7 @@ namespace GT.Core.Tests.Services
 				ExperienceLevel = new ExperienceLevel() { Name = "ExampleExperienceLevelName" }
 			};
 
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -231,7 +231,7 @@ namespace GT.Core.Tests.Services
 				.Setup(m => m.Get())
 				.Returns(new List<Listing>() { listingInDatabase }.AsQueryable().BuildMock());
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -252,7 +252,7 @@ namespace GT.Core.Tests.Services
 		public async Task AddAsync_AddValidNewListing_Succeeds()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -313,7 +313,7 @@ namespace GT.Core.Tests.Services
 				.Callback<Listing>(listingInputArg => callbackListingResult = listingInputArg)
 				.ReturnsAsync(callbackListingResult);
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -362,14 +362,14 @@ namespace GT.Core.Tests.Services
 		public async Task AddAsync_NullArguments_FailsAndReturnsNull()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -424,7 +424,7 @@ namespace GT.Core.Tests.Services
 				ExperienceLevel = "New ExperienceLevel"
 			};
 
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -460,7 +460,7 @@ namespace GT.Core.Tests.Services
 						callbackListingId = idInputArg;
 					});
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -510,14 +510,14 @@ namespace GT.Core.Tests.Services
 		[Fact]
 		public async Task UpdateAsync_NullReferenceArgument_Fails()
 		{
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -539,14 +539,14 @@ namespace GT.Core.Tests.Services
 		[InlineData("92f44091-1f99-400c-b18d-b2789eac5c81", null)]
 		public async Task UpdateAsync_MultipleUnmatchingIdInputs_Fails(string unmatchingId1, string unmatchingId2)
 		{
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var mockInquiryRepository = new Mock<IGTGenericRepository<ListingInquiry>>();
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -566,7 +566,7 @@ namespace GT.Core.Tests.Services
 		public async Task DeleteAsync_ValidIdInput_Succeeds()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -584,7 +584,7 @@ namespace GT.Core.Tests.Services
 				.BuildMock()
 				);
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -607,7 +607,7 @@ namespace GT.Core.Tests.Services
 		public async Task DeleteAsync_MultipleInvalidIdInputs_Fails(string inputIdNotInDB)
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -623,7 +623,7 @@ namespace GT.Core.Tests.Services
 				.BuildMock()
 				);
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,
@@ -646,7 +646,7 @@ namespace GT.Core.Tests.Services
 		public async Task ExistsByNameAsync_CheckMultipleInputs_ReturnsExpectedValue(string inputId, bool expected)
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTListingService>>();
+			var mockLogger = new Mock<ILogger<ListingService>>();
 			var mockListingRepository = new Mock<IGTGenericRepository<Listing>>();
 			var mockCompanyRepository = new Mock<IGTGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGTGenericRepository<Location>>();
@@ -662,7 +662,7 @@ namespace GT.Core.Tests.Services
 				.BuildMock()
 				);
 
-			var sut = new GTListingService(
+			var sut = new ListingService(
 				mockLogger.Object,
 				mockListingRepository.Object,
 				mockCompanyRepository.Object,

@@ -2,7 +2,7 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTExperienceLevelService
+	public interface IExperienceLevelService
 	{
 		Task<bool> AddAsync(PostExperienceLevelDTO dto);
 
@@ -14,6 +14,6 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> DeleteAsync(string id);
 
-		Task<bool> UpdateAsync(ExperienceLevelDTO dto, string id);
+		Task<bool> UpdateAsync(PostExperienceLevelDTO dto, string id);
 	}
 }

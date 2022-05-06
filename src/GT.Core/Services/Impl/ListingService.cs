@@ -12,9 +12,9 @@ namespace GT.Core.Services.Impl
 	/// <summary>
 	/// Contains business logic for listing objects. Used to map and convert data transfer objects and entities.
 	/// </summary>
-	public class GTListingService : IGTListingService
+	public class ListingService : IListingService
 	{
-		private readonly ILogger<GTListingService> _logger;
+		private readonly ILogger<ListingService> _logger;
 
 		private readonly IGTGenericRepository<Listing> _listingRepository;
 		private readonly IGTGenericRepository<Company> _companyRepository;
@@ -22,8 +22,8 @@ namespace GT.Core.Services.Impl
 		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 		private readonly IGTGenericRepository<ListingInquiry> _inquiryRepository;
 
-		public GTListingService(
-			ILogger<GTListingService> logger,
+		public ListingService(
+			ILogger<ListingService> logger,
 
 			IGTGenericRepository<Listing> listingRepository,
 			IGTGenericRepository<Company> companyRepository,

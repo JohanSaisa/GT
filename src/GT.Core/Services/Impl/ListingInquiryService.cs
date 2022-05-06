@@ -9,17 +9,17 @@ using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTListingInquiryService : IGTInquiryService
+	public class ListingInquiryService : IInquiryService
 	{
-		private readonly ILogger<GTListingInquiryService> _logger;
+		private readonly ILogger<ListingInquiryService> _logger;
 		private readonly IGTGenericRepository<ListingInquiry> _listingInquiryRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly IGTListingService _listingService;
+		private readonly IListingService _listingService;
 
-		public GTListingInquiryService(ILogger<GTListingInquiryService> logger,
+		public ListingInquiryService(ILogger<ListingInquiryService> logger,
 			IGTGenericRepository<ListingInquiry> listingInquiryRepository,
 			UserManager<ApplicationUser> userManager,
-			IGTListingService listingService)
+			IListingService listingService)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_listingInquiryRepository = listingInquiryRepository

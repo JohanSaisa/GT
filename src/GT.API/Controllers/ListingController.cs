@@ -16,13 +16,13 @@ namespace GT.API.Controllers
 	public class ListingController : GTControllerBase
 	{
 		private readonly IGTListingService _listingService;
-		private readonly IGTCompanyService _companyService;
+		private readonly ICompanyService _companyService;
 		private readonly IGTExperienceLevelService _experienceLevelService;
 		private readonly IGTLocationService _locationService;
 
 		public ListingController(
 			IGTListingService listingService,
-			IGTCompanyService companyService,
+			ICompanyService companyService,
 			IGTExperienceLevelService experienceLevelService,
 			IGTLocationService locationService,
 			IConfiguration configuration) : base(configuration)

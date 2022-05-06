@@ -9,9 +9,9 @@ namespace GT.API.Controllers
 	[ApiController]
 	public class ExperienceLevelController : Controller
 	{
-		private readonly IGTExperienceLevelService _experienceLevelService;
+		private readonly IExperienceLevelService _experienceLevelService;
 
-		public ExperienceLevelController(IGTExperienceLevelService experienceLevelService)
+		public ExperienceLevelController(IExperienceLevelService experienceLevelService)
 		{
 			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
 		}

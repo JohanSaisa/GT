@@ -2,7 +2,7 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTInquiryService
+	public interface IInquiryService
 	{
 		Task<bool> AddAsync(PostInquiryDTO dto, string? signedInUserId = null);
 

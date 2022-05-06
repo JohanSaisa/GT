@@ -16,10 +16,10 @@ namespace GT.UI.Controllers
 	[ApiController]
 	public class ListingAPIController : ControllerBase
 	{
-		private readonly IGTListingService _listingService;
+		private readonly IListingService _listingService;
 		private readonly UserManager<ApplicationUser> _userManager;
 
-		public ListingAPIController(IGTListingService listingService, UserManager<ApplicationUser> userManager)
+		public ListingAPIController(IListingService listingService, UserManager<ApplicationUser> userManager)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));

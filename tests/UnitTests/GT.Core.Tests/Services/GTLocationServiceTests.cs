@@ -29,7 +29,7 @@ namespace GT.Core.Tests.Services
 				Name = inputLocationName
 			};
 
-			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<LocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 			var callbackResult = new Location();
 
@@ -38,7 +38,7 @@ namespace GT.Core.Tests.Services
 				.Callback<Location>(inputArgs => callbackResult = inputArgs)
 				.Returns(Task.FromResult(callbackResult));
 
-			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -69,10 +69,10 @@ namespace GT.Core.Tests.Services
 				Name = inputLocationName
 			};
 
-			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<LocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
-			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -90,10 +90,10 @@ namespace GT.Core.Tests.Services
 			// Arrange
 			LocationDTO dto = null;
 
-			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<LocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
-			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -114,7 +114,7 @@ namespace GT.Core.Tests.Services
 			bool expected)
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<LocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
 			mockRepository
@@ -127,7 +127,7 @@ namespace GT.Core.Tests.Services
 					.BuildMock()
 				);
 
-			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.ExistsByNameAsync(inputName);
@@ -141,7 +141,7 @@ namespace GT.Core.Tests.Services
 		public async Task GetAllAsync_ThreeEntitiesExistInDB_SucceedsAndReturnsThreeEntities()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<LocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
 			mockRepository
@@ -154,7 +154,7 @@ namespace GT.Core.Tests.Services
 				 }.AsQueryable().BuildMock()
 				);
 
-			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.GetAllAsync();
@@ -168,7 +168,7 @@ namespace GT.Core.Tests.Services
 		public async Task GetAllAsync_NoEntitiesExistInDB_SucceedsAndReturnsEmptyListOfDTO()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTLocationService>>();
+			var mockLogger = new Mock<ILogger<LocationService>>();
 			var mockRepository = new Mock<IGTGenericRepository<Location>>();
 
 			mockRepository
@@ -177,7 +177,7 @@ namespace GT.Core.Tests.Services
 				{ }.AsQueryable().BuildMock()
 				);
 
-			var sut = new GTLocationService(mockLogger.Object, mockRepository.Object);
+			var sut = new LocationService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.GetAllAsync();

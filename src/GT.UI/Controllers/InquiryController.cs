@@ -11,14 +11,14 @@ namespace GT.UI.Controllers
 {
 	public class InquiryController : Controller
 	{
-		private readonly IGTInquiryService _gtListingInquiryService;
-		private readonly IGTListingService _gtListingService;
+		private readonly IInquiryService _gtListingInquiryService;
+		private readonly IListingService _gtListingService;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public InquiryController(
-			IGTInquiryService gtListingInquiryService,
-			IGTListingService gtListingService,
+			IInquiryService gtListingInquiryService,
+			IListingService gtListingService,
 			SignInManager<ApplicationUser> signInManager,
 			UserManager<ApplicationUser> userManager)
 		{

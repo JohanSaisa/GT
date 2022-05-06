@@ -29,7 +29,7 @@ namespace GT.Core.Tests.Services
 				Name = inputExperienceLevelName
 			};
 
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var callbackResult = new ExperienceLevel();
 
@@ -38,7 +38,7 @@ namespace GT.Core.Tests.Services
 				.Callback<ExperienceLevel>(inputArgs => callbackResult = inputArgs)
 				.Returns(Task.FromResult(callbackResult));
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -68,10 +68,10 @@ namespace GT.Core.Tests.Services
 				Name = inputExperienceLevelName
 			};
 
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -94,7 +94,7 @@ namespace GT.Core.Tests.Services
 				Name = inputNameWithWhitespaces
 			};
 
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 			var callbackResult = new ExperienceLevel();
 
@@ -102,7 +102,7 @@ namespace GT.Core.Tests.Services
 				.Setup(m => m.AddAsync(It.IsAny<ExperienceLevel>()))
 				.Callback<ExperienceLevel>(inputArgs => callbackResult = inputArgs);
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -118,10 +118,10 @@ namespace GT.Core.Tests.Services
 			// Arrange
 			ExperienceLevelDTO dto = null;
 
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.AddAsync(dto);
@@ -140,7 +140,7 @@ namespace GT.Core.Tests.Services
 		public async Task ExistsByNameAsync_CheckMultipleInputs_ReturnsExpectedValue(string inputName, bool expected)
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
 			mockRepository
@@ -151,7 +151,7 @@ namespace GT.Core.Tests.Services
 				 }.AsQueryable().BuildMock()
 				);
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.ExistsByNameAsync(inputName);
@@ -165,7 +165,7 @@ namespace GT.Core.Tests.Services
 		public async Task GetAllAsync_ThreeEntitiesExistInDB_SucceedsAndReturnsThreeEntities()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
 			mockRepository
@@ -178,7 +178,7 @@ namespace GT.Core.Tests.Services
 				 }.AsQueryable().BuildMock()
 				);
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.GetAllAsync();
@@ -192,7 +192,7 @@ namespace GT.Core.Tests.Services
 		public async Task GetAllAsync_NoEntitiesExistInDB_SucceedsAndReturnsEmptyListOfDTO()
 		{
 			// Arrange
-			var mockLogger = new Mock<ILogger<GTExperienceLevelService>>();
+			var mockLogger = new Mock<ILogger<ExperienceLevelService>>();
 			var mockRepository = new Mock<IGTGenericRepository<ExperienceLevel>>();
 
 			mockRepository
@@ -201,7 +201,7 @@ namespace GT.Core.Tests.Services
 				{ }.AsQueryable().BuildMock()
 				);
 
-			var sut = new GTExperienceLevelService(mockLogger.Object, mockRepository.Object);
+			var sut = new ExperienceLevelService(mockLogger.Object, mockRepository.Object);
 
 			// Act
 			var result = await sut.GetAllAsync();

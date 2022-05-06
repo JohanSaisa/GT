@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTExperienceLevelService : IGTExperienceLevelService
+	public class ExperienceLevelService : IExperienceLevelService
 	{
-		private readonly ILogger<GTExperienceLevelService> _logger;
+		private readonly ILogger<ExperienceLevelService> _logger;
 		private readonly IGTGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
-		public GTExperienceLevelService(ILogger<GTExperienceLevelService> logger,
+		public ExperienceLevelService(ILogger<ExperienceLevelService> logger,
 			IGTGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
