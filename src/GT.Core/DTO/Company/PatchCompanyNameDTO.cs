@@ -6,9 +6,10 @@ namespace GT.Core.DTO.Company
 	/// <summary>
 	/// Represents a Company view and create model.
 	/// </summary>
-	public class CompanyDTO
+	public class PatchCompanyNameDTO
 	{
+		[Required]
+		[StringLength(100)]
 		public string? Name { get; set; }
-		public List<LocationDTO>? Locations { get; set; }
 	}
 }

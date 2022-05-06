@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.Inquiry;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.GTAppDb.Entities;
 using GT.Data.Data.GTIdentityDb.Entities;
@@ -28,7 +28,7 @@ namespace GT.Core.Services.Impl
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 		}
 
-		public async Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO dto, string? signedInUserId = null)
+		public async Task<InquiryDTO?> AddAsync(InquiryDTO dto, string? signedInUserId = null)
 		{
 			try
 			{
@@ -131,7 +131,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<List<ListingInquiryDTO?>> GetAllAsync()
+		public async Task<List<InquiryDTO?>> GetAllAsync()
 		{
 			// Get entities from database
 			try
@@ -140,7 +140,7 @@ namespace GT.Core.Services.Impl
 					.Get()
 					.ToListAsync();
 
-				var inquiryDTOs = new List<ListingInquiryDTO>();
+				var inquiryDTOs = new List<InquiryDTO>();
 
 				foreach (var entity in entities)
 				{
@@ -148,7 +148,7 @@ namespace GT.Core.Services.Impl
 
 					// TODO add automapper
 
-					inquiryDTOs.Add(new ListingInquiryDTO
+					inquiryDTOs.Add(new InquiryDTO
 					{
 						Id = entity.Id,
 						ApplicantId = entity.ApplicantId,
@@ -169,7 +169,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<ListingInquiryDTO?> GetByIdAsync(string id)
+		public async Task<InquiryDTO?> GetByIdAsync(string id)
 		{
 			if (id is null)
 			{
@@ -194,7 +194,7 @@ namespace GT.Core.Services.Impl
 
 				// TODO Automapper
 
-				var inquiryDTO = new ListingInquiryDTO()
+				var inquiryDTO = new InquiryDTO()
 				{
 					Id = entity.Id,
 					ApplicantId = entity.ApplicantId,
@@ -214,7 +214,7 @@ namespace GT.Core.Services.Impl
 			}
 		}
 
-		public async Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string id)
+		public async Task<List<InquiryDTO>?> GetByListingIdAsync(string id)
 		{
 			if (id is null)
 			{
@@ -232,14 +232,14 @@ namespace GT.Core.Services.Impl
 				return null;
 			}
 
-			var listingInquiryDTOs = new List<ListingInquiryDTO>();
+			var listingInquiryDTOs = new List<InquiryDTO>();
 
 			foreach (var entity in entities)
 			{
 				var applicant = await _userManager
 					.FindByIdAsync(entity.ApplicantId);
 
-				listingInquiryDTOs.Add(new ListingInquiryDTO
+				listingInquiryDTOs.Add(new InquiryDTO
 				{
 					Id = entity.Id,
 					ApplicantId = entity.ApplicantId,
@@ -254,7 +254,7 @@ namespace GT.Core.Services.Impl
 			return listingInquiryDTOs;
 		}
 
-		public async Task UpdateAsync(ListingInquiryDTO dto, string id)
+		public async Task UpdateAsync(InquiryDTO dto, string id)
 		{
 			try
 			{

@@ -1,18 +1,18 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.Inquiry;
 
 namespace GT.Core.Services.Interfaces
 {
 	public interface IGTListingInquiryService : IGTService
 	{
-		Task<List<ListingInquiryDTO?>> GetAllAsync();
+		Task<List<InquiryDTO?>> GetAllAsync();
 
-		Task<ListingInquiryDTO?> GetByIdAsync(string id);
+		Task<InquiryDTO?> GetByIdAsync(string id);
 
-		Task<List<ListingInquiryDTO>?> GetByListingIdAsync(string id);
+		Task<List<InquiryDTO>?> GetByListingIdAsync(string id);
 
-		Task<ListingInquiryDTO?> AddAsync(ListingInquiryDTO dto, string? signedInUserId = null);
+		Task<InquiryDTO?> AddAsync(InquiryDTO dto, string? signedInUserId = null);
 
-		Task UpdateAsync(ListingInquiryDTO dto, string id);
+		Task UpdateAsync(InquiryDTO dto, string id);
 
 		Task DeleteAsync(string id);
 

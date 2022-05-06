@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.Authentication;
 using GT.Data.Data.GTIdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +33,7 @@ namespace GT.API.Controllers
 
 		[Route("RequestToken")]
 		[HttpPost]
-		public async Task<IActionResult> GetToken([FromBody] JwtTokenDTO loginModel)
+		public async Task<IActionResult> GetToken([FromBody] PostLoginDTO loginModel)
 		{
 			if (!ModelState.IsValid)
 			{

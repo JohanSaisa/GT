@@ -1,12 +1,11 @@
-﻿using GT.Core.DTO.Interfaces;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace GT.Core.DTO.Impl
+namespace GT.Core.DTO.Listing
 {
 	/// <summary>
 	/// Represents a listing view and create model.
 	/// </summary>
-	public class ListingDTO : IGTDataTransferObject
+	public class ListingDTO
 	{
 		[StringLength(450)]
 		public string? Id { get; set; }
@@ -49,7 +48,7 @@ namespace GT.Core.DTO.Impl
 		public string? ExperienceLevel { get; set; }
 
 		public List<InquiryDTO>? Inquiries { get; set; }
-    
+
 		/// <summary>
 		/// Maps to an ApplicationDeadline name in the database.
 		/// </summary>

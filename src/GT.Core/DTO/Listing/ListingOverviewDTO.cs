@@ -1,6 +1,4 @@
-﻿using GT.Core.DTO.Interfaces;
-
-namespace GT.Core.DTO.Impl
+﻿namespace GT.Core.DTO.Listing
 {
 	/// <summary>
 	/// Intended view model for a listing which is part of a list of other listings.
@@ -8,7 +6,7 @@ namespace GT.Core.DTO.Impl
 	/// all necessary properties needed for the creation of the listing entity.
 	/// Instead use the ListingDTO.
 	/// </summary>
-	public class ListingOverviewDTO : IGTDataTransferObject
+	public class ListingOverviewDTO
 	{
 		public string? Id { get; set; }
 		public string? ListingTitle { get; set; }

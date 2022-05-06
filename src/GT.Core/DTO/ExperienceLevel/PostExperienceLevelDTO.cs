@@ -5,10 +5,10 @@ namespace GT.Core.DTO.ExperienceLevel
 	/// <summary>
 	/// Represents an ExperienceLevel view and create model.
 	/// </summary>
-	public class ExperienceLevelDTO
+	public class PostExperienceLevelDTO
 	{
-		public string? Id { get; set; }
-
+		[Required]
+		[StringLength(100)]
 		public string? Name { get; set; }
 	}
 }

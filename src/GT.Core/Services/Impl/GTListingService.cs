@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.Listing;
 using GT.Core.FilterModels.Impl;
 using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;

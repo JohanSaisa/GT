@@ -6,9 +6,11 @@ namespace GT.Core.DTO.Company
 	/// <summary>
 	/// Represents a Company view and create model.
 	/// </summary>
-	public class CompanyDTO
+	public class PostCompanyDTO
 	{
+		[Required]
 		public string? Name { get; set; }
+
 		public List<LocationDTO>? Locations { get; set; }
 	}
 }

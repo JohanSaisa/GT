@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.Inquiry;
 using GT.Core.Services.Impl;
 using GT.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -61,7 +61,7 @@ namespace GT.API.Controllers
 		// POST: /create
 		[Route("create")]
 		[HttpPost]
-		public async Task<ActionResult<string>> PostInquiry(ListingInquiryDTO dto)
+		public async Task<ActionResult<string>> PostInquiry(InquiryDTO dto)
 		{
 			if (dto is null)
 			{
@@ -85,7 +85,7 @@ namespace GT.API.Controllers
 		// PUT: update/5
 		[Route("update/{id}")]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutInquiry(string id, ListingInquiryDTO dto)
+		public async Task<IActionResult> PutInquiry(string id, InquiryDTO dto)
 		{
 			if (string.IsNullOrEmpty(id) || id != dto.Id)
 			{

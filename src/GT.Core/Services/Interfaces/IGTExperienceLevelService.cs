@@ -1,4 +1,4 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.ExperienceLevel;
 
 namespace GT.Core.Services.Interfaces
 {
