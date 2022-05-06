@@ -49,7 +49,8 @@ builder.Services
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+	.AddScoped(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
+	.AddScoped<IGTIdentityRepository, GTIdentityRepository>();
 
 //Add BLL services
 builder.Services

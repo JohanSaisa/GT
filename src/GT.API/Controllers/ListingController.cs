@@ -15,16 +15,16 @@ namespace GT.API.Controllers
 	[ApiController]
 	public class ListingController : GTControllerBase
 	{
-		private readonly IGTListingService _listingService;
+		private readonly IListingService _listingService;
 		private readonly ICompanyService _companyService;
-		private readonly IGTExperienceLevelService _experienceLevelService;
-		private readonly IGTLocationService _locationService;
+		private readonly IExperienceLevelService _experienceLevelService;
+		private readonly ILocationService _locationService;
 
 		public ListingController(
-			IGTListingService listingService,
+			IListingService listingService,
 			ICompanyService companyService,
-			IGTExperienceLevelService experienceLevelService,
-			IGTLocationService locationService,
+			IExperienceLevelService experienceLevelService,
+			ILocationService locationService,
 			IConfiguration configuration) : base(configuration)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));

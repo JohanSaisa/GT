@@ -1,13 +1,13 @@
-﻿using GT.Data.Data.GTIdentityDb;
+﻿using GT.Data.Data.IdentityDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
 namespace TestingNTier.DAL.Data
 {
-	public class IdentityContextFactory : IDesignTimeDbContextFactory<GTIdentityContext>
+	public class IdentityContextFactory : IDesignTimeDbContextFactory<IdentityContext>
 	{
-		public GTIdentityContext CreateDbContext(string[] args)
+		public IdentityContext CreateDbContext(string[] args)
 		{
 			var basePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
 
@@ -17,13 +17,13 @@ namespace TestingNTier.DAL.Data
 			.AddJsonFile("appsettings.json")
 			.Build();
 
-			var optionsBuilder = new DbContextOptionsBuilder<GTIdentityContext>();
+			var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
 
 			var connectionString = cfg.GetConnectionString("GTIdentityContextConnection");
 
 			optionsBuilder.UseSqlServer(connectionString);
 
-			return new GTIdentityContext(optionsBuilder.Options);
+			return new IdentityContext(optionsBuilder.Options);
 		}
 	}
 }

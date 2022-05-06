@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GT.Data.Data.GTIdentityDb.Entities;
+namespace GT.Data.Data.IdentityDb.Entities;
 
-// Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser, IAppEntity
 {
 	[PersonalData]

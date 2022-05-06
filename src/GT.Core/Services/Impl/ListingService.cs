@@ -2,7 +2,7 @@
 using GT.Core.FilterModels.Impl;
 using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.AppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,7 +20,7 @@ namespace GT.Core.Services.Impl
 		private readonly IGenericRepository<Company> _companyRepository;
 		private readonly IGenericRepository<Location> _locationRepository;
 		private readonly IGenericRepository<ExperienceLevel> _experienceLevelRepository;
-		private readonly IGenericRepository<ListingInquiry> _inquiryRepository;
+		private readonly IGenericRepository<Inquiry> _inquiryRepository;
 
 		public ListingService(
 			ILogger<ListingService> logger,
@@ -29,7 +29,7 @@ namespace GT.Core.Services.Impl
 			IGenericRepository<Company> companyRepository,
 			IGenericRepository<Location> locationRepository,
 			IGenericRepository<ExperienceLevel> experienceLevelRepository,
-			IGenericRepository<ListingInquiry> inquiryRepository)
+			IGenericRepository<Inquiry> inquiryRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));

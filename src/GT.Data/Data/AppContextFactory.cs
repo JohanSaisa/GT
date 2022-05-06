@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace TestingNTier.DAL.Data
+namespace GT.Data.Data
 {
-	public class AppContextFactory : IDesignTimeDbContextFactory<GTAppContext>
+	public class AppContextFactory : IDesignTimeDbContextFactory<GTAppDb.AppContext>
 	{
-		public GTAppContext CreateDbContext(string[] args)
+		public GTAppDb.AppContext CreateDbContext(string[] args)
 		{
-			var basePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
+			var basePath = Path.Combine(System.AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
 
 			// TODO use connection string from user secrets
 			var cfg = new ConfigurationBuilder()
@@ -17,13 +17,13 @@ namespace TestingNTier.DAL.Data
 			.AddJsonFile("appsettings.json")
 			.Build();
 
-			var optionsBuilder = new DbContextOptionsBuilder<GTAppContext>();
+			var optionsBuilder = new DbContextOptionsBuilder<GTAppDb.AppContext>();
 
 			var connectionString = cfg.GetConnectionString("GTApplicationContextConnection");
 
 			optionsBuilder.UseSqlServer(connectionString);
 
-			return new GTAppContext(optionsBuilder.Options);
+			return new GTAppDb.AppContext(optionsBuilder.Options);
 		}
 	}
 }

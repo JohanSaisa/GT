@@ -23,9 +23,9 @@ namespace GT.Data.Repositories.Interfaces
 		Task<TEntity?> FindAsync(params object[] keys);
 
 		Task AddAsync(TEntity entity);
-		
+
 		void Update(TEntity entity);
-		
+
 		void Delete(TEntity entity);
 
 		Task<bool> SaveAsync();

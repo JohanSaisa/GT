@@ -1,7 +1,7 @@
 ﻿using GT.Core.DTO.Inquiry;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTAppDb.Entities;
-using GT.Data.Data.GTIdentityDb.Entities;
+using GT.Data.Data.AppDb.Entities;
+using GT.Data.Data.IdentityDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +12,12 @@ namespace GT.Core.Services.Impl
 	public class ListingInquiryService : IInquiryService
 	{
 		private readonly ILogger<ListingInquiryService> _logger;
-		private readonly IGenericRepository<ListingInquiry> _listingInquiryRepository;
+		private readonly IGenericRepository<Inquiry> _listingInquiryRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IListingService _listingService;
 
 		public ListingInquiryService(ILogger<ListingInquiryService> logger,
-			IGenericRepository<ListingInquiry> listingInquiryRepository,
+			IGenericRepository<Inquiry> listingInquiryRepository,
 			UserManager<ApplicationUser> userManager,
 			IListingService listingService)
 		{
@@ -52,7 +52,7 @@ namespace GT.Core.Services.Impl
 					}
 				}
 
-				var newInquiry = new ListingInquiry();
+				var newInquiry = new Inquiry();
 
 				//TODO Implement automapper
 				newInquiry.Id = Guid.NewGuid().ToString();

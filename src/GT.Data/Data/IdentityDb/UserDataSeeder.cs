@@ -1,4 +1,4 @@
-﻿using GT.Data.Data.GTIdentityDb.Entities;
+﻿using GT.Data.Data.IdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace GT.Data.Data.GTIdentityDb
+namespace GT.Data.Data.IdentityDb
 {
-	public static class GTUserDataSeeder
+	public static class UserDataSeeder
 	{
 		private static readonly string _gtAdminAccount = "GTadmin@admin.com";
 		private static readonly string _gtUserAccount = "GTuser@user.com";

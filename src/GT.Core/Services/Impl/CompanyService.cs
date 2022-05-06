@@ -1,6 +1,6 @@
 ﻿using GT.Core.DTO.Company;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.AppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

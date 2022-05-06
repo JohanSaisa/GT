@@ -1,6 +1,6 @@
 using GT.Core.DTO.ExperienceLevel;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.AppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

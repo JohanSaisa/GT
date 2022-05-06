@@ -1,10 +1,11 @@
-﻿using GT.Data.Data.GTAppDb.Entities;
+﻿using GT.Data.Data.AppDb.Entities;
+using GT.Data.Data.GTAppDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GT.Data.Data.GTAppDb
+namespace GT.Data.Data.AppDb
 {
-	public static class GTAppDataSeeder
+	public static class AppDataSeeder
 	{
 		// Number of Data objects.
 		private static readonly int _numberOfItems = 11;
@@ -134,10 +135,10 @@ namespace GT.Data.Data.GTAppDb
 			// Junction table connections.
 			(List<Company> companies, List<Location> locations) = SetCompanyLocations(tempCompanies, tempLocations);
 			List<Listing> listings = PopulateListings(companies, experienceLevels, locations);
-			List<ListingInquiry> listingInquiries = PopulateListingInquiries(listings);
+			List<Inquiry> listingInquiries = PopulateListingInquiries(listings);
 
-			using (var context = new GTAppContext(
-							serviceProvider.GetRequiredService<DbContextOptions<GTAppContext>>()))
+			using (var context = new AppContext(
+							serviceProvider.GetRequiredService<DbContextOptions<AppContext>>()))
 			{
 				SeedDataToDatabase(context, companies, listingInquiries, listings, locations);
 			}
@@ -293,13 +294,13 @@ namespace GT.Data.Data.GTAppDb
 		/// <param name="listings"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		private static List<ListingInquiry> PopulateListingInquiries(List<Listing> listings)
+		private static List<Inquiry> PopulateListingInquiries(List<Listing> listings)
 		{
 			if (listings.Count <= 0 || listings == null)
 			{
 				throw new ArgumentNullException();
 			}
-			List<ListingInquiry> listingInquiries = new List<ListingInquiry>();
+			List<Inquiry> listingInquiries = new List<Inquiry>();
 
 			List<string> messageBodies = new List<string>();
 			for (int i = 0; i < _numberOfItems; i++)
@@ -317,7 +318,7 @@ namespace GT.Data.Data.GTAppDb
 
 			for (int i = 0; i < _numberOfItems; i++)
 			{
-				var listingInquiry = new ListingInquiry()
+				var listingInquiry = new Inquiry()
 				{
 					Id = Guid.NewGuid().ToString(),
 					MessageTitle = _messageTitles[i],
@@ -338,7 +339,7 @@ namespace GT.Data.Data.GTAppDb
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="companies"></param>
-		private static void SeedDataToDatabase(GTAppContext context, List<Company> companies, List<ListingInquiry> listingInquiries, List<Listing> listings, List<Location> locations)
+		private static void SeedDataToDatabase(AppContext context, List<Company> companies, List<Inquiry> listingInquiries, List<Listing> listings, List<Location> locations)
 		{
 			if (context.Listings.Any())
 			{

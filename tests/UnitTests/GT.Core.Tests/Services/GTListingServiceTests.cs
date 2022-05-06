@@ -2,7 +2,7 @@
 using GT.Core.DTO.Impl;
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Impl;
-using GT.Data.Data.GTAppDb.Entities;
+using GT.Data.Data.AppDb.Entities;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using MockQueryable.Moq;
@@ -42,7 +42,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var listingInDatabase = new Listing()
 			{
@@ -131,7 +131,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var emptyFilterModel = new PostListingFilterDTO();
 
@@ -170,7 +170,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			mockListingRepository
 				.Setup(m => m.Get())
@@ -225,7 +225,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			mockListingRepository
 				.Setup(m => m.Get())
@@ -257,7 +257,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var inputDTO = new ListingDTO()
 			{
@@ -367,7 +367,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var sut = new ListingService(
 				mockLogger.Object,
@@ -429,7 +429,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			mockListingRepository
 				.Setup(m => m.Get())
@@ -515,7 +515,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var sut = new ListingService(
 				mockLogger.Object,
@@ -544,7 +544,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var sut = new ListingService(
 				mockLogger.Object,
@@ -571,7 +571,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			var exampleIdInDB = "92f44091-1f99-400c-b18d-b2789eac5c81";
 
@@ -612,7 +612,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			mockListingRepository
 				.Setup(m => m.Get())
@@ -651,7 +651,7 @@ namespace GT.Core.Tests.Services
 			var mockCompanyRepository = new Mock<IGenericRepository<Company>>();
 			var mockLocationRepository = new Mock<IGenericRepository<Location>>();
 			var mockExperienceLevelRepository = new Mock<IGenericRepository<ExperienceLevel>>();
-			var mockInquiryRepository = new Mock<IGenericRepository<ListingInquiry>>();
+			var mockInquiryRepository = new Mock<IGenericRepository<Inquiry>>();
 
 			mockListingRepository
 				.Setup(m => m.Get())

@@ -1,5 +1,5 @@
 ﻿using GT.Core.DTO.Authentication;
-using GT.Data.Data.GTIdentityDb.Entities;
+using GT.Data.Data.IdentityDb.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

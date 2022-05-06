@@ -1,8 +1,8 @@
 using GT.Core.Services.Impl;
 using GT.Core.Services.Interfaces;
-using GT.Data.Data.GTAppDb;
-using GT.Data.Data.GTIdentityDb;
-using GT.Data.Data.GTIdentityDb.Entities;
+using GT.Data.Data.AppDb;
+using GT.Data.Data.IdentityDb;
+using GT.Data.Data.IdentityDb.Entities;
 using GT.Data.Repositories.Impl;
 using GT.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,9 +18,9 @@ var identityConnectionString = configuration["GTIdentityContextConnection"];
 var appConnectionString = configuration["GTApplicationContextConnection"];
 
 builder.Services
-	.AddDbContext<GTAppContext>(options =>
+	.AddDbContext<global::GT.Data.Data.GTAppDb.AppContext>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
 		options.UseSqlServer(appConnectionString))
-	.AddDbContext<GTIdentityContext>(options =>
+	.AddDbContext<global::GT.Data.Data.IdentityDb.IdentityContext>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
 		options.UseSqlServer(identityConnectionString));
 
 // Add identity
@@ -32,7 +32,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 	options.Password.RequiredLength = 8;
 })
 	.AddRoles<IdentityRole>()
-	.AddEntityFrameworkStores<GTIdentityContext>();
+	.AddEntityFrameworkStores<IdentityContext>();
 
 // Add services to the container.
 builder.Services
@@ -44,7 +44,8 @@ builder.Services
 
 // Add DAL repositories
 builder.Services
-	.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+	.AddScoped(typeof(IGTGenericRepository<>), typeof(GTGenericRepository<>))
+	.AddScoped<IGTIdentityRepository, GTIdentityRepository>();
 
 // Add BLL services
 builder.Services
@@ -91,7 +92,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
 	var services = scope.ServiceProvider;
-	GTAppDataSeeder.Initialize(services);
+	AppDataSeeder.Initialize(services);
 }
 
 app.UseHttpsRedirection();
