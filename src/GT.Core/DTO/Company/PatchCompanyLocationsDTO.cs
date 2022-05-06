@@ -8,7 +8,7 @@ namespace GT.Core.DTO.Company
 	/// </summary>
 	public class PatchCompanyLocationsDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "Locations is required")]
 		public List<LocationDTO>? Locations { get; set; }
 	}
 }

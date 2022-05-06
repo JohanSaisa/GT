@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace GT.Core.Services.Impl
 {
-	public class GTListingInquiryService : IGTListingInquiryService
+	public class GTListingInquiryService : IGTInquiryService
 	{
 		private readonly ILogger<GTListingInquiryService> _logger;
 		private readonly IGTGenericRepository<ListingInquiry> _listingInquiryRepository;

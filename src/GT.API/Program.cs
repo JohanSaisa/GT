@@ -52,7 +52,7 @@ builder.Services
 	.AddScoped<IGTListingService, GTListingService>()
 	.AddScoped<IGTCompanyService, GTCompanyService>()
 	.AddScoped<IGTLocationService, GTLocationService>()
-	.AddScoped<IGTListingInquiryService, GTListingInquiryService>()
+	.AddScoped<IGTInquiryService, GTListingInquiryService>()
 	.AddScoped<IGTExperienceLevelService, GTExperienceLevelService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

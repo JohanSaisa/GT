@@ -1,16 +1,12 @@
-﻿using GT.Core.DTO.Impl;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GT.Core.DTO.Company
 {
-	/// <summary>
-	/// Represents a Company view and create model.
-	/// </summary>
 	public class PostCompanyDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "Name is required")]
 		public string? Name { get; set; }
 
-		public List<LocationDTO>? Locations { get; set; }
+		public List<string>? Locations { get; set; } = new List<string>();
 	}
 }

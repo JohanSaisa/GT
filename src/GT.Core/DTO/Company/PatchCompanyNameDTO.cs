@@ -8,7 +8,7 @@ namespace GT.Core.DTO.Company
 	/// </summary>
 	public class PatchCompanyNameDTO
 	{
-		[Required]
+		[Required(ErrorMessage = "Name is required")]
 		[StringLength(100)]
 		public string? Name { get; set; }
 	}

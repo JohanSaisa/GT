@@ -2,18 +2,18 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTExperienceLevelService : IGTService
+	public interface IGTExperienceLevelService
 	{
+		Task<bool> AddAsync(PostExperienceLevelDTO dto);
+
 		Task<List<ExperienceLevelDTO>> GetAllAsync();
 
 		Task<ExperienceLevelDTO?> GetByIdAsync(string id);
 
-		Task<ExperienceLevelDTO> AddAsync(ExperienceLevelDTO dto);
-
 		Task<bool> ExistsByNameAsync(string name);
 
-		Task UpdateAsync(ExperienceLevelDTO dto, string name);
+		Task<bool> DeleteAsync(string id);
 
-		Task DeleteAsync(string id);
+		Task<bool> UpdateAsync(ExperienceLevelDTO dto, string id);
 	}
 }

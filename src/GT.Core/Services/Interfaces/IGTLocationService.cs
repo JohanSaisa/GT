@@ -2,12 +2,18 @@
 
 namespace GT.Core.Services.Interfaces
 {
-	public interface IGTLocationService : IGTService
+	public interface IGTLocationService
 	{
-		Task<List<LocationDTO>?> GetAllAsync();
+		Task<bool> AddAsync(PostLocationDTO dto);
 
-		Task<LocationDTO> AddAsync(LocationDTO dto);
+		Task<List<LocationDTO>> GetAllAsync();
+
+		Task<LocationDTO> GetByIdAsync(string id);
 
 		Task<bool> ExistsByNameAsync(string name);
+
+		Task<bool> DeleteAsync(string id);
+
+		Task<bool> UpdateAsync(PostLocationDTO dto, string id);
 	}
 }

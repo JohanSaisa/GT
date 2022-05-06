@@ -14,13 +14,13 @@ namespace GT.UI.Areas.Identity.Pages.Account.Manage
 	public class DeletePersonalDataModel : PageModel
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly IGTListingInquiryService _listingInquiryService;
+		private readonly IGTInquiryService _listingInquiryService;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly ILogger<DeletePersonalDataModel> _logger;
 
 		public DeletePersonalDataModel(
 				UserManager<ApplicationUser> userManager,
-				IGTListingInquiryService listingInquiryService,
+				IGTInquiryService listingInquiryService,
 				SignInManager<ApplicationUser> signInManager,
 				ILogger<DeletePersonalDataModel> logger)
 		{

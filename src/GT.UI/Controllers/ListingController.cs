@@ -15,14 +15,14 @@ namespace GT.UI.Controllers
 		private readonly IGTListingService _listingService;
 		private readonly IGTExperienceLevelService _experienceService;
 		private readonly IGTLocationService _locationService;
-		private readonly IGTListingInquiryService _listingInquiryService;
+		private readonly IGTInquiryService _listingInquiryService;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public ListingController(
 			IGTListingService listingService,
 			IGTExperienceLevelService experienceService,
 			IGTLocationService locationService,
-			IGTListingInquiryService listingInquiryService,
+			IGTInquiryService listingInquiryService,
 			UserManager<ApplicationUser> userManager)
 		{
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
