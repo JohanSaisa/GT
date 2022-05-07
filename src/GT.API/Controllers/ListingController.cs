@@ -41,9 +41,7 @@ namespace GT.API.Controllers
 
 			try
 			{
-				var dtos = await _listingService
-					.GetAllByFilterAsync(filterModel);
-
+				var dtos = await _listingService.GetAllByFilterAsync(filterModel);
 				return Ok(dtos);
 			}
 			catch (Exception ex)
@@ -62,8 +60,7 @@ namespace GT.API.Controllers
 
 			try
 			{
-				var dto = await _listingService
-					.GetByIdAsync(id);
+				var dto = await _listingService.GetByIdAsync(id);
 
 				if (dto is null)
 				{
@@ -112,16 +109,19 @@ namespace GT.API.Controllers
 
 			try
 			{
-				if (dto.Employer is not null && !await _companyService.ExistsByNameAsync(dto.Employer.Trim()))
-				{
-					await _companyService.AddAsync(new PostCompanyDTO { Name = dto.Employer.Trim() });
-				}
-
+				// Add Location if it does not exist
 				if (dto.Location is not null && !await _locationService.ExistsByNameAsync(dto.Location.Trim()))
 				{
 					await _locationService.AddAsync(new PostLocationDTO { Name = dto.Location.Trim() });
 				}
 
+				// Add Company if it does not exist
+				if (dto.Employer is not null && !await _companyService.ExistsByNameAsync(dto.Employer.Trim()))
+				{
+					await _companyService.AddAsync(new PostCompanyDTO { Name = dto.Employer.Trim() });
+				}
+
+				// Add ExperienceLevel if it does not exist
 				if (dto.ExperienceLevel is not null && !await _experienceLevelService.ExistsByNameAsync(dto.ExperienceLevel))
 				{
 					await _experienceLevelService.AddAsync(new PostExperienceLevelDTO { Name = dto.ExperienceLevel.Trim() });
@@ -131,35 +131,42 @@ namespace GT.API.Controllers
 
 				return Ok();
 			}
-			catch
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 		}
 
-		[Route("create")]
 		[HttpPost]
-		public async Task<ActionResult<string?>> PostListing(ListingDTO dto)
+		public async Task<ActionResult> PostListing(PostListingDTO dto)
 		{
-			if (dto is null)
-			{
-				return BadRequest();
-			}
-
 			try
 			{
-				// Ensures that all necessary entities exists in the database.
-				await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
-				await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
-				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
+				// Add Location if it does not exist
+				if (dto.Location is not null && !await _locationService.ExistsByNameAsync(dto.Location.Trim()))
+				{
+					await _locationService.AddAsync(new PostLocationDTO { Name = dto.Location.Trim() });
+				}
 
-				var objToReturn = await _listingService.AddAsync(dto, GetUserId());
-				var result = JsonConvert.SerializeObject(objToReturn);
-				return StatusCode(201, result);
+				// Add Company if it does not exist
+				if (dto.Employer is not null && !await _companyService.ExistsByNameAsync(dto.Employer.Trim()))
+				{
+					await _companyService.AddAsync(new PostCompanyDTO { Name = dto.Employer.Trim() });
+				}
+
+				// Add ExperienceLevel if it does not exist
+				if (dto.ExperienceLevel is not null && !await _experienceLevelService.ExistsByNameAsync(dto.ExperienceLevel))
+				{
+					await _experienceLevelService.AddAsync(new PostExperienceLevelDTO { Name = dto.ExperienceLevel.Trim() });
+				}
+
+				await _listingService.AddAsync(dto, GetUserId());
+
+				return StatusCode(201);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 		}
 	}

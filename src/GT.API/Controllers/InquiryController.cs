@@ -54,11 +54,6 @@ namespace GT.API.Controllers
 		[HttpPost]
 		public async Task<ActionResult> PostInquiry(PostInquiryDTO dto)
 		{
-			if (dto is null)
-			{
-				return BadRequest();
-			}
-
 			try
 			{
 				await _inquiryService.AddAsync(dto);
