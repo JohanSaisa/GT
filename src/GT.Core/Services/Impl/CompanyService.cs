@@ -137,7 +137,7 @@ namespace GT.Core.Services.Impl
 
 			if (dto is null)
 			{
-				throw new ArgumentNullException("DTO cannot be null.");
+				throw new ArgumentNullException("Company object cannot be null.");
 			}
 
 			if (string.IsNullOrWhiteSpace(dto.Name))

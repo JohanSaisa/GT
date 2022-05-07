@@ -31,7 +31,6 @@ namespace GT.Core.Services.Impl
 
 			dto.Name = dto.Name.Trim();
 
-
 			if (await ExistsByNameAsync(dto.Name))
 			{
 				throw new ArgumentException($"ExperienceLevel with name {dto.Name} already exists.");
@@ -81,6 +80,11 @@ namespace GT.Core.Services.Impl
 
 		private async Task<bool> ExistsByIdAsync(string id)
 		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("Id cannot be null or empty.");
+			}
+
 			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Id == id);
 		}
 
@@ -94,7 +98,7 @@ namespace GT.Core.Services.Impl
 			return experienceLevelDTOs;
 		}
 
-		public async Task<ExperienceLevelDTO?> GetByIdAsync(string id)
+		public async Task<ExperienceLevelDTO> GetByIdAsync(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -103,55 +107,53 @@ namespace GT.Core.Services.Impl
 
 			var dto = await _experienceLevelRepository
 				.Get()!
-				.SingleOrDefault(e => e.Id == id);
+				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
+				.SingleOrDefaultAsync(e => e.Id == id);
 
 			if (dto is null)
 			{
 				throw new Exception($"No ExperienceLevel with id '{id}' was found.");
 			}
 
-			var experienceLevelDTO = new ExperienceLevelDTO()
-			{
-				Id = entity.Id,
-				Name = entity.Name,
-			};
-
-			return experienceLevelDTO;
+			return dto;
 		}
 
-		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string id)
+		public async Task<bool> UpdateAsync(PostExperienceLevelDTO dto, string id)
 		{
-			try
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				if (experienceLevelDTO.Id != id)
-				{
-					_logger.LogWarning($"Ids are not matching in method: {nameof(UpdateAsync)}.");
-					return;
-				}
-				if (experienceLevelDTO.Id is not null && id is not null)
-				{
-					if (await ExistsByIdAsync(id))
-					{
-						var entityToUpdate = await _experienceLevelRepository.Get().FirstOrDefaultAsync(e => e.Id == experienceLevelDTO.Id);
-
-						// TODO: Refactor and implement automapper
-						if (entityToUpdate is null)
-						{
-							return;
-						}
-
-						await _experienceLevelRepository.UpdateAsync(entityToUpdate, id);
-					}
-				}
-				else
-				{
-					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
-				}
+				throw new ArgumentException("Id cannot be null or empty.");
 			}
-			catch (Exception e)
+
+			if (dto is null)
 			{
-				_logger.LogError(e.Message);
+				throw new ArgumentNullException("ExperienceLevel object cannot be null.");
 			}
+
+			if (string.IsNullOrWhiteSpace(dto.Name))
+			{
+				throw new ArgumentNullException($"Name cannot be null or empty.");
+			}
+
+			dto.Name = dto.Name.Trim();
+
+			if (await _experienceLevelRepository.Get()!.AnyAsync((e => e.Id != id && e.Name == dto.Name)))
+			{
+				throw new ArgumentException($"ExperienceLevel with name: {dto.Name} already exist.");
+			}
+
+			var entityToUpdate = await _experienceLevelRepository.Get()!.SingleOrDefaultAsync(e => e.Id == id);
+
+			if (entityToUpdate is null)
+			{
+				throw new Exception($"No ExperienceLevel with id '{id}' was found.");
+			}
+
+			entityToUpdate.Name = dto.Name;
+
+			_experienceLevelRepository.Update(entityToUpdate);
+
+			return await _experienceLevelRepository.SaveAsync();
 		}
 	}
 }
