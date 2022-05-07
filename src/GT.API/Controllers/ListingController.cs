@@ -1,4 +1,6 @@
-﻿using GT.Core.DTO.Impl;
+﻿using GT.Core.DTO.Company;
+using GT.Core.DTO.ExperienceLevel;
+using GT.Core.DTO.Impl;
 using GT.Core.DTO.Listing;
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
@@ -29,62 +31,62 @@ namespace GT.API.Controllers
 			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
 		}
 
-		// POST: /overview
 		[HttpPost("overview")]
-		public async Task<ActionResult<IEnumerable<string>>> GetListingsWithFilter(PostListingFilterDTO? filterModel)
+		public async Task<ActionResult<List<ListingOverviewDTO>>> GetListingsWithFilter(PostListingFilterDTO? filterModel)
 		{
 			if (filterModel is null)
 			{
 				filterModel = new PostListingFilterDTO();
 			}
 
-			var dtos = await _listingService
-				.GetAllByFilterAsync(filterModel);
-
-			if (dtos is null)
+			try
 			{
-				return NotFound();
-			}
-			var result = JsonConvert.SerializeObject(dtos);
+				var dtos = await _listingService
+					.GetAllByFilterAsync(filterModel);
 
-			return Ok(result);
+				return Ok(dtos);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
-		// GET:/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<string>> GetListing(string id)
+		public async Task<ActionResult<ListingDTO>> GetListing(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
-			var dto = await _listingService
-				.GetByIdAsync(id);
-
-			if (dto is null)
+			try
 			{
-				return NotFound();
+				var dto = await _listingService
+					.GetByIdAsync(id);
+
+				if (dto is null)
+				{
+					return NotFound();
+				}
+
+				return Ok(dto);
 			}
-
-			var result = JsonConvert.SerializeObject(dto);
-
-			return Ok(result);
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
-		// GET: delete/5
-		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteListing(string? id)
+		public async Task<IActionResult> DeleteListing(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
-			var listingExists = await _listingService.ExistsByIdAsync(id);
-
-			if (!listingExists)
+			if (!await _listingService.ExistsByIdAsync(id))
 			{
 				return NotFound();
 			}
@@ -92,43 +94,49 @@ namespace GT.API.Controllers
 			try
 			{
 				await _listingService.DeleteAsync(id);
+				return Ok();
 			}
-			catch
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
-
-			return Ok();
 		}
 
-		// PUT: update/5
-		[Route("update/{id}")]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutListing(string id, ListingDTO dto)
+		public async Task<IActionResult> PutListing(string id, PostListingDTO dto)
 		{
-			if (string.IsNullOrEmpty(id) || id != dto.Id)
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				// Ensures that all necessary entities exists in the database.
-				await _companyService.AddAsync(new CompanyDTO { Name = dto.Employer });
-				await _locationService.AddAsync(new LocationDTO { Name = dto.Location });
-				await _experienceLevelService.AddAsync(new ExperienceLevelDTO { Name = dto.Location });
+				if (dto.Employer is not null && !await _companyService.ExistsByNameAsync(dto.Employer.Trim()))
+				{
+					await _companyService.AddAsync(new PostCompanyDTO { Name = dto.Employer.Trim() });
+				}
+
+				if (dto.Location is not null && !await _locationService.ExistsByNameAsync(dto.Location.Trim()))
+				{
+					await _locationService.AddAsync(new PostLocationDTO { Name = dto.Location.Trim() });
+				}
+
+				if (dto.ExperienceLevel is not null && !await _experienceLevelService.ExistsByNameAsync(dto.ExperienceLevel))
+				{
+					await _experienceLevelService.AddAsync(new PostExperienceLevelDTO { Name = dto.ExperienceLevel.Trim() });
+				}
 
 				await _listingService.UpdateAsync(dto, id);
+
+				return Ok();
 			}
 			catch
 			{
 				return StatusCode(500);
 			}
-
-			return Ok();
 		}
 
-		// POST: /create
 		[Route("create")]
 		[HttpPost]
 		public async Task<ActionResult<string?>> PostListing(ListingDTO dto)

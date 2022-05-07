@@ -22,6 +22,7 @@ namespace GT.Core.DTO.Listing
 		[StringLength(100)]
 		public string? JobTitle { get; set; }
 
+		[Required]
 		[StringLength(200)]
 		public string? Location { get; set; }
 
