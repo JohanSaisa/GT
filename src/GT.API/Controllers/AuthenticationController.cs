@@ -33,13 +33,8 @@ namespace GT.API.Controllers
 
 		[Route("RequestToken")]
 		[HttpPost]
-		public async Task<IActionResult> GetToken([FromBody] PostLoginDTO loginModel)
+		public async Task<IActionResult> GetToken(PostLoginDTO loginModel)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
-
 			var user = await _userManager.FindByNameAsync(loginModel.Username);
 
 			var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginModel.Password, false);
@@ -52,7 +47,7 @@ namespace GT.API.Controllers
 				{
 					new Claim(JwtRegisteredClaimNames.Sub, user.Email),
 					new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-					new Claim(JwtRegisteredClaimNames.UniqueName, loginModel.Username),
+					new Claim(JwtRegisteredClaimNames.UniqueName, loginModel.Username!),
 					new Claim(ClaimTypes.NameIdentifier, user.Id)
 				};
 

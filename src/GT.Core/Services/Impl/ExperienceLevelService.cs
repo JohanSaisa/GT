@@ -1,3 +1,5 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using GT.Core.DTO.ExperienceLevel;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.AppDb.Entities;
@@ -9,19 +11,22 @@ namespace GT.Core.Services.Impl
 {
 	public class ExperienceLevelService : IExperienceLevelService
 	{
+		private readonly IMapper _mapper;
 		private readonly IGenericRepository<ExperienceLevel> _experienceLevelRepository;
 
-		public ExperienceLevelService(IGenericRepository<ExperienceLevel> experienceLevelRepository)
+		public ExperienceLevelService(IMapper mapper,
+			IGenericRepository<ExperienceLevel> experienceLevelRepository)
 		{
+			_mapper = mapper;
 			_experienceLevelRepository = experienceLevelRepository
 				?? throw new ArgumentNullException(nameof(experienceLevelRepository));
 		}
 
 		public async Task<bool> AddAsync(PostExperienceLevelDTO dto)
 		{
-			if (string.IsNullOrEmpty(dto.Name!.Trim()))
+			if (string.IsNullOrWhiteSpace(dto.Name))
 			{
-				throw new ArgumentException("Name property cannot be null or empty.");
+				throw new ArgumentException("Name cannot be null or empty.");
 			}
 
 			dto.Name = dto.Name.Trim();
@@ -45,9 +50,9 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> DeleteAsync(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				throw new ArgumentException($"No entity with id '{id}' was found.");
+				throw new ArgumentException("Id cannot be null or empty.");
 			}
 
 			var entity = await _experienceLevelRepository.Get()!
@@ -56,7 +61,7 @@ namespace GT.Core.Services.Impl
 
 			if (entity is null)
 			{
-				throw new ArgumentException($"No entity with id '{id}' was found.");
+				throw new ArgumentException($"No ExperienceLevel with id '{id}' was found.");
 			}
 
 			_experienceLevelRepository.Delete(entity);
@@ -66,10 +71,11 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrWhiteSpace(name))
 			{
-				throw new ArgumentException("Name property cannot be null or empty.");
+				throw new ArgumentException("Name cannot be null or empty.");
 			}
+
 			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Name == name);
 		}
 
@@ -78,58 +84,39 @@ namespace GT.Core.Services.Impl
 			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Id == id);
 		}
 
-		public async Task<List<ExperienceLevelDTO?>> GetAllAsync()
+		public async Task<List<ExperienceLevelDTO>> GetAllAsync()
 		{
-			var experienceLevelEntitiess = await _experienceLevelRepository
-				.Get()
+			var experienceLevelDTOs = await _experienceLevelRepository
+				.Get()!
+				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
 				.ToListAsync();
 
-			var experienceLevelDTOs = new List<ExperienceLevelDTO>();
-
-			//TODO automapper
-			foreach (var entity in experienceLevelEntitiess)
-			{
-				experienceLevelDTOs.Add(new ExperienceLevelDTO()
-				{
-					Id = entity.Id,
-					Name = entity.Name
-				});
-			}
-
 			return experienceLevelDTOs;
-			_logger.LogError(e.Message);
-			return null;
 		}
 
 		public async Task<ExperienceLevelDTO?> GetByIdAsync(string id)
 		{
-			try
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				// Get entity
-				var entity = await _experienceLevelRepository
-					.Get()
-					.FirstOrDefaultAsync(e => e.Id == id);
-
-				if (entity == null)
-				{
-					_logger.LogInformation($"Entity with id {id} not found.");
-					return null;
-				}
-
-				// Map entity to DTO
-				var experienceLevelDTO = new ExperienceLevelDTO()
-				{
-					Id = entity.Id,
-					Name = entity.Name,
-				};
-
-				return experienceLevelDTO;
+				throw new ArgumentException("Id cannot be null or empty.");
 			}
-			catch (Exception e)
+
+			var dto = await _experienceLevelRepository
+				.Get()!
+				.SingleOrDefault(e => e.Id == id);
+
+			if (dto is null)
 			{
-				_logger.LogError(e.Message);
-				return null;
+				throw new Exception($"No ExperienceLevel with id '{id}' was found.");
 			}
+
+			var experienceLevelDTO = new ExperienceLevelDTO()
+			{
+				Id = entity.Id,
+				Name = entity.Name,
+			};
+
+			return experienceLevelDTO;
 		}
 
 		public async Task UpdateAsync(ExperienceLevelDTO experienceLevelDTO, string id)
@@ -150,7 +137,6 @@ namespace GT.Core.Services.Impl
 						// TODO: Refactor and implement automapper
 						if (entityToUpdate is null)
 						{
-							_logger.LogWarning($"Entity was not found with existing Id");
 							return;
 						}
 

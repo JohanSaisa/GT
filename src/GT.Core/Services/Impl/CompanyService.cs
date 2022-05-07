@@ -27,9 +27,9 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> AddAsync(PostCompanyDTO dto)
 		{
-			if (string.IsNullOrEmpty(dto.Name))
+			if (string.IsNullOrWhiteSpace(dto.Name))
 			{
-				throw new ArgumentException($"Name property cannot be null or empty.");
+				throw new ArgumentException($"Name cannot be null or empty.");
 			}
 
 			dto.Name = dto.Name.Trim();
@@ -52,7 +52,7 @@ namespace GT.Core.Services.Impl
 
 				if (locationEntity is null)
 				{
-					throw new Exception($"No entity with name '{dto.Name}' was found.");
+					throw new Exception($"No Company with name '{dto.Name}' was found.");
 				}
 
 				companyEntityToAdd.Locations!.Add(locationEntity);
@@ -75,9 +75,9 @@ namespace GT.Core.Services.Impl
 
 		public async Task<CompanyDTO?> GetByIdAsync(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				throw new ArgumentException($"Id property cannot be null or empty.");
+				throw new ArgumentException("Id cannot be null or empty.");
 			}
 
 			var dto = await _companyRepository
@@ -89,7 +89,7 @@ namespace GT.Core.Services.Impl
 
 			if (dto is null)
 			{
-				throw new Exception($"No entity with id '{id}' was found.");
+				throw new Exception($"No Company with id '{id}' was found.");
 			}
 
 			return dto;
@@ -97,9 +97,9 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> ExistsByNameAsync(string name)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrWhiteSpace(name))
 			{
-				throw new ArgumentException($"Name property cannot be null or empty.");
+				throw new ArgumentException($"Name cannot be null or empty.");
 			}
 
 			name = name.Trim();
@@ -109,9 +109,9 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> DeleteAsync(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				throw new ArgumentException("No id to delete was submitted.");
+				throw new ArgumentException("Id cannot be null or empty.");
 			}
 
 			var entity = await _companyRepository.Get()!
@@ -120,7 +120,7 @@ namespace GT.Core.Services.Impl
 
 			if (entity is null)
 			{
-				throw new ArgumentException($"Company with id {id} does not exist.");
+				throw new ArgumentException($"No Company with id '{id}' was found.");
 			}
 
 			_companyRepository.Delete(entity);
@@ -130,9 +130,9 @@ namespace GT.Core.Services.Impl
 
 		public async Task<bool> UpdateAsync(PostCompanyDTO dto, string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				throw new ArgumentException($"Id property cannot be null or empty.");
+				throw new ArgumentException($"Id cannot be null or empty.");
 			}
 
 			if (dto is null)
@@ -140,9 +140,9 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentNullException("DTO cannot be null.");
 			}
 
-			if (string.IsNullOrEmpty(dto.Name))
+			if (string.IsNullOrWhiteSpace(dto.Name))
 			{
-				throw new ArgumentNullException($"Name property cannot be null or empty.");
+				throw new ArgumentNullException($"Name cannot be null or empty.");
 			}
 
 			dto.Name = dto.Name.Trim();
@@ -157,7 +157,7 @@ namespace GT.Core.Services.Impl
 
 			if (entityToUpdate is null)
 			{
-				throw new Exception($"No entity with id '{id}' was found.");
+				throw new Exception($"No Company with id '{id}' was found.");
 			}
 
 			entityToUpdate.Name = dto.Name;
@@ -167,7 +167,7 @@ namespace GT.Core.Services.Impl
 				var location = await _locationRepository.Get()!.Where(e => e.Name == locationName).SingleOrDefaultAsync();
 				if (location is null)
 				{
-					throw new Exception($"No entity with name '{locationName}' was found.");
+					throw new Exception($"No Company with name '{locationName}' was found.");
 				}
 
 				entityToUpdate.Locations!.Add(location);
