@@ -20,7 +20,6 @@ namespace GT.Core.DTO.Inquiry
 		[StringLength(500)]
 		public string? MessageBody { get; set; }
 
-		[Required(ErrorMessage = "LinkedInLink is required")]
 		[StringLength(254)]
 		public string? LinkedInLink { get; set; }
 	}

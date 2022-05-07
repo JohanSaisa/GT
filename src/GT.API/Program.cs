@@ -51,7 +51,7 @@ builder.Services
 	.AddScoped<IListingService, ListingService>()
 	.AddScoped<ICompanyService, CompanyService>()
 	.AddScoped<ILocationService, LocationService>()
-	.AddScoped<IInquiryService, ListingInquiryService>()
+	.AddScoped<IInquiryService, InquiryService>()
 	.AddScoped<IExperienceLevelService, ExperienceLevelService>();
 
 // Add automapper...
