@@ -3,11 +3,7 @@ using GT.Core.DTO.Listing;
 using GT.Core.FilterModels.Impl;
 using GT.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace GT.API.Controllers
 {
@@ -33,12 +29,14 @@ namespace GT.API.Controllers
 			_locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
 		}
 
-		// GET: /overview
-		[Route("overview")]
-		[HttpGet]
-		public async Task<ActionResult<IEnumerable<string>>> GetListingsWithFilter()
+		// POST: /overview
+		[HttpPost("overview")]
+		public async Task<ActionResult<IEnumerable<string>>> GetListingsWithFilter(PostListingFilterDTO? filterModel)
 		{
-			PostListingFilterDTO filterModel = new PostListingFilterDTO();
+			if (filterModel is null)
+			{
+				filterModel = new PostListingFilterDTO();
+			}
 
 			var dtos = await _listingService
 				.GetAllByFilterAsync(filterModel);
