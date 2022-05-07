@@ -8,7 +8,7 @@ namespace GT.Core.Services.Interfaces
 
 		Task<List<ExperienceLevelDTO>> GetAllAsync();
 
-		Task<ExperienceLevelDTO> GetByIdAsync(string id);
+		Task<ExperienceLevelDTO?> GetByIdAsync(string id);
 
 		Task<bool> ExistsByNameAsync(string name);
 

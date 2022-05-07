@@ -16,48 +16,51 @@ namespace GT.API.Controllers
 			_experienceLevelService = experienceLevelService ?? throw new ArgumentNullException(nameof(experienceLevelService));
 		}
 
-		// GET: /overview
-		[Route("overview")]
+		// GET:
 		[HttpGet]
-		public async Task<ActionResult<string>> GetExperienceLevels()
+		public async Task<ActionResult<List<ExperienceLevelDTO>>> GetExperienceLevels()
 		{
-			var experienceLevels = await _experienceLevelService.GetAllAsync();
-
-			if (experienceLevels is null)
+			try
 			{
-				return NotFound();
+				var experienceLevels = await _experienceLevelService.GetAllAsync();
+
+				return Ok(experienceLevels);
 			}
-
-			var result = JsonConvert.SerializeObject(experienceLevels);
-
-			return Ok(result);
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
 		//  GET: /5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<string>> GetExperienceLevel(string id)
+		public async Task<ActionResult<ExperienceLevelDTO>> GetExperienceLevel(string id)
 		{
 			if (string.IsNullOrEmpty(id))
 			{
 				return BadRequest();
 			}
 
-			var experienceLevel = await _experienceLevelService.GetByIdAsync(id);
-
-			if (experienceLevel is null)
+			try
 			{
-				return NotFound();
+				var experienceLevel = await _experienceLevelService.GetByIdAsync(id);
+
+				if (experienceLevel is null)
+				{
+					return NotFound();
+				}
+
+				return Ok(experienceLevel);
 			}
-
-			var result = JsonConvert.SerializeObject(experienceLevel);
-
-			return Ok(result);
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
-		// POST: /create
-		[Route("create")]
+		// POST:
 		[HttpPost]
-		public async Task<ActionResult<string?>> PostExperienceLevel(ExperienceLevelDTO experienceLevel)
+		public async Task<ActionResult> PostExperienceLevel(PostExperienceLevelDTO experienceLevel)
 		{
 			if (experienceLevel is null)
 			{
@@ -66,58 +69,65 @@ namespace GT.API.Controllers
 
 			try
 			{
-				var objToReturn = await _experienceLevelService.AddAsync(experienceLevel);
-				var result = JsonConvert.SerializeObject(objToReturn);
-				return StatusCode(201, result);
+				if (!await _experienceLevelService.AddAsync(experienceLevel))
+				{
+					return StatusCode(500, "Failed to save ExperienceLevel to database.");
+				}
+
+				return StatusCode(201);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex);
 			}
 		}
 
-		// PUT: update/5
-		[Route("update/{id}")]
+		// PUT: /5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutExperienceLevel(string id, ExperienceLevelDTO experienceLevel)
+		public async Task<IActionResult> PutExperienceLevel(string id, PostExperienceLevelDTO experienceLevel)
 		{
-			if (string.IsNullOrEmpty(id) || id != experienceLevel.Id)
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				await _experienceLevelService.UpdateAsync(experienceLevel, id);
+				if (!await _experienceLevelService.UpdateAsync(experienceLevel, id))
+				{
+					return StatusCode(500, "Failed to update ExperienceLevel to database.");
+				}
+
+				return Ok();
 			}
 			catch
 			{
 				return StatusCode(500);
 			}
-
-			return Ok();
 		}
 
-		// DELETE: delete/5
-		[Route("delete/{id}")]
+		// DELETE: /5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteExperienceLevel(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
 			try
 			{
-				await _experienceLevelService.DeleteAsync(id);
+				if (!await _experienceLevelService.DeleteAsync(id))
+				{
+					return StatusCode(500, "Failed to delete ExperienceLevel in database.");
+				}
+
+				return Ok();
 			}
 			catch (Exception)
 			{
 				return StatusCode(500);
 			}
-
-			return Ok();
 		}
 	}
 }

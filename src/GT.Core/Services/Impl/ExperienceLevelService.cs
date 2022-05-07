@@ -47,6 +47,41 @@ namespace GT.Core.Services.Impl
 			return await _experienceLevelRepository.SaveAsync();
 		}
 
+		public async Task<List<ExperienceLevelDTO>> GetAllAsync()
+		{
+			var experienceLevelDTOs = await _experienceLevelRepository
+				.Get()!
+				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
+				.ToListAsync();
+
+			return experienceLevelDTOs;
+		}
+
+		public async Task<ExperienceLevelDTO?> GetByIdAsync(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("Id cannot be null or empty.");
+			}
+
+			var dto = await _experienceLevelRepository
+				.Get()!
+				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
+				.SingleOrDefaultAsync(e => e.Id == id);
+
+			return dto;
+		}
+
+		public async Task<bool> ExistsByNameAsync(string name)
+		{
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				throw new ArgumentException("Name cannot be null or empty.");
+			}
+
+			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Name == name);
+		}
+
 		public async Task<bool> DeleteAsync(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
@@ -66,56 +101,6 @@ namespace GT.Core.Services.Impl
 			_experienceLevelRepository.Delete(entity);
 
 			return await _experienceLevelRepository.SaveAsync();
-		}
-
-		public async Task<bool> ExistsByNameAsync(string name)
-		{
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				throw new ArgumentException("Name cannot be null or empty.");
-			}
-
-			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Name == name);
-		}
-
-		private async Task<bool> ExistsByIdAsync(string id)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Id cannot be null or empty.");
-			}
-
-			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Id == id);
-		}
-
-		public async Task<List<ExperienceLevelDTO>> GetAllAsync()
-		{
-			var experienceLevelDTOs = await _experienceLevelRepository
-				.Get()!
-				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
-				.ToListAsync();
-
-			return experienceLevelDTOs;
-		}
-
-		public async Task<ExperienceLevelDTO> GetByIdAsync(string id)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Id cannot be null or empty.");
-			}
-
-			var dto = await _experienceLevelRepository
-				.Get()!
-				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
-				.SingleOrDefaultAsync(e => e.Id == id);
-
-			if (dto is null)
-			{
-				throw new Exception($"No ExperienceLevel with id '{id}' was found.");
-			}
-
-			return dto;
 		}
 
 		public async Task<bool> UpdateAsync(PostExperienceLevelDTO dto, string id)

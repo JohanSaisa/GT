@@ -71,6 +71,8 @@ namespace GT.API.Controllers
 		{
 			try
 			{
+				// TODO: Add calls to Locations service
+
 				if (!await _companyService.AddAsync(dto))
 				{
 					return StatusCode(500, "Could not save the company.");
@@ -95,6 +97,8 @@ namespace GT.API.Controllers
 
 			try
 			{
+				// TODO: Add calls to Locations service
+
 				await _companyService.UpdateAsync(dto, id);
 			}
 			catch (Exception ex)
@@ -116,7 +120,6 @@ namespace GT.API.Controllers
 
 			try
 			{
-
 				if (!await _companyService.DeleteAsync(id))
 				{
 					return StatusCode(500, "Could not delete the company.");

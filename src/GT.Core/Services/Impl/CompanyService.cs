@@ -87,11 +87,6 @@ namespace GT.Core.Services.Impl
 				.ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider)
 				.SingleOrDefaultAsync();
 
-			if (dto is null)
-			{
-				throw new Exception($"No Company with id '{id}' was found.");
-			}
-
 			return dto;
 		}
 
