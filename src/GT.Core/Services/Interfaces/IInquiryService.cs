@@ -12,11 +12,11 @@ namespace GT.Core.Services.Interfaces
 
 		Task<bool> ExistsByIdAsync(string id);
 
-		Task<bool> DeleteAsync(string id);
+		Task DeleteAsync(string id);
 
-		Task<bool> UpdateAsync(PostInquiryDTO dto, string id);
+		Task UpdateAsync(PostInquiryDTO dto, string id);
 
-		Task<bool> DeleteInquiriesAssociatedWithUserIdAsync(string userId);
+		Task DeleteInquiriesAssociatedWithUserIdAsync(string userId);
 
 		Task<List<InquiryDTO>> GetByListingIdAsync(string id);
 	}

@@ -10,6 +10,7 @@ namespace GT.Core.DTO.Inquiry
 
 		[Required(ErrorMessage = "ApplicantEmail is required")]
 		[StringLength(254)]
+		[EmailAddress(ErrorMessage = "Invalid email address")]
 		public string? ApplicantEmail { get; set; }
 
 		[Required(ErrorMessage = "MessageTitle is required")]

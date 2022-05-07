@@ -123,7 +123,7 @@ namespace GT.Core.Services.Impl
 			}
 
 			var query = _listingRepository?
-				.Get()?
+				.Get()!
 				.Include(e => e.ExperienceLevel)
 				.Include(e => e.Location)
 				.Include(e => e.Employer)
@@ -190,7 +190,7 @@ namespace GT.Core.Services.Impl
 
 			try
 			{
-				return await query?
+				return await query!
 					.Select(entity => new ListingOverviewDTO
 					{
 						Id = entity.Id,
@@ -205,7 +205,7 @@ namespace GT.Core.Services.Impl
 						ExperienceLevel = entity.ExperienceLevel == null ? null : entity.ExperienceLevel.Name,
 						ApplicationDeadline = entity.ApplicationDeadline == null ? null : entity.ApplicationDeadline
 					})
-					.ToListAsync()!;
+					.ToListAsync();
 			}
 			catch (Exception e)
 			{

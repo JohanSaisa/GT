@@ -14,54 +14,46 @@ namespace GT.API.Controllers
 	{
 		private readonly IInquiryService _inquiryService;
 
+		// TODO: UserManager
 		public InquiryController(IInquiryService inquiryService, IConfiguration configuration)
 			: base(configuration)
 		{
 			_inquiryService = inquiryService ?? throw new ArgumentNullException(nameof(inquiryService));
 		}
 
-		// GET: /overview
-		[Route("overview")]
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<string>>> GetInquiries()
+		public async Task<ActionResult<List<InquiryDTO>>> GetInquiries()
 		{
 			var dtos = await _inquiryService.GetAllAsync();
-
-			if (dtos is null)
-			{
-				return NotFound();
-			}
-
-			var result = JsonConvert.SerializeObject(dtos);
-
-			return Ok(result);
+			return Ok(dtos);
 		}
 
-		// GET: /5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<string>> GetInquiry(string id)
+		public async Task<ActionResult<InquiryDTO>> GetInquiry(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
-			var dto = await _inquiryService.GetByIdAsync(id);
-
-			if (dto is null)
+			try
 			{
-				return NotFound();
+				var dto = await _inquiryService.GetByIdAsync(id);
+				if (dto is null)
+				{
+					return NotFound();
+				}
+
+				return Ok(dto);
 			}
-
-			var result = JsonConvert.SerializeObject(dto);
-
-			return Ok(result);
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
-		// POST: /create
-		[Route("create")]
 		[HttpPost]
-		public async Task<ActionResult<string>> PostInquiry(InquiryDTO dto)
+		public async Task<ActionResult> PostInquiry(PostInquiryDTO dto)
 		{
 			if (dto is null)
 			{
@@ -70,63 +62,61 @@ namespace GT.API.Controllers
 
 			try
 			{
-				var objToReturn = await _inquiryService.AddAsync(dto, GetUserId());
+				await _inquiryService.AddAsync(dto);
 
-				var result = JsonConvert.SerializeObject(objToReturn);
-
-				return StatusCode(201, result);
+				return StatusCode(201);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 		}
 
-		// PUT: update/5
-		[Route("update/{id}")]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutInquiry(string id, InquiryDTO dto)
+		public async Task<IActionResult> PutInquiry(string id, PostInquiryDTO dto)
 		{
-			if (string.IsNullOrEmpty(id) || id != dto.Id)
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
 			try
 			{
+				if (!await _inquiryService.ExistsByIdAsync(id))
+				{
+					return BadRequest();
+				}
+
 				await _inquiryService.UpdateAsync(dto, id);
 				return Ok();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 		}
 
-		// DELETE: delete/5
-		[Route("delete/{id}")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteInquiry(string id)
 		{
-			if (string.IsNullOrEmpty(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return BadRequest();
 			}
 
-			var inquiryExists = await _inquiryService.ExistsByIdAsync(id);
-			if (!inquiryExists)
-			{
-				return NotFound();
-			}
-
 			try
 			{
+				if (!await _inquiryService.ExistsByIdAsync(id))
+				{
+					return NotFound();
+				}
+
 				await _inquiryService.DeleteAsync(id);
 				return Ok();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return StatusCode(500);
+				return StatusCode(500, ex.Message);
 			}
 		}
 	}

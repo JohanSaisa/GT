@@ -152,7 +152,7 @@ namespace GT.Core.Services.Impl
 
 			if (entityToUpdate is null)
 			{
-				throw new Exception($"No Company with id '{id}' was found.");
+				throw new ArgumentException($"No Company with id '{id}' was found.");
 			}
 
 			entityToUpdate.Name = dto.Name;

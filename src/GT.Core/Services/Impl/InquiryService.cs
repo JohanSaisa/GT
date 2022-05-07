@@ -14,24 +14,24 @@ namespace GT.Core.Services.Impl
 	public class InquiryService : IInquiryService
 	{
 		private readonly IMapper _mapper;
-		private readonly IGenericRepository<Inquiry> _listingInquiryRepository;
+		private readonly IGenericRepository<Inquiry> _inquiryRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IListingService _listingService;
 
 		public InquiryService(IMapper mapper,
-			IGenericRepository<Inquiry> listingInquiryRepository,
+			IGenericRepository<Inquiry> inquiryRepository,
 			UserManager<ApplicationUser> userManager,
 			IListingService listingService)
 		{
 			_mapper = mapper;
-			_listingInquiryRepository = listingInquiryRepository ?? throw new ArgumentNullException(nameof(listingInquiryRepository));
+			_inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
 			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 		}
 
 		public async Task<bool> AddAsync(InquiryDTO dto)
 		{
-			if (_listingInquiryRepository.Get()!.Any(e => e.ApplicantEmail == dto.ApplicantEmail && e.ListingId == dto.ListingId))
+			if (await _inquiryRepository.Get()!.AnyAsync(e => e.ApplicantEmail == dto.ApplicantEmail && e.ListingId == dto.ListingId))
 			{
 				throw new ArgumentException($"An inquiry for this listing has already been made with email {dto.ApplicantEmail}.");
 			}
@@ -46,219 +46,104 @@ namespace GT.Core.Services.Impl
 				LinkedInLink = dto.LinkedInLink
 			};
 
-			await _listingInquiryRepository.AddAsync(newInquiry);
+			await _inquiryRepository.AddAsync(newInquiry);
 
-			return await _listingInquiryRepository.SaveAsync();
+			return await _inquiryRepository.SaveAsync();
 		}
 
 		public async Task<List<InquiryDTO>> GetAllAsync()
 		{
-			var entities = await _listingInquiryRepository
+			var inquiryDTOs = await _inquiryRepository
 				.Get()!
 				.ProjectTo<InquiryDTO>(_mapper.ConfigurationProvider)
 				.ToListAsync();
-
-			var inquiryDTOs = new List<InquiryDTO>();
-
-			foreach (var entity in entities)
-			{
-				var applicant = await _userManager.FindByIdAsync(entity.ApplicantId);
-
-				// TODO add automapper
-
-				inquiryDTOs.Add(new InquiryDTO
-				{
-					Id = entity.Id,
-					ApplicantId = entity.ApplicantId,
-					ApplicantEmail = applicant?.Email,
-					ListingId = entity.ListingId,
-					LinkedInLink = entity.LinkedInLink,
-					MessageBody = entity.MessageBody,
-					MessageTitle = entity.MessageTitle
-				});
-			}
 
 			return inquiryDTOs;
 		}
 
 		public async Task<InquiryDTO?> GetByIdAsync(string id)
 		{
-			if (id is null)
-			{
-				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByIdAsync)}");
-				return null;
-			}
+			var inquiryDTO = await _inquiryRepository
+				.Get()!
+				.ProjectTo<InquiryDTO>(_mapper.ConfigurationProvider)
+				.FirstOrDefaultAsync(e => e.Id == id);
 
-			try
-			{
-				var entity = await _listingInquiryRepository
-					.Get()!
-					.FirstOrDefaultAsync(e => e.Id == id);
-
-				if (entity == null)
-				{
-					_logger.LogInformation($"Entity with id {id} not found. {nameof(GetByIdAsync)}");
-					return null;
-				}
-
-				var applicant = await _userManager
-					.FindByIdAsync(entity.ApplicantId);
-
-				// TODO Automapper
-
-				var inquiryDTO = new InquiryDTO()
-				{
-					Id = entity.Id,
-					ApplicantId = entity.ApplicantId,
-					ApplicantEmail = applicant?.Email,
-					ListingId = entity.ListingId,
-					LinkedInLink = entity.LinkedInLink,
-					MessageBody = entity.MessageBody,
-					MessageTitle = entity.MessageTitle
-				};
-
-				return inquiryDTO;
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return null;
-			}
+			return inquiryDTO;
 		}
 
 		public async Task<bool> ExistsByIdAsync(string id)
 		{
-			try
-			{
-				return await _listingInquiryRepository
-					.Get()
-					.AnyAsync(e => e.Id == id);
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return false;
-			}
+			return await _inquiryRepository
+				.Get()!
+				.AnyAsync(e => e.Id == id);
 		}
 
 		public async Task DeleteAsync(string id)
 		{
-			try
-			{
-				var entity = await _listingInquiryRepository.Get()
-					.Include(e => e.Listing)
-					.FirstOrDefaultAsync(e => e.Id == id);
+			var entity = await _inquiryRepository
+				.Get()!
+				.Include(e => e.Listing)
+				.FirstOrDefaultAsync(e => e.Id == id);
 
-				if (entity is not null)
-				{
-					await _listingInquiryRepository.DeleteAsync(entity);
-				}
-			}
-			catch (Exception e)
+			_inquiryRepository.Delete(entity);
+
+			if (!await _inquiryRepository.SaveAsync())
 			{
-				_logger.LogError(e.Message);
+				throw new Exception($"Could not delete inquiry with id '{id}' in database.");
 			}
 		}
 
-		public async Task UpdateAsync(InquiryDTO dto, string id)
+		public async Task UpdateAsync(PostInquiryDTO dto, string id)
 		{
-			try
+			var entityToUpdate = await _inquiryRepository
+				.Get()!
+				.FirstOrDefaultAsync(e => e.Id == id);
+			if (entityToUpdate is null)
 			{
-				if (dto.Id != id)
-				{
-					_logger.LogWarning($"IDs are not matching in method: {nameof(UpdateAsync)}.");
-					return;
-				}
-				if (dto.Id is not null && id is not null)
-				{
-					if (await ExistsByIdAsync(id))
-					{
-						var entityToUpdate = await _listingInquiryRepository
-							.Get()
-							.FirstOrDefaultAsync(e => e.Id == id);
-
-						// TODO implement automapper
-						entityToUpdate.Id = dto.Id;
-						entityToUpdate.ApplicantId = dto.ApplicantId;
-						entityToUpdate.ListingId = dto.ListingId;
-						entityToUpdate.LinkedInLink = dto.LinkedInLink;
-						entityToUpdate.MessageBody = dto.MessageBody;
-						entityToUpdate.MessageTitle = dto.MessageTitle;
-
-						await _listingInquiryRepository.UpdateAsync(entityToUpdate, id);
-					}
-				}
-				else
-				{
-					_logger.LogWarning($"Arguments cannot be null when using the method: {nameof(UpdateAsync)}.");
-				}
+				throw new ArgumentException($"No Inquiry with id '{id}' was found.");
 			}
-			catch (Exception e)
+
+			entityToUpdate.ApplicantEmail = dto.ApplicantEmail;
+			entityToUpdate.ListingId = dto.ListingId;
+			entityToUpdate.LinkedInLink = dto.LinkedInLink;
+			entityToUpdate.MessageBody = dto.MessageBody;
+			entityToUpdate.MessageTitle = dto.MessageTitle;
+
+			_inquiryRepository.Update(entityToUpdate);
+
+			if (!await _inquiryRepository.SaveAsync())
 			{
-				_logger.LogError(e.Message);
+				throw new Exception($"Could not update inquiry with id '{id}' in database.");
 			}
 		}
 
-		public async Task DeleteInquiriesAssociatedWithUserIdAsync(string userId)
+		public async Task DeleteInquiriesAssociatedWithUserIdAsync(string userEmail)
 		{
-			try
-			{
-				var associatedInquiries = await _listingInquiryRepository.Get()
-					.Where(e => e.ApplicantId == userId)
-					.ToListAsync();
-
-				if (associatedInquiries is not null)
-				{
-					foreach (var entity in associatedInquiries)
-					{
-						await _listingInquiryRepository.DeleteAsync(entity);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-			}
-		}
-
-		public async Task<List<InquiryDTO>?> GetByListingIdAsync(string id)
-		{
-			if (id is null)
-			{
-				_logger.LogWarning($"Attempted to get entity with null reference id argument. {nameof(GetByListingIdAsync)}");
-				return null;
-			}
-
-			var entities = await _listingInquiryRepository
-				.Get()
-				.Where(e => e.ListingId == id)
+			var associatedInquiries = await _inquiryRepository
+				.Get()!
+				.Where(e => e.ApplicantEmail == userEmail)
 				.ToListAsync();
 
-			if (entities is null)
+			foreach (var entity in associatedInquiries)
 			{
-				return null;
+				_inquiryRepository.Delete(entity);
 			}
 
-			var listingInquiryDTOs = new List<InquiryDTO>();
-
-			foreach (var entity in entities)
+			if (await _inquiryRepository.SaveAsync())
 			{
-				var applicant = await _userManager
-					.FindByIdAsync(entity.ApplicantId);
-
-				listingInquiryDTOs.Add(new InquiryDTO
-				{
-					Id = entity.Id,
-					ApplicantId = entity.ApplicantId,
-					ApplicantEmail = applicant?.Email,
-					ListingId = entity.ListingId,
-					LinkedInLink = entity.LinkedInLink,
-					MessageBody = entity.MessageBody,
-					MessageTitle = entity.MessageTitle
-				});
+				throw new Exception($"Could not delete associated inquiries with email '{userEmail}' in database.");
 			}
+		}
 
-			return listingInquiryDTOs;
+		public async Task<List<InquiryDTO>> GetByListingIdAsync(string id)
+		{
+			var inquiryDTOs = await _inquiryRepository
+				.Get()!
+				.Where(e => e.ListingId == id)
+				.ProjectTo<InquiryDTO>(_mapper.ConfigurationProvider)
+				.ToListAsync();
+
+			return inquiryDTOs;
 		}
 	}
 }
