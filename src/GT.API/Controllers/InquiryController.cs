@@ -14,7 +14,6 @@ namespace GT.API.Controllers
 	{
 		private readonly IInquiryService _inquiryService;
 
-		// TODO: UserManager
 		public InquiryController(IInquiryService inquiryService, IConfiguration configuration)
 			: base(configuration)
 		{

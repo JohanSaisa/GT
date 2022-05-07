@@ -1,6 +1,5 @@
 ﻿using GT.Core.DTO.Listing;
 using GT.Core.FilterModels.Impl;
-using GT.Core.FilterModels.Interfaces;
 using GT.Core.Services.Interfaces;
 using GT.Data.Data.AppDb.Entities;
 using GT.Data.Repositories.Interfaces;
@@ -14,8 +13,6 @@ namespace GT.Core.Services.Impl
 	/// </summary>
 	public class ListingService : IListingService
 	{
-		private readonly ILogger<ListingService> _logger;
-
 		private readonly IGenericRepository<Listing> _listingRepository;
 		private readonly IGenericRepository<Company> _companyRepository;
 		private readonly IGenericRepository<Location> _locationRepository;
@@ -23,15 +20,12 @@ namespace GT.Core.Services.Impl
 		private readonly IGenericRepository<Inquiry> _inquiryRepository;
 
 		public ListingService(
-			ILogger<ListingService> logger,
-
 			IGenericRepository<Listing> listingRepository,
 			IGenericRepository<Company> companyRepository,
 			IGenericRepository<Location> locationRepository,
 			IGenericRepository<ExperienceLevel> experienceLevelRepository,
 			IGenericRepository<Inquiry> inquiryRepository)
 		{
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_listingRepository = listingRepository ?? throw new ArgumentNullException(nameof(listingRepository));
 			_companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
 			_locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
@@ -39,11 +33,6 @@ namespace GT.Core.Services.Impl
 			_inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
 		}
 
-		/// <summary>
-		/// Converts a DTO to entities and updates the database.
-		/// Requires the signed in users Id for assignment of CreatedBy property.
-		/// </summary>
-		/// <returns>The input DTO with an updated Id.</returns>
 		public async Task<ListingDTO?> AddAsync(ListingDTO dto, string signedInUserId)
 		{
 			try
