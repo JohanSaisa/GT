@@ -33,75 +33,52 @@ namespace GT.Core.Services.Impl
 			_inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
 		}
 
-		public async Task<ListingDTO?> AddAsync(ListingDTO dto, string signedInUserId)
+		public async Task<bool> AddAsync(ListingDTO dto, string signedInUserId)
 		{
-			try
+			var newListing = new Listing()
 			{
-				if (dto is null)
-				{
-					_logger.LogWarning($"Attempted to add a null reference to the database.");
-					return null;
-				}
-				if (signedInUserId is null)
-				{
-					_logger.LogWarning($"Attempted to add a new listing with a null reference on signedInUserId.");
-					return null;
-				}
+				Id = Guid.NewGuid().ToString(),
+				CreatedById = signedInUserId,
+				CreatedDate = DateTime.Now,
+				ApplicationDeadline = dto.ApplicationDeadline,
+				SalaryMin = dto.SalaryMin,
+				SalaryMax = dto.SalaryMax,
+				FTE = dto.FTE,
+				ListingTitle = dto.ListingTitle == null ? null : dto.ListingTitle.Trim(),
+				Description = dto.Description == null ? null : dto.Description.Trim(),
+				JobTitle = dto.JobTitle == null ? null : dto.JobTitle.Trim(),
+				Employer = await _companyRepository.Get().SingleOrDefaultAsync(e => e.Name == dto.Employer),
+				Location = await _locationRepository.Get().SingleOrDefaultAsync(e => e.Name == dto.Location),
+				ExperienceLevel = await _experienceLevelRepository.Get().SingleOrDefaultAsync(e => e.Name == dto.ExperienceLevel),
+			};
 
-				var newListing = new Listing()
-				{
-					Id = Guid.NewGuid().ToString(),
-					CreatedById = signedInUserId,
-					CreatedDate = DateTime.Now,
-					ApplicationDeadline = dto.ApplicationDeadline,
-					ListingTitle = dto.ListingTitle == null ? null : dto.ListingTitle.Trim(),
-					Description = dto.Description == null ? null : dto.Description.Trim(),
-					JobTitle = dto.JobTitle == null ? null : dto.JobTitle.Trim(),
-					SalaryMin = dto.SalaryMin,
-					SalaryMax = dto.SalaryMax,
-					FTE = dto.FTE,
-					Employer = await _companyRepository.Get().FirstOrDefaultAsync(e => e.Name == dto.Employer),
-					Location = await _locationRepository.Get().FirstOrDefaultAsync(e => e.Name == dto.Location),
-					ExperienceLevel = await _experienceLevelRepository.Get().FirstOrDefaultAsync(e => e.Name == dto.ExperienceLevel),
-				};
-
-				await _listingRepository.AddAsync(newListing);
-
-				// Assigning the updated id to the DTO as it is the only property with a new value.
-				dto.Id = newListing.Id;
-				dto.CreatedDate = newListing.CreatedDate;
-				return dto;
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e.Message);
-				return null;
-			}
+			await _listingRepository.AddAsync(newListing);
+			return await _listingRepository.SaveAsync();
 		}
 
 		public async Task DeleteAsync(string id)
 		{
-			try
-			{
-				var entity = await _listingRepository.Get()
-					.Include(e => e.Inquiries)
-					.Include(e => e.ExperienceLevel)
-					.Include(e => e.Employer)
-					.Include(e => e.Location)
+			var entity = await _listingRepository.Get()
+				.Include(e => e.Inquiries)
+				.Include(e => e.ExperienceLevel)
+				.Include(e => e.Employer)
+				.Include(e => e.Location)
+				.FirstOrDefaultAsync(e => e.Id == id);
 
-					.FirstOrDefaultAsync(e => e.Id == id);
-				if (entity is not null)
-				{
-					await _listingRepository.DeleteAsync(entity);
-				}
-			}
-			catch (Exception e)
+			if (entity is null)
 			{
-				_logger.LogError(e.Message);
+				throw new Exception("Listing not found.");
+			}
+
+			_listingRepository.Delete(entity);
+
+			if (!await _listingRepository.SaveAsync())
+			{
+				throw new Exception("Could not delete listing.");
 			}
 		}
 
-		public async Task<List<ListingOverviewDTO>> GetAllByFilterAsync(IListingFilterModel? filter = null)
+		public async Task<List<ListingOverviewDTO>> GetAllByFilterAsync(PostListingFilterDTO? filter = null)
 		{
 			// TODO - Refactor code and split up into multiple methods which modifys an IQueryable.
 			// Suggesting that the methods should be implemented in the FilterModel as static methods.
@@ -112,7 +89,7 @@ namespace GT.Core.Services.Impl
 			}
 
 			var query = _listingRepository?
-				.Get()!
+				.Get()
 				.Include(e => e.ExperienceLevel)
 				.Include(e => e.Location)
 				.Include(e => e.Employer)

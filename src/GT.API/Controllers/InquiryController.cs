@@ -10,7 +10,7 @@ namespace GT.API.Controllers
 	[Route("api/v1/inquiries")]
 	[ApiController]
 	public class InquiryController :
-		GTControllerBase
+		APIControllerBase
 	{
 		private readonly IInquiryService _inquiryService;
 

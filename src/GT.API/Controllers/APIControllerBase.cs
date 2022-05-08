@@ -6,27 +6,32 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GT.API.Controllers;
 
-public abstract class GTControllerBase : ControllerBase
+public abstract class APIControllerBase : ControllerBase
 {
 	protected readonly IConfiguration _configuration;
 
-	protected GTControllerBase(IConfiguration configuration)
+	protected APIControllerBase(IConfiguration configuration)
 	{
 		_configuration = configuration;
 	}
-	
-	protected string GetUserId()
+
+	protected string GetSignedInUserId()
 	{
 		string authHeaderValue = Request.Headers["Authorization"];
 
 		var tokenClaims = GetClaims(authHeaderValue.Substring("Bearer ".Length).Trim());
 
-		var userId = tokenClaims.Claims
-			.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+		var signedInUserId = tokenClaims.Claims
+			.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
 
-		return userId;
+		if (signedInUserId is null)
+		{
+			throw new ArgumentException(nameof(signedInUserId), $"Could not retrieve the signed in user id.");
+		}
+
+		return signedInUserId;
 	}
-	
+
 	private ClaimsPrincipal GetClaims(string token)
 	{
 		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"]));

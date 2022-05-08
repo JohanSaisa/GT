@@ -47,7 +47,7 @@ namespace GT.Core.Services.Impl
 
 			foreach (var locationName in dto.Locations!)
 			{
-				var locationEntity = await _locationRepository.Get()!
+				var locationEntity = await _locationRepository.Get()
 					.Where(e => e.Name == locationName).SingleOrDefaultAsync();
 
 				if (locationEntity is null)
@@ -65,7 +65,7 @@ namespace GT.Core.Services.Impl
 
 		public async Task<List<CompanyDTO>> GetAllAsync()
 		{
-			var companyDTOs = await _companyRepository.Get()!
+			var companyDTOs = await _companyRepository.Get()
 				.Include(e => e.Locations)
 				.ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider)
 				.ToListAsync();
@@ -81,7 +81,7 @@ namespace GT.Core.Services.Impl
 			}
 
 			var dto = await _companyRepository
-				.Get()!
+				.Get()
 				.Where(e => e.Id == id)
 				.Include(e => e.Locations)
 				.ProjectTo<CompanyDTO>(_mapper.ConfigurationProvider)
@@ -99,7 +99,7 @@ namespace GT.Core.Services.Impl
 
 			name = name.Trim();
 
-			return await _companyRepository.Get()!.Where(e => e.Name == name).AnyAsync();
+			return await _companyRepository.Get().Where(e => e.Name == name).AnyAsync();
 		}
 
 		public async Task<bool> DeleteAsync(string id)
@@ -109,7 +109,7 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentException("Id cannot be null or empty.");
 			}
 
-			var entity = await _companyRepository.Get()!
+			var entity = await _companyRepository.Get()
 				.Include(e => e.Locations)
 				.FirstOrDefaultAsync(e => e.Id == id);
 
@@ -143,12 +143,12 @@ namespace GT.Core.Services.Impl
 			dto.Name = dto.Name.Trim();
 
 			// Check if another company exists with the same name as the DTO to prevent duplicate companies
-			if (await _companyRepository.Get()!.AnyAsync((e => e.Id != id && e.Name == dto.Name)))
+			if (await _companyRepository.Get().AnyAsync((e => e.Id != id && e.Name == dto.Name)))
 			{
 				throw new ArgumentException($"Company with name: {dto.Name} already exist.");
 			}
 
-			var entityToUpdate = await _companyRepository.Get()!.Where(e => e.Id == id).SingleOrDefaultAsync();
+			var entityToUpdate = await _companyRepository.Get().Where(e => e.Id == id).SingleOrDefaultAsync();
 
 			if (entityToUpdate is null)
 			{
@@ -159,7 +159,7 @@ namespace GT.Core.Services.Impl
 
 			foreach (var locationName in dto.Locations!)
 			{
-				var location = await _locationRepository.Get()!.Where(e => e.Name == locationName).SingleOrDefaultAsync();
+				var location = await _locationRepository.Get().Where(e => e.Name == locationName).SingleOrDefaultAsync();
 				if (location is null)
 				{
 					throw new Exception($"No Company with name '{locationName}' was found.");

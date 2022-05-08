@@ -50,7 +50,7 @@ namespace GT.Core.Services.Impl
 		public async Task<List<ExperienceLevelDTO>> GetAllAsync()
 		{
 			var experienceLevelDTOs = await _experienceLevelRepository
-				.Get()!
+				.Get()
 				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
 				.ToListAsync();
 
@@ -65,7 +65,7 @@ namespace GT.Core.Services.Impl
 			}
 
 			var dto = await _experienceLevelRepository
-				.Get()!
+				.Get()
 				.ProjectTo<ExperienceLevelDTO>(_mapper.ConfigurationProvider)
 				.SingleOrDefaultAsync(e => e.Id == id);
 
@@ -79,7 +79,7 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentException("Name cannot be null or empty.");
 			}
 
-			return await _experienceLevelRepository.Get()!.AnyAsync(e => e.Name == name);
+			return await _experienceLevelRepository.Get().AnyAsync(e => e.Name == name);
 		}
 
 		public async Task<bool> DeleteAsync(string id)
@@ -89,7 +89,7 @@ namespace GT.Core.Services.Impl
 				throw new ArgumentException("Id cannot be null or empty.");
 			}
 
-			var entity = await _experienceLevelRepository.Get()!
+			var entity = await _experienceLevelRepository.Get()
 				.Include(e => e.Listings)
 				.SingleOrDefaultAsync(e => e.Id == id);
 
@@ -122,12 +122,12 @@ namespace GT.Core.Services.Impl
 
 			dto.Name = dto.Name.Trim();
 
-			if (await _experienceLevelRepository.Get()!.AnyAsync((e => e.Id != id && e.Name == dto.Name)))
+			if (await _experienceLevelRepository.Get().AnyAsync((e => e.Id != id && e.Name == dto.Name)))
 			{
 				throw new ArgumentException($"ExperienceLevel with name: {dto.Name} already exist.");
 			}
 
-			var entityToUpdate = await _experienceLevelRepository.Get()!.SingleOrDefaultAsync(e => e.Id == id);
+			var entityToUpdate = await _experienceLevelRepository.Get().SingleOrDefaultAsync(e => e.Id == id);
 
 			if (entityToUpdate is null)
 			{

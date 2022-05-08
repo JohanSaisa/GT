@@ -11,7 +11,7 @@ namespace GT.API.Controllers
 {
 	[Route("api/v1/listings")]
 	[ApiController]
-	public class ListingController : GTControllerBase
+	public class ListingController : APIControllerBase
 	{
 		private readonly IListingService _listingService;
 		private readonly ICompanyService _companyService;
@@ -83,14 +83,15 @@ namespace GT.API.Controllers
 				return BadRequest();
 			}
 
-			if (!await _listingService.ExistsByIdAsync(id))
-			{
-				return NotFound();
-			}
-
 			try
 			{
+				if (!await _listingService.ExistsByIdAsync(id))
+				{
+					return NotFound();
+				}
+
 				await _listingService.DeleteAsync(id);
+
 				return Ok();
 			}
 			catch (Exception ex)
@@ -160,7 +161,10 @@ namespace GT.API.Controllers
 					await _experienceLevelService.AddAsync(new PostExperienceLevelDTO { Name = dto.ExperienceLevel.Trim() });
 				}
 
-				await _listingService.AddAsync(dto, GetUserId());
+				if (!await _listingService.AddAsync(dto, GetSignedInUserId()))
+				{
+					return StatusCode(500, "Could not save the listing.");
+				}
 
 				return StatusCode(201);
 			}
