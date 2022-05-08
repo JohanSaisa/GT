@@ -29,7 +29,7 @@ namespace GT.Core.Services.Impl
 			_listingService = listingService ?? throw new ArgumentNullException(nameof(listingService));
 		}
 
-		public async Task<bool> AddAsync(InquiryDTO dto)
+		public async Task<bool> AddAsync(PostInquiryDTO dto)
 		{
 			if (await _inquiryRepository.Get()!.AnyAsync(e => e.ApplicantEmail == dto.ApplicantEmail && e.ListingId == dto.ListingId))
 			{

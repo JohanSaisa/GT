@@ -4,7 +4,7 @@ namespace GT.Core.Services.Interfaces
 {
 	public interface IInquiryService
 	{
-		Task<bool> AddAsync(PostInquiryDTO dto, string? signedInUserId = null);
+		Task<bool> AddAsync(PostInquiryDTO dto);
 
 		Task<List<InquiryDTO>> GetAllAsync();
 
