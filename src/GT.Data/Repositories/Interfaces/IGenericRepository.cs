@@ -13,7 +13,7 @@ namespace GT.Data.Repositories.Interfaces
 		/// Gets entities of the generic type found in database. Supports includes.
 		/// </summary>
 		/// <exception cref="ArgumentNullException"></exception>
-		IQueryable<TEntity>? Get();
+		IQueryable<TEntity> Get();
 
 		/// <summary>
 		/// Finds matching entity. Unable to include other entities. Faster than finding by predicate.

@@ -21,7 +21,7 @@ namespace GT.Data.Repositories.Impl
 			_context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public IQueryable<TEntity>? Get()
+		public IQueryable<TEntity> Get()
 		{
 			return _context.Set<TEntity>();
 		}
