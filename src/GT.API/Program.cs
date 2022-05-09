@@ -18,7 +18,7 @@ var identityConnectionString = configuration["GTIdentityContextConnection"];
 var appConnectionString = configuration["GTApplicationContextConnection"];
 
 builder.Services
-	.AddDbContext<global::GT.Data.Data.GTAppDb.AppContext>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
+	.AddDbContext<global::GT.Data.Data.GTAppDb.AppDbContext>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
 		options.UseSqlServer(appConnectionString))
 	.AddDbContext<global::GT.Data.Data.IdentityDb.IdentityContext>((global::Microsoft.EntityFrameworkCore.DbContextOptionsBuilder options) =>
 		options.UseSqlServer(identityConnectionString));

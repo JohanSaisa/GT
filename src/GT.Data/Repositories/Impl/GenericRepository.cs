@@ -14,9 +14,9 @@ namespace GT.Data.Repositories.Impl
 	: IGenericRepository<TEntity>
 			where TEntity : class, IAppEntity
 	{
-		private readonly Data.GTAppDb.AppContext _context;
+		private readonly Data.GTAppDb.AppDbContext _context;
 
-		public GenericRepository(Data.GTAppDb.AppContext context)
+		public GenericRepository(Data.GTAppDb.AppDbContext context)
 		{
 			_context = context ?? throw new ArgumentNullException(nameof(context));
 		}

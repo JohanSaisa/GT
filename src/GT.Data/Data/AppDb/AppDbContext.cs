@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GT.Data.Data.GTAppDb
 {
-	public class AppContext : DbContext
+	public class AppDbContext : DbContext
 	{
-		public DbSet<Company> Companies { get; set; }
-		public DbSet<ExperienceLevel> ExperienceLevels { get; set; }
-		public DbSet<Listing> Listings { get; set; }
-		public DbSet<Inquiry> ListingInquiries { get; set; }
-		public DbSet<Location> Locations { get; set; }
+		public DbSet<Company> Companies => Set<Company>();
+		public DbSet<ExperienceLevel> ExperienceLevels => Set<ExperienceLevel>();
+		public DbSet<Listing> Listings => Set<Listing>();
+		public DbSet<Inquiry> Inquiries => Set<Inquiry>();
+		public DbSet<Location> Locations => Set<Location>();
 
-		public AppContext(DbContextOptions<AppContext> options)
+		public AppDbContext(DbContextOptions<AppDbContext> options)
 			: base(options)
 		{
 		}
