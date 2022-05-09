@@ -1,8 +1,6 @@
 ﻿using GT.Data.Data;
 using GT.Data.Data.GTAppDb;
 using GT.Data.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace GT.Data.Repositories.Impl
 {
@@ -14,9 +12,9 @@ namespace GT.Data.Repositories.Impl
 	: IGenericRepository<TEntity>
 			where TEntity : class, IAppEntity
 	{
-		private readonly Data.GTAppDb.AppDbContext _context;
+		private readonly AppDbContext _context;
 
-		public GenericRepository(Data.GTAppDb.AppDbContext context)
+		public GenericRepository(AppDbContext context)
 		{
 			_context = context ?? throw new ArgumentNullException(nameof(context));
 		}

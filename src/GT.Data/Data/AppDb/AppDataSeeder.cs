@@ -137,8 +137,8 @@ namespace GT.Data.Data.AppDb
 			List<Listing> listings = PopulateListings(companies, experienceLevels, locations);
 			List<Inquiry> listingInquiries = PopulateListingInquiries(listings);
 
-			using (var context = new AppContext(
-							serviceProvider.GetRequiredService<DbContextOptions<AppContext>>()))
+			using (var context = new AppDbContext(
+							serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
 			{
 				SeedDataToDatabase(context, companies, listingInquiries, listings, locations);
 			}
@@ -231,7 +231,7 @@ namespace GT.Data.Data.AppDb
 
 			for (int i = 0; i < _numberOfItems; i++)
 			{
-				companies[i].Locations.Add(locations[i]);
+				companies[i].Locations!.Add(locations[i]);
 				locations[i].Companies.Add(companies[i]);
 				updatedCompanies.Add(companies[i]);
 				updatedLocations.Add(locations[i]);
@@ -324,7 +324,7 @@ namespace GT.Data.Data.AppDb
 					MessageTitle = _messageTitles[i],
 					MessageBody = messageBodies[i],
 					LinkedInLink = linkedInLinks[i],
-					ApplicantId = null,
+					ApplicantEmail = null,
 					Listing = listings[i],
 				};
 
@@ -339,7 +339,7 @@ namespace GT.Data.Data.AppDb
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="companies"></param>
-		private static void SeedDataToDatabase(AppContext context, List<Company> companies, List<Inquiry> listingInquiries, List<Listing> listings, List<Location> locations)
+		private static void SeedDataToDatabase(AppDbContext context, List<Company> companies, List<Inquiry> listingInquiries, List<Listing> listings, List<Location> locations)
 		{
 			if (context.Listings.Any())
 			{
@@ -347,7 +347,7 @@ namespace GT.Data.Data.AppDb
 			}
 
 			context.Companies.AddRange(companies);
-			context.ListingInquiries.AddRange(listingInquiries);
+			context.Inquiries.AddRange(listingInquiries);
 			context.Listings.AddRange(listings);
 			context.Locations.AddRange(locations);
 			context.SaveChanges();

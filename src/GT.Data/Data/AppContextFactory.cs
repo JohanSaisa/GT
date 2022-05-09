@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace GT.Data.Data
 {
-	public class AppContextFactory : IDesignTimeDbContextFactory<GTAppDb.AppContext>
+	public class AppContextFactory : IDesignTimeDbContextFactory<GTAppDb.AppDbContext>
 	{
-		public GTAppDb.AppContext CreateDbContext(string[] args)
+		public GTAppDb.AppDbContext CreateDbContext(string[] args)
 		{
 			var basePath = Path.Combine(System.AppContext.BaseDirectory, @"..\..\..\..\", "GT.UI");
 
@@ -17,13 +17,13 @@ namespace GT.Data.Data
 			.AddJsonFile("appsettings.json")
 			.Build();
 
-			var optionsBuilder = new DbContextOptionsBuilder<GTAppDb.AppContext>();
+			var optionsBuilder = new DbContextOptionsBuilder<GTAppDb.AppDbContext>();
 
 			var connectionString = cfg.GetConnectionString("GTApplicationContextConnection");
 
 			optionsBuilder.UseSqlServer(connectionString);
 
-			return new GTAppDb.AppContext(optionsBuilder.Options);
+			return new GTAppDb.AppDbContext(optionsBuilder.Options);
 		}
 	}
 }
